@@ -1,2 +1,2 @@
-# bastet-project
-Bastet robot project
+# Kitty-project
+Kitty robot project
