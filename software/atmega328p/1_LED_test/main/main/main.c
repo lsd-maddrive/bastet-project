@@ -1,10 +1,3 @@
-/*
- * main.c
- *
- * Created: 24.12.2021 17:46:10
- * Author : Michael
- */ 
-
 #include <avr/io.h>
 #define F_CPU 16000000
 #include <util/delay.h>
@@ -26,10 +19,10 @@
 
 int main(void)
 {
-	DDRD = (1<<7);
+	DDRE = (1<<4);
 	while (1)
 	{
-		PORTD ^= (1<<7);
+		PORTE ^= (1<<4);
 		_delay_ms(1000);
 	}
 }
