@@ -4,6 +4,8 @@
 
 adc.c
 
+test1.c
+
 dc_mot.c
 
 gpio_expander.c

@@ -6,6 +6,11 @@
  * Author : Michael
  */ 
 
+#define MAIN_ROUTINE 0
+#define TEST1 1
+
+#define PROGRAM_ROUTINE TEST1
+#include "tests.h"
 #include "utils.h"
 #include "uart.h"
 #include "i2c_basics.h"
@@ -14,9 +19,23 @@
 #include "dc_mot.h"
 #include "st_mot.h"
 
+
+
+void test_fun(){
+#if(PROGRAM_ROUTINE == TEST1)
+	test1();
+#endif
+
+}
+
 void InitAll(void);
 
 int main(void){
+	
+#if(PROGRAM_ROUTINE != MAIN_ROUTINE)
+	test_fun();
+#else
+
 	InitAll();
 	while (1){
 		float info=UartReceiveData();
@@ -37,9 +56,14 @@ int main(void){
 			//UartSendDec(dc_mot_enc[i]);
 			//UartTransmitByte('\t');
 		//}
+		
+		// Вывод скорости в терминал
+		// UartSendDec(GetSpeed());
+		
 		UartTransmitByte('\r');
 		_delay_ms(20);
 	}
+#endif
 }
 
 void InitAll(void){
