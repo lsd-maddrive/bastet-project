@@ -42,11 +42,14 @@ void IntDcMotEcoderInit(void){
 void DcMotGo(float speed){
 	if(speed>=0) DC_MOT_FOR;
 	else DC_MOT_REV;
-	//OCR0B=(uint8_t)((abs(speed)*255)/100);
-	OCR2A = speed;
-	OCR2B = speed; 
-	OCR4A = speed; 
-	OCR4C = speed;
+	OCR2A = (uint8_t)((abs(speed)*255)/100);
+	OCR2B = (uint8_t)((abs(speed)*255)/100);
+	OCR4A = (uint8_t)((abs(speed)*255)/100);
+	OCR4C = (uint8_t)((abs(speed)*255)/100);
+	//OCR2A = speed;
+	//OCR2B = speed; 
+	//OCR4A = speed; 
+	//OCR4C = speed;
 }
 
 uint16_t* GetSpeed(void){
