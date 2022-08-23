@@ -4,25 +4,35 @@
 
 #include "dc_motor.h"
 #include "utils.h"
+#include "uart.h"
 
 void InitAll(void);
-uint8_t angle;
 
 int main(void){
-	InitAll();
-	EICRA=(1<<ISC01);
-	EIMSK=(1<<INT0);
-	//настройка формы сигнала
-	sei();
 	
+	InitAll();
+	_delay_ms(50);
+	float data;
+	//настройка формы сигнала	
 	while (1)
 	{
-		DcMotGo(angle);
+		//// получаем данные с терминала 0Е100 Ц скважность Ў»ћ
+		//data = UartReceiveDec();
+		//// выставл€ем скорость вращени€ двигател€
+		//DcMotGo(data);
+		// табул€ци€ положени€ курсора в терминале
+		UartTransmitByte('\t');
+		// выводим только что переданное значение
+		//UartSendDec(data);
+		UartSendDec(GetSpeed());
+		UartTransmitByte('\r');
 	}
 }
 
+
+
 void InitAll(void){
-	//UartInit();
+	UartInit();
 	//I2cInit();
 	//ExpInit(EXP_DEF_ADDR);
 	//AdcInit();
@@ -31,22 +41,17 @@ void InitAll(void){
 	//StMotInit();
 	//StMotGo(0);
 	//_delay_ms(100);
-	//sei();
+	sei();
 }
 
-ISR (INT0_vect)
-{
-	PORTB^=(1<<7);
-	angle+=1;
-}
 
 // ќпределение скорости по внешним прерывани€м
 
 // uint16_t speed = 0, dc_mot_enc_count = 0;
 
 //void IntDcMotEcoderInit(void){
-	//EICRA=(1<<ISC00);
-	//EIMSK=(1<<INT0);
+//EICRA=(1<<ISC00);
+//EIMSK=(1<<INT0);
 //}
 
 //uint16_t GetSpeed(void){

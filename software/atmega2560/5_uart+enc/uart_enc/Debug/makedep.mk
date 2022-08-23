@@ -6,5 +6,7 @@ dc_motor.c
 
 main.c
 
+uart.c
+
 utils.c
 
