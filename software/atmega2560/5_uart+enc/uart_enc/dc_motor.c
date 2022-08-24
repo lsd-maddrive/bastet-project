@@ -1,7 +1,7 @@
 #include "dc_motor.h"
 #include <avr/io.h>
 
-uint16_t tim2_count=0, dc_mot_enc_count, enc_result;
+uint16_t tim2_count=0, dc_mot_enc_count = 0, enc_result = 0;
 //uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
 uint8_t prev_state=0, current_state=0;
 
@@ -10,18 +10,21 @@ void Tim2DcMotInit(void){
 	//вывод PH6(OC2B), PB4(OC2A) – ШИМ, вывод PH4 - направление
 	TCCR2A |= (1<<COM2A1);
 	TCCR2A |= (1<<COM2B1);
+	TIMSK2 |=(1<<TOIE2);
 	//вывод PH3(OC4A), PH5(OC4C) – ШИМ
 	TCCR4A |= (1<<COM4A1);
 	TCCR4A |= (1<<COM4C1);
 	/* TIMER2 - настройка таймера: быстрый ШИМ,
-	неинвертированный режим, предделитель на 1 */
+	неинвертированный режим, предделитель на 256 244hz */
 	TCCR2A |= (1<<WGM20) | (1<<WGM21);
-	TCCR2B |= (1<<CS20);
+	//phase correct
+	//TCCR2A |= (1<<WGM20);
+	TCCR2B |= (1<<CS22) | (1<<CS21);
 	/* TIMER4 - настройка таймера: быстрый ШИМ,
-	неинвертированный режим, 8 bit, TOP = 0xFF, предделитель на 1*/
+	неинвертированный режим, 8 bit, TOP = 0xFF, предделитель на 256*/
 	TCCR4A |= (1 << WGM40);
 	TCCR4B |= (1 << WGM42);
-	TCCR4B |= (1<<CS40);
+	TCCR4B |= (1<<CS42);
 }
 
 void DcMotInit(void){
@@ -50,52 +53,49 @@ void DcMotGo(float speed){
 }
 
 uint16_t* GetSpeed(void){
-	//return(enc_result);
-	return(dc_mot_enc_count);
+	return(enc_result);
+	//return(dc_mot_enc_count);
 	
 }
 
-ISR(TIMER0_OVF_vect){ //isr executes every 8 ms
-	if(tim2_count<25) tim2_count++; //every 200 ms
-	else{
-		for(uint8_t i=0; i<4; i++){
-			enc_result=(dc_mot_enc_count*5*60)/220; //rev per minute
-			dc_mot_enc_count=0;
-		}
-		tim2_count=0;
-	}
-}
+//ISR(TIMER0_OVF_vect){ //isr executes every 8 ms
+//if(tim2_count<25) tim2_count++; //every 200 ms
+//else{
+//for(uint8_t i=0; i<4; i++){
+//enc_result=(dc_mot_enc_count*5*60)/220; //rev per minute
+//dc_mot_enc_count=0;
+//}
+//tim2_count=0;
+//}
+//}
 
 //ISR(TIMER0_OVF_vect){ //isr executes every 8 ms
-	//if(tim2_count<25) tim2_count++; //every 200 ms
-	//else{
-		//for(uint8_t i=0; i<4; i++){
-			//enc_result[i]=(dc_mot_enc_count[i]*5*60)/220; //rev per minute
-			//dc_mot_enc_count[i]=0;
-		//}
-		//tim2_count=0;
-	//}
+//if(tim2_count<25) tim2_count++; //every 200 ms
+//else{
+//for(uint8_t i=0; i<4; i++){
+//enc_result[i]=(dc_mot_enc_count[i]*5*60)/220; //rev per minute
+//dc_mot_enc_count[i]=0;
+//}
+//tim2_count=0;
+//}
 //}
 //
-//ISR(PCINT2_vect){
-	//current_state=PIND;
-	//if((prev_state&(1<<4))^(current_state&(1<<4))) dc_mot_enc_count[0]++;
-	//if((prev_state&(1<<5))^(current_state&(1<<5))) dc_mot_enc_count[1]++;
-	//if((prev_state&(1<<6))^(current_state&(1<<6))) dc_mot_enc_count[2]++;
-	//if((prev_state&(1<<7))^(current_state&(1<<7))) dc_mot_enc_count[3]++;
-	//prev_state=current_state;
-//}
 
 ISR (INT0_vect)
 {
-	PORTB^=(1<<7);
+	//PORTB^=(1<<7);
 	dc_mot_enc_count+=1;
 }
 
-
-//uint16_t GetSpeed(void){
-//return((enc_result*10*60)/220);
-//}
+ISR(TIMER2_OVF_vect){ //isr executes every 4 ms
+	if(tim2_count<50) tim2_count++; //every 200 ms
+	else{
+		enc_result=(dc_mot_enc_count*5*60)/115; //rev per minute
+		dc_mot_enc_count=0;
+		PORTB^=(1<<7);
+		tim2_count=0;
+	}
+}
 
 //void SetSpeed(uint16_t dc_mot_enc_count){
 //enc_result=dc_mot_enc_count;

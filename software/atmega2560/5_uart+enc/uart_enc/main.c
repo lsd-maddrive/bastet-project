@@ -17,9 +17,9 @@ int main(void){
 	while (1)
 	{
 		//// получаем данные с терминала 0Е100 Ц скважность Ў»ћ
-		//data = UartReceiveDec();
+		data = UartReceiveDec();
 		//// выставл€ем скорость вращени€ двигател€
-		//DcMotGo(data);
+		DcMotGo(data);
 		// табул€ци€ положени€ курсора в терминале
 		UartTransmitByte('\t');
 		// выводим только что переданное значение
@@ -28,8 +28,6 @@ int main(void){
 		UartTransmitByte('\r');
 	}
 }
-
-
 
 void InitAll(void){
 	UartInit();

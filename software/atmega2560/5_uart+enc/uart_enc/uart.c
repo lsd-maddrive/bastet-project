@@ -79,7 +79,7 @@ int16_t UartReceiveDec(void){
 	return(data);
 }
 
-#define INTERRUPTS
+#define NO_INTERRUPTS
 /* функци€ инициализации: настройка ћ  на приЄм и передачу данных, 
 длина сообщени€ Ц 8 бит, один —“ќѕ бит, без паритета, скорость обмена Ц 19200 бод */
 void UartInit(void){
