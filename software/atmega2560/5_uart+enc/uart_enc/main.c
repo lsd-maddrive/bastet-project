@@ -25,11 +25,15 @@ int main(void){
 		UartTransmitByte('\t');
 		// выводим только что переданное значение
 		UartSendDec(data);
-		UartTransmitByte('\t');
-		UartSendDec(GetSpeed());
-		UartTransmitByte('\t');
-		error = data - GetSpeed();
-		UartSendDec(error);
+		for (int i = 0; i < 4; i++){
+			UartTransmitByte('\t');
+			UartSendDec(GetSpeed()[i]);
+			//UartSendDec(data - GetSpeed()[i]);
+			
+		}
+		//UartTransmitByte('\t');
+		//error = data - GetSpeed();
+		//UartSendDec(error);
 	
 		UartTransmitByte('\r');
 		

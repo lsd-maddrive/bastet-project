@@ -42,13 +42,13 @@
 void Tim2DcMotInit(void);
 void DcMotInit(void);
 void IntDcMotEcoderInit(void); //110 points per 1 rev
-void DcMotGo(float speed);
+void DcMotGo(float* speed);
 void DcMotPIDGo(float SetSpeed);
 float ComputeP(uint16_t input, float setpoint);
 float ComputePI(uint16_t input, float setpoint);
 
 
-uint16_t GetSpeed(void);
+uint16_t* GetSpeed(void);
 //void SetSpeed(uint16_t dc_mot_enc_count, uint8_t i);
 //uint16_t GetSpeed(void);
 void SetSpeed(float desired_speed);
