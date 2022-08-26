@@ -3,7 +3,7 @@
 
 uint16_t tim2_count=0, dc_mot_enc_count = 0;
 uint32_t enc_result = 0;
-float reg_speed = 0, set_speed = 0;
+float reg_speed = 0, set_speed = 0, integral = 0;
 //uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
 uint8_t prev_state=0, current_state=0;
 
@@ -46,25 +46,27 @@ void IntDcMotEcoderInit(void){
 }
 
 void DcMotGo(float speed){
-	if(speed>=0) DC_MOT_FOR;
-	else DC_MOT_REV;
+	//if(speed>=0) DC_MOT_FOR;
+	//else DC_MOT_REV;
 	OCR2A = speed;
 	OCR2B = speed;
 	OCR4A = speed;
 	OCR4C = speed;
 }
 
-uint16_t* GetSpeed(void){
+uint16_t GetSpeed(void){
 	return(enc_result);
 }
 
 void SetSpeed(float desired_speed){
-	set_speed = desired_speed;
+	if(desired_speed>=0) DC_MOT_FOR;
+	else DC_MOT_REV;
+	set_speed = abs(desired_speed);
 }
 
 
 void DcMotPIDGo(float set_speed){
-	reg_speed = ComputeP(GetSpeed(), set_speed);
+	reg_speed = ComputePI(GetSpeed(), set_speed);
 	DcMotGo(reg_speed);		
 }
 
@@ -102,28 +104,30 @@ ISR(TIMER2_OVF_vect){ //isr executes every 4 ms
 	}
 }
 
-float ComputeP(uint16_t input, float setpoint){
-	float kp = 0.5;
-	float err = setpoint - input;
-	float control = err * kp;	
-	if(control > 255) //ограничение сигнала управления сверху
-	control = 255;
-	if(control < 0) //ограничение сигнала управления снизу
-	control = 0;
-	return(control);
-}
-
-//float ComputePI(uint16_t input, float setpoint){
-	//float kp = 0.8;
-	//float kI = 
+//float ComputeP(uint16_t input, float setpoint){
+	//float kp = 0.5;
 	//float err = setpoint - input;
-	//float control = err * kp;
+	//float control = err * kp;	
 	//if(control > 255) //ограничение сигнала управления сверху
 	//control = 255;
 	//if(control < 0) //ограничение сигнала управления снизу
 	//control = 0;
 	//return(control);
 //}
+
+float ComputePI(uint16_t input, float setpoint){
+	float kp = 0.6;
+	float ki = 0.3;
+	float dt = 0.2;
+	float error = setpoint - input;
+	integral = integral + (error*dt);
+	float control = (error * kp) + (integral * ki);
+	if(control > 255) //ограничение сигнала управления сверху
+		control = 255;
+	if(control < 0) //ограничение сигнала управления снизу
+		control = 0;
+	return(control);
+}
 
 //previous_error = 0;
 //integral = 0;

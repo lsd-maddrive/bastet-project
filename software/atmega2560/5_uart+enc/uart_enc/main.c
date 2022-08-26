@@ -13,6 +13,7 @@ int main(void){
 	InitAll();
 	_delay_ms(50);
 	float data;
+	float error;
 	data = 0;
 	while (1)
 	{
@@ -26,6 +27,10 @@ int main(void){
 		UartSendDec(data);
 		UartTransmitByte('\t');
 		UartSendDec(GetSpeed());
+		UartTransmitByte('\t');
+		error = data - GetSpeed();
+		UartSendDec(error);
+	
 		UartTransmitByte('\r');
 		
 	}
