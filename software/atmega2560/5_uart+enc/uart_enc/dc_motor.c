@@ -1,8 +1,9 @@
 #include "dc_motor.h"
 #include <avr/io.h>
 
-uint16_t tim2_count=0,dc_mot_enc_count = 0;
+uint16_t tim2_count=0, dc_mot_enc_count = 0;
 uint32_t enc_result = 0;
+float reg_speed = 0, set_speed = 0;
 //uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
 uint8_t prev_state=0, current_state=0;
 
@@ -55,7 +56,16 @@ void DcMotGo(float speed){
 
 uint16_t* GetSpeed(void){
 	return(enc_result);
+}
 
+void SetSpeed(float desired_speed){
+	set_speed = desired_speed;
+}
+
+
+void DcMotPIDGo(float set_speed){
+	reg_speed = ComputeP(GetSpeed(), set_speed);
+	DcMotGo(reg_speed);		
 }
 
 //ISR(TIMER0_OVF_vect){ //isr executes every 8 ms
@@ -76,18 +86,24 @@ ISR (INT0_vect)
 	dc_mot_enc_count+=1;
 }
 
+
+
 ISR(TIMER2_OVF_vect){ //isr executes every 4 ms
 	if(tim2_count<50) tim2_count++; //every 200 ms
 	else{
+		
 		enc_result=((uint32_t)dc_mot_enc_count*5*60)/115; //rev per minute
 		dc_mot_enc_count=0;
+		
+		DcMotPIDGo(set_speed);
+				
 		PORTB^=(1<<7);
 		tim2_count=0;
 	}
 }
 
 float ComputeP(uint16_t input, float setpoint){
-	float kp = 0.8;
+	float kp = 0.5;
 	float err = setpoint - input;
 	float control = err * kp;	
 	if(control > 255) //ограничение сигнала управления сверху
@@ -97,17 +113,17 @@ float ComputeP(uint16_t input, float setpoint){
 	return(control);
 }
 
-float ComputePI(uint16_t input, float setpoint){
-	float kp = 0.8;
-	float kI = 
-	float err = setpoint - input;
-	float control = err * kp;
-	if(control > 255) //ограничение сигнала управления сверху
-	control = 255;
-	if(control < 0) //ограничение сигнала управления снизу
-	control = 0;
-	return(control);
-}
+//float ComputePI(uint16_t input, float setpoint){
+	//float kp = 0.8;
+	//float kI = 
+	//float err = setpoint - input;
+	//float control = err * kp;
+	//if(control > 255) //ограничение сигнала управления сверху
+	//control = 255;
+	//if(control < 0) //ограничение сигнала управления снизу
+	//control = 0;
+	//return(control);
+//}
 
 //previous_error = 0;
 //integral = 0;
@@ -127,9 +143,7 @@ float ComputePI(uint16_t input, float setpoint){
 //}
 
 
-//void SetSpeed(uint16_t dc_mot_enc_count){
-//enc_result=dc_mot_enc_count;
-//}
+
 
 //ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 //if(tim2_count<12) tim2_count++; //every 100 ms

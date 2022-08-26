@@ -13,20 +13,17 @@ int main(void){
 	InitAll();
 	_delay_ms(50);
 	float data;
-	float reg_speed;
-	//настройка формы сигнала	
 	data = 0;
 	while (1)
 	{
 		//получаем данные с терминала 0Е100 Ц скважность Ў»ћ
-		data = UartReceiveDec();
+		//data = UartReceiveDec();
 		// выставл€ем скорость вращени€ двигател€
-		reg_speed = ComputeP(GetSpeed(), data);
-		DcMotGo(reg_speed);
+		SetSpeed(data);
 		// табул€ци€ положени€ курсора в терминале
 		UartTransmitByte('\t');
 		// выводим только что переданное значение
-		UartSendDec(reg_speed);
+		UartSendDec(data);
 		UartTransmitByte('\t');
 		UartSendDec(GetSpeed());
 		UartTransmitByte('\r');
