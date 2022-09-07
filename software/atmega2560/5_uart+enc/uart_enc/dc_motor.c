@@ -66,7 +66,7 @@ void DcMotPIDGo(float set_speed){
 	float speed_test[4]={0,0,0,0};
 	for(uint8_t i=0; i<4; i++){
 		//reg_speed[i] = ComputePI(GetSpeed()[i], input_speed);
-		reg_speed[i] = ComputePI(GetSpeed()[i], speed_test[i]);
+		reg_speed[i] = ComputePI(GetSpeed()[i], set_speed);
 	}
 	DcMotGo(reg_speed);
 }
@@ -74,6 +74,7 @@ void DcMotPIDGo(float set_speed){
 void IntDcMotEcoderInit(void){
 	EICRA=(1<<ISC01) | (1<<ISC11) | (1<<ISC21) | (1<<ISC31);
 	EIMSK=(1<<INT0) | (1<<INT1) | (1<<INT2) | (1<<INT3);
+
 }
 
 
