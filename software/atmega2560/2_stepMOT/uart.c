@@ -106,25 +106,25 @@ float UartReceiveData(void){
 	return(angle_received);
 }
 
-//ISR(USART_RX_vect){
-	//digit_received=UDR0;
-	//if(digit_received=='\r') complete_flag=0;
-	//if(digit_received=='\n') complete_flag=1;
-	//if(digit_received=='-') negative_flag=1;
-	//if((digit_received>='0') && (digit_received<='9')){
-		//digit_received-='0';
-		//data_received*=10;
-		//data_received+=digit_received;
-	//}
-	//if(complete_flag==1){
-		//if(negative_flag==1) data_received=-data_received;
-		//angle_received=data_received;
-		//complete_flag=0;
-		//negative_flag=0;
-		//data_received=0;
-	//}
-//}
-
-ISR(USART_RX_vect){
-	PORTB^=(1<<7);
+ISR(USART0_RX_vect){
+	digit_received=UDR0;
+	if(digit_received=='\r') complete_flag=0;
+	if(digit_received=='\n') complete_flag=1;
+	if(digit_received=='-') negative_flag=1;
+	if((digit_received>='0') && (digit_received<='9')){
+		digit_received-='0';
+		data_received*=10;
+		data_received+=digit_received;
+	}
+	if(complete_flag==1){
+		if(negative_flag==1) data_received=-data_received;
+		angle_received=data_received;
+		complete_flag=0;
+		negative_flag=0;
+		data_received=0;
+	}
 }
+
+//ISR(USART0_RX_vect){
+	//PORTB^=(1<<7);
+//}
