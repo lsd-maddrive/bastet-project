@@ -10,22 +10,29 @@ int main(void)
 	float angle = 0;
 	while (1)
 	{
-		//получаем данные с терминала 0…100 – скважность ШИМ
+		//получаем данные с терминала
 		angle = UartReceiveData();
 		// выставляем скорость вращения двигателя
 		SetAngle(angle);
 		// табуляция положения курсора в терминале
 		UartTransmitByte('\t');
 		// выводим только что переданное значение
-		UartSendDec(GetCount());
+		for (int i = 0; i < 3; i++){
+			UartSendDec(GetInfo()[i]);
+			UartTransmitByte('\t');
+		}
+		
+		//UartSendDec(AdcGetPos()[0]);
+		//UartTransmitByte('\t');
+		//UartSendDec(GetMotPos());
+		
+		
 		
 		//UartTransmitByte('\t');
 		//error = data - GetSpeed();
 		//UartSendDec(error);
 		
 		UartTransmitByte('\r');
-		//PORTB^=(1<<7);
-		//_delay_ms(500);
 	}
 }
 
@@ -33,7 +40,7 @@ void InitAll(void){
 	UartInit();
 	DDRB|=(1<<7);
 	DDRF|=(1<<5);
-	//AdcInit();
+	AdcInit();
 	StMotInit();
 	//StMotGo(0);
 	_delay_ms(100);

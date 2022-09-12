@@ -3,7 +3,7 @@
 
 //#include "i2c_basics.h"
 #include "utils.h"
-//#include "adc.h"
+#include "adc.h"
 //#include "gpio_expander.h"
 
 //DIRECT defined connection
@@ -34,7 +34,7 @@
 
 //general settings
 #define POS_CENTER 512
-#define POS_ERR 2
+#define POS_ERR 25
 #define MAX_ANGLE 90
 #define MIN_ANGLE -90
 #define MODE 16 //step divide by n
@@ -48,7 +48,8 @@
 void StMotTim1Init(void);
 void StMotInit(void);
 
-uint16_t GetCount(void);
+float* GetInfo(void);
+float GetMotPos(void);
 void StMotPul(void);
 void StMotDir(float direction);
 void StMotGo();

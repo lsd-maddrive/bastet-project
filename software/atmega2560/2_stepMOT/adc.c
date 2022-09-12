@@ -8,7 +8,7 @@ uint16_t adc_res[4]={0,0,0,0};
 void AdcInit(void){
 	#ifdef ARM_READ
 	
-	ExpPinModePort(EXP_DEF_ADDR, ((1<<0)|(1<<1)|(1<<2)|(1<<3)), INPUT); //pins 0,1,2,3 - input
+	//ExpPinModePort(EXP_DEF_ADDR, ((1<<0)|(1<<1)|(1<<2)|(1<<3)), INPUT); //pins 0,1,2,3 - input
 	//ExpWriteCmd(EXP_DEF_ADDR, EXP_ADC_LOWPASS_FILTER_ON); //ON by default
 	//ExpWriteCmd8BitVal(EXP_DEF_ADDR, EXP_ADC_SPEED, 6); //6 by default
 	

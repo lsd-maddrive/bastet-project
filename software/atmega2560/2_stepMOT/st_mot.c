@@ -3,7 +3,7 @@
 uint8_t operate_flag=0, direction_flag=0;
 uint8_t st_mot_chosen=0;
 uint16_t pulse_count=0, pulse_setpoint=0;
-float angle_setpoint=0, current_angle=0, set_angle = 0;
+float angle_setpoint=0, current_angle=0, set_angle = 0, real_mot_pos = 0;
 
 uint16_t set_counter =0;
 
@@ -20,8 +20,11 @@ void StMotTim1Init(void){
 void StMotInit(void){
 	StMotTim1Init();
 	
-	ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
-	ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
+	//ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
+	//ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
+	
+	ST_MOT_PUL_DDR|=(1<<DD_PUL1);
+	ST_MOT_DIR_DDR|=(1<<DD_DIR1);
 
 	pulse_setpoint=0;
 	
@@ -40,16 +43,60 @@ ISR(TIMER1_OVF_vect){
 		}
 		else
 		{
-			pulse_count=0;
+			float real_mot_pos;
+			real_mot_pos = GetMotPos();
 			operate_flag=0;
 			current_angle=set_angle;
+			pulse_count=0;
+			
+			if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+			{
+				
+			
+			}
+			else
+			{
+				//operate_flag=1;
+				////angle_setpoint_delta is a difference between setpoint and real angle of the shaft
+				//float angle_setpoint_delta=set_angle-real_mot_pos;
+				////setting up the direction of rotation according to delta
+				//StMotDir(angle_setpoint_delta);
+				////3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
+				//pulse_setpoint=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
+				//pulse_count=0;
+			}
+			
 		}
 	}
 }
-uint16_t GetCount(void){
-	//return(pulse_count);
-	return(operate_flag);
-	//return(set_counter);
+
+
+void StMotCorrectPos(void){
+	//reading real real shaft pos relative to 512
+	float real_mot_pos;
+	//~300 potentiometer degrees / 1024 = 0.29..
+	real_mot_pos=(512.0f-(float)AdcGetPos()[st_mot_chosen-1])*0.290323;
+	//position error for the shaft is POS_ERR
+	if((real_mot_pos>=(angle_setpoint-POS_ERR)) && (real_mot_pos<=(angle_setpoint+POS_ERR))) operate_flag=0;
+	else operate_flag=1;
+	//angle_setpoint_delta is a difference between setpoint and real angle of the shaft
+	float angle_setpoint_delta=angle_setpoint-real_mot_pos;
+	//setting up the direction of rotation according to delta
+	StMotDir(angle_setpoint_delta);
+	//annihilating negativeness
+	angle_setpoint_delta=abs(angle_setpoint_delta);
+	
+	//3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
+	pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
+	
+}
+float* GetInfo(void){
+	float info[3]={0, 0 ,0};
+	//if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+	info[0] = real_mot_pos;
+	info[1] = set_angle;
+	info[2] = POS_ERR;
+	return info;
 	
 }
 
@@ -70,9 +117,10 @@ uint16_t GetCount(void){
 //pulse_count++;
 //StMotPul();
 //}
-//}
 //
 //}
+
+
 void StMotGo(){
 	//angle_setpoint=angle-current_angle;
 	StMotDir(angle_setpoint);
@@ -111,9 +159,6 @@ void SetAngle(float angle){
 
 	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
-	//current_angle = angle_setpoint;
-	//angle_setpoint = angle - current_angle;
-
 	if ((angle!=current_angle) & (operate_flag == 0))
 	{
 		set_angle = angle;
@@ -124,6 +169,14 @@ void SetAngle(float angle){
 	}
 
 }
+
+float GetMotPos(void){
+	float real_mot_pos;
+	real_mot_pos=(512.0f-(float)AdcGetPos()[0])*0.262;
+	return real_mot_pos;
+	
+}
+
 //ISR(TIMER2_OVF_vect){
 //TCNT1=65535-250; //timer period = 400 us
 //if(operate_flag){
