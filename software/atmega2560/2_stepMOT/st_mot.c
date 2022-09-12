@@ -3,7 +3,7 @@
 uint8_t operate_flag=0, direction_flag=0;
 uint8_t st_mot_chosen=0;
 uint16_t pulse_count=0, pulse_setpoint=0;
-float angle_setpoint=0, current_angle=0;
+float angle_setpoint=0, current_angle=0, set_angle = 0;
 
 uint16_t set_counter =0;
 
@@ -19,15 +19,10 @@ void StMotTim1Init(void){
 
 void StMotInit(void){
 	StMotTim1Init();
-	//#ifdef DIRECT
-	//
-	//ST_MOT_PUL_DDR|=(1<<DD_PUL1);
-	//ST_MOT_DIR_DDR|=(1<<DD_DIR1);
 	
 	ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
 	ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
-	//
-	//#endif
+
 	pulse_setpoint=0;
 	
 }
@@ -36,22 +31,24 @@ ISR(TIMER1_OVF_vect){
 	TCNT1=65535-100; //timer period = 400 us
 
 	//StMotGo();
-	
-	if (pulse_count < pulse_setpoint){
-		StMotPul();
-		pulse_count++;
-		
-	}
-	else
+	if (operate_flag)
 	{
-		//pulse_count=0;
-		//pulse_setpoint=0;
-		//operate_flag=0;
+		if (pulse_count < pulse_setpoint){
+			StMotPul();
+			pulse_count++;
+			
+		}
+		else
+		{
+			pulse_count=0;
+			operate_flag=0;
+			current_angle=set_angle;
+		}
 	}
 }
 uint16_t GetCount(void){
 	//return(pulse_count);
-	return(angle_setpoint);
+	return(operate_flag);
 	//return(set_counter);
 	
 }
@@ -116,9 +113,15 @@ void SetAngle(float angle){
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
 	//current_angle = angle_setpoint;
 	//angle_setpoint = angle - current_angle;
-	angle_setpoint = angle;
-	StMotDir(angle_setpoint);
-	pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
+
+	if ((angle!=current_angle) & (operate_flag == 0))
+	{
+		set_angle = angle;
+		angle_setpoint = angle - current_angle;
+		StMotDir(angle_setpoint);
+		pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
+		operate_flag = 1;
+	}
 
 }
 //ISR(TIMER2_OVF_vect){
