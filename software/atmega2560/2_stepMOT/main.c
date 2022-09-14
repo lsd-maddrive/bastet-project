@@ -16,6 +16,10 @@ int main(void)
 		SetAngle(angle);
 		// табуляция положения курсора в терминале
 		UartTransmitByte('\t');
+		UartSendDec(GetMotPos());
+		UartTransmitByte('\t');
+		
+			
 		// выводим только что переданное значение
 		for (int i = 0; i < 3; i++){
 			UartSendDec(GetInfo()[i]);

@@ -4,8 +4,9 @@ uint8_t operate_flag=0, direction_flag=0;
 uint8_t st_mot_chosen=0;
 uint16_t pulse_count=0, pulse_setpoint=0;
 float angle_setpoint=0, current_angle=0, set_angle = 0, real_mot_pos = 0;
-
 uint16_t set_counter =0;
+
+float info[3]={0, 0 ,0};
 
 
 void StMotTim1Init(void){
@@ -43,27 +44,26 @@ ISR(TIMER1_OVF_vect){
 		}
 		else
 		{
-			float real_mot_pos;
+			//float real_mot_pos;
 			real_mot_pos = GetMotPos();
-			operate_flag=0;
-			current_angle=set_angle;
-			pulse_count=0;
 			
 			if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
 			{
+				operate_flag=0;
+				current_angle=set_angle;
+				pulse_count=0;
 				
-			
 			}
 			else
 			{
-				//operate_flag=1;
-				////angle_setpoint_delta is a difference between setpoint and real angle of the shaft
-				//float angle_setpoint_delta=set_angle-real_mot_pos;
-				////setting up the direction of rotation according to delta
-				//StMotDir(angle_setpoint_delta);
-				////3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
-				//pulse_setpoint=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
-				//pulse_count=0;
+				operate_flag=1;
+				//angle_setpoint_delta is a difference between setpoint and real angle of the shaft
+				float angle_setpoint_delta=set_angle-real_mot_pos;
+				//setting up the direction of rotation according to delta
+				StMotDir(angle_setpoint_delta);
+				//3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
+				pulse_setpoint=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
+				pulse_count=0;
 			}
 			
 		}
@@ -91,13 +91,11 @@ void StMotCorrectPos(void){
 	
 }
 float* GetInfo(void){
-	float info[3]={0, 0 ,0};
-	//if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
-	info[0] = real_mot_pos;
-	info[1] = set_angle;
-	info[2] = POS_ERR;
+	////if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+	info[0] = set_angle;
+	info[1] = POS_ERR;
+	info[2] = operate_flag;
 	return info;
-	
 }
 
 //ISR(TIMER2_OVF_vect){
@@ -172,8 +170,8 @@ void SetAngle(float angle){
 
 float GetMotPos(void){
 	float real_mot_pos;
-	real_mot_pos=(512.0f-(float)AdcGetPos()[0])*0.262;
-	return real_mot_pos;
+	real_mot_pos=(512.0f-(float)AdcGetPos()[0])*0.268;
+	return -real_mot_pos;
 	
 }
 
