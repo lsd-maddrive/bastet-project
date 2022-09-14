@@ -1,7 +1,6 @@
 #ifndef ST_MOT_H_
 #define ST_MOT_H_
 
-//#include "i2c_basics.h"
 #include "utils.h"
 #include "adc.h"
 //#include "gpio_expander.h"
@@ -34,19 +33,20 @@
 
 //general settings
 #define POS_CENTER 512
-#define POS_ERR 5
+#define POS_ERR 2
 #define MAX_ANGLE 90
 #define MIN_ANGLE -90
 #define MODE 16 //step divide by n
 #define STEPS (360/(1.8/MODE))*2
 #define ANGLE_TO_STEPS STEPS/360
 
-//#define SINGLE_MOT //SINGLE_MOT / ALL_MOT 
+#define ALL_MOT //SINGLE_MOT / ALL_MOT
 //#define DIRECT //DIRECT / i2c MODULE
 
-//void StMotTim0Init(void);
 void StMotTim1Init(void);
 void StMotInit(void);
+
+#ifdef SINGLE_MOT
 
 float* GetInfo(void);
 float GetMotPos(void);
@@ -54,31 +54,23 @@ void StMotPul(void);
 void StMotDir(float direction);
 void StMotGo();
 void SetAngle(float angle);
-
-
-#ifdef SINGLE_MOT
-
-void StMotGo(float angle, uint8_t st_mot_num);
-void StMotPul(void);
-void StMotDir(float direction);
 void StMotCorrectPos(void);
 
 #endif
 #ifdef ALL_MOT
 
-void StMotGo(float angle);
-void StMotPul(uint8_t st_mot_chosen);
-void StMotDir(uint8_t st_mot_chosen);
-void StMotCorrectPos(uint8_t st_mot_chosen);
+//void StMotGo(float angle);
+//void StMotPul(uint8_t st_mot_chosen);
+//void StMotDir(uint8_t st_mot_chosen);
+//void StMotCorrectPos(uint8_t st_mot_chosen);
 
-#endif
-
-#ifdef ORIGIN
-
-void StMotGo(float angle);
-void StMotPul(uint8_t st_mot_chosen);
-void StMotDir(uint8_t st_mot_chosen);
-void StMotCorrectPos(uint8_t st_mot_chosen);
+float* GetInfo(void);
+float GetMotPos(uint8_t n);
+void StMotPul(uint8_t n);
+void StMotDir(float direction, uint8_t n);
+void StMotGo();
+void SetAngle(float angle);
+void StMotCorrectPos(uint8_t n, float real_mot_pos);
 
 #endif
 

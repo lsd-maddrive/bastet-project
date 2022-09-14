@@ -1,12 +1,20 @@
 #include "st_mot.h"
 
-uint8_t operate_flag=0, direction_flag=0;
+#ifdef ALL_MOT //4WD mode
+uint8_t operate_flag[4]={0, 0, 0, 0};
 uint8_t st_mot_chosen=0;
-uint16_t pulse_count=0, pulse_setpoint=0;
+uint8_t	operate_master_flag=0;
+
+uint16_t pulse_count[4]={0,0,0,0}, pulse_setpoint[4]={0,0,0,0};
 float angle_setpoint=0, current_angle=0, set_angle = 0, real_mot_pos = 0;
 uint16_t set_counter =0;
 
+
+//pot_koefs
+float p_k[4]={0.268,0.268,0.268,0.268};
 float info[3]={0, 0 ,0};
+
+
 
 
 void StMotTim1Init(void){
@@ -21,310 +29,234 @@ void StMotTim1Init(void){
 void StMotInit(void){
 	StMotTim1Init();
 	
-	//ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
-	//ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
-	
-	ST_MOT_PUL_DDR|=(1<<DD_PUL1);
-	ST_MOT_DIR_DDR|=(1<<DD_DIR1);
+	ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
+	ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
+	//ST_MOT_PUL_DDR|=(1<<DD_PUL1);
+	//ST_MOT_DIR_DDR|=(1<<DD_DIR1); 
 
-	pulse_setpoint=0;
-	
 }
 
 ISR(TIMER1_OVF_vect){
 	TCNT1=65535-100; //timer period = 400 us
-
-	//StMotGo();
-	if (operate_flag)
-	{
-		if (pulse_count < pulse_setpoint){
-			StMotPul();
-			pulse_count++;
-			
-		}
-		else
+	for(int n = 0; n<4; n++){
+		if (operate_flag[n])
 		{
-			//float real_mot_pos;
-			real_mot_pos = GetMotPos();
-			
-			if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
-			{
-				operate_flag=0;
-				current_angle=set_angle;
-				pulse_count=0;
+			if (pulse_count[n] < pulse_setpoint[n]){
+				StMotPul(n);
+				pulse_count[n]++;
 				
 			}
 			else
 			{
-				operate_flag=1;
-				//angle_setpoint_delta is a difference between setpoint and real angle of the shaft
-				float angle_setpoint_delta=set_angle-real_mot_pos;
-				//setting up the direction of rotation according to delta
-				StMotDir(angle_setpoint_delta);
-				//3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
-				pulse_setpoint=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
-				pulse_count=0;
+				float real_mot_pos;
+				real_mot_pos = GetMotPos(n);
+				StMotCorrectPos(n, real_mot_pos);
 			}
-			
 		}
 	}
 }
 
 
-void StMotCorrectPos(void){
-	//reading real real shaft pos relative to 512
-	float real_mot_pos;
-	//~300 potentiometer degrees / 1024 = 0.29..
-	real_mot_pos=(512.0f-(float)AdcGetPos()[st_mot_chosen-1])*0.290323;
-	//position error for the shaft is POS_ERR
-	if((real_mot_pos>=(angle_setpoint-POS_ERR)) && (real_mot_pos<=(angle_setpoint+POS_ERR))) operate_flag=0;
-	else operate_flag=1;
-	//angle_setpoint_delta is a difference between setpoint and real angle of the shaft
-	float angle_setpoint_delta=angle_setpoint-real_mot_pos;
-	//setting up the direction of rotation according to delta
-	StMotDir(angle_setpoint_delta);
-	//annihilating negativeness
-	angle_setpoint_delta=abs(angle_setpoint_delta);
-	
-	//3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
-	pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
+void StMotCorrectPos(uint8_t n, float real_mot_pos){
+	if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+	{
+		operate_flag[n]=0;
+		current_angle=set_angle;
+		pulse_count[n]=0;
+		
+	}
+	else
+	{
+		operate_flag[n]=1;
+		float angle_setpoint_delta=set_angle-real_mot_pos;
+		StMotDir(angle_setpoint_delta, n);
+		pulse_setpoint[n]=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
+		pulse_count[n]=0;
+	}
 	
 }
 float* GetInfo(void){
-	////if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
 	info[0] = set_angle;
 	info[1] = POS_ERR;
-	info[2] = operate_flag;
+	//info[2] = operate_flag;
 	return info;
 }
 
-//ISR(TIMER2_OVF_vect){
-//TCNT0=256-100;
-//if(operate_flag){
-//StMotDir();
-//if(pulse_count>=pulse_setpoint){
-////if the motion is finished but setpoint hasn`t been reached yet
-//pulse_count=0;
-//float real_mot_pos;
-//real_mot_pos=(512.0f-(float)AdcGetPos()[st_mot_chosen-1])*0.290323;
-//if((real_mot_pos>=(angle_setpoint-POS_ERR)) && (real_mot_pos<=(angle_setpoint+POS_ERR))) operate_flag=0;
-//else StMotCorrectPos();
-//}
-//else{
-////if the motion hasn`t been finished yet
-//pulse_count++;
-//StMotPul();
-//}
-//
-//}
 
 
-void StMotGo(){
-	//angle_setpoint=angle-current_angle;
-	StMotDir(angle_setpoint);
-	pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
-	
-}
-
-
-void StMotPul(void){
-	ST_MOT_PUL_PORT^=(1<<PORT_PUL1);
-	ST_MOT_PUL_PORT^=(1<<PORT_PUL2);
-	ST_MOT_PUL_PORT^=(1<<PORT_PUL3);
-	ST_MOT_PUL_PORT^=(1<<PORT_PUL4);
+void StMotPul(uint8_t n){
+	//PUL pin are 0 2 4 6
+	ST_MOT_PUL_PORT^=(1<<(n*2));
 
 }
 
-void StMotDir(float direction){
-
+void StMotDir(float direction, uint8_t n){
+	uint8_t port_num = 2*n+1;
 	if (direction >= 0){
-		ST_MOT_DIR_PORT|=(1<<PORT_DIR1);
-		ST_MOT_DIR_PORT|=(1<<PORT_DIR2);
-		ST_MOT_DIR_PORT|=(1<<PORT_DIR3);
-		ST_MOT_DIR_PORT|=(1<<PORT_DIR4);
+		ST_MOT_DIR_PORT|=(1<<port_num);
 	}
 	else{
-		ST_MOT_DIR_PORT&=(0<<PORT_DIR1);
-		ST_MOT_DIR_PORT&=(0<<PORT_DIR2);
-		ST_MOT_DIR_PORT&=(0<<PORT_DIR3);
-		ST_MOT_DIR_PORT&=(0<<PORT_DIR4);
+		ST_MOT_DIR_PORT&=(0<<port_num);
 	}
 }
 
 void SetAngle(float angle){
 
-	//limiting the setpoint +/- 90 degrees
-
 	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
-	if ((angle!=current_angle) & (operate_flag == 0))
+	operate_master_flag = operate_flag[0] | operate_flag[1] | operate_flag[2] | operate_flag[3];
+	if ((angle!=current_angle) & (operate_master_flag == 0))
 	{
 		set_angle = angle;
 		angle_setpoint = angle - current_angle;
-		StMotDir(angle_setpoint);
-		pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
-		operate_flag = 1;
+		for (int i=0; i<4; i++)
+		{
+			StMotDir(angle_setpoint, i);
+			pulse_setpoint[i]=abs(angle_setpoint) * ANGLE_TO_STEPS;
+			operate_flag[i] = 1;
+		}
 	}
 
 }
 
-float GetMotPos(void){
+float GetMotPos(uint8_t n){
 	float real_mot_pos;
-	real_mot_pos=(512.0f-(float)AdcGetPos()[0])*0.268;
+	real_mot_pos=(512.0f-(float)AdcGetPos()[n])*p_k[n];
 	return -real_mot_pos;
 	
 }
 
-//ISR(TIMER2_OVF_vect){
-//TCNT1=65535-250; //timer period = 400 us
-//if(operate_flag){
-//StMotDir();
-//if(pulse_count>=pulse_setpoint){
-////if the motion is finished but setpoint hasn`t been reached yet
-//pulse_count=0;
-//float real_mot_pos;
-//real_mot_pos=(512.0f-(float)AdcGetPos()[st_mot_chosen-1])*0.290323;
-//if((real_mot_pos>=(angle_setpoint-POS_ERR)) && (real_mot_pos<=(angle_setpoint+POS_ERR))) operate_flag=0;
-//else StMotCorrectPos();
-//}
-//else{
-////if the motion hasn`t been finished yet
-//pulse_count++;
-//StMotPul();
-//}
-//}
-
-
+#endif
 //delta = time * f /pre_scaler
 //########################################################################################################################
 
-#ifdef SINGLE_MOT //one stepper motor mode
-
-uint8_t operate_flag=0, direction_flag=0;
-uint8_t st_mot_chosen=0;
-uint16_t pulse_count=0, pulse_setpoint=0;
-float angle_setpoint;
-
-void StMotGo(float angle, uint8_t st_mot_num){
-	//motors 3 & 4 should rotate in opposite direction to motors 1 & 23
-
-	if((st_mot_num==3)||(st_mot_num==4)) angle_setpoint=-angle;
-	//angle_setpoint stores user angle main setpoint
-	else angle_setpoint=angle;
-	//operate_flag is an indication of motor`s motion
-	if(operate_flag==0) st_mot_chosen=st_mot_num;
-	//limiting the setpoint +/- 90 degrees
-	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
-	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
-	StMotCorrectPos();
-}
-
-void StMotCorrectPos(void){
-	//reading real real shaft pos relative to 512
-	float real_mot_pos;
-	//~300 potentiometer degrees / 1024 = 0.29..
-	real_mot_pos=(512.0f-(float)AdcGetPos()[st_mot_chosen-1])*0.290323;
-	//position error for the shaft is POS_ERR
-	if((real_mot_pos>=(angle_setpoint-POS_ERR)) && (real_mot_pos<=(angle_setpoint+POS_ERR))) operate_flag=0;
-	else operate_flag=1;
-	//angle_setpoint_delta is a difference between setpoint and real angle of the shaft
-	float angle_setpoint_delta=angle_setpoint-real_mot_pos;
-	//setting up the direction of rotation according to delta
-	if(angle_setpoint_delta<0) direction_flag=1;
-	else direction_flag=0;
-	//annihilating negativeness
-	angle_setpoint_delta=abs(angle_setpoint_delta);
-	//3200 steps (LOOK FOR THE STEPPER MODE!) / 180 degrees
-	pulse_setpoint=(uint16_t)(angle_setpoint_delta*18);
-}
-
-
-void StMotPul(void){
-	#ifdef MODULE
-
-	st_mot_i2c_message^=(1<<(st_mot_chosen+3));
-
-	#endif
-	#ifdef DIRECT
-
-	ST_MOT_PUL_PORT^=(1<<(st_mot_chosen-1));
-
-	#endif
-}
-
-void StMotDir(void){
-
-	#ifdef DIRECT
-
-	switch(st_mot_chosen){
-		case 1:{
-			dir_pin=0;
-			break;
-		}
-		case 2:{
-			dir_pin=3;
-			break;
-		}
-		case 3:{
-			dir_pin=4;
-			break;
-		}
-		case 4:{
-			dir_pin=5;
-			break;
-		}
-	}
-	if(direction_flag[st_mot_chosen-1]) ST_MOT_DIR_PORT|=(1<<dir_pin);
-	else ST_MOT_DIR_PORT&=~(1<<dir_pin);
-
-	#endif
-}
-
-ISR(TIMER2_OVF_vect){
-	TCNT0=256-100;
-	if(operate_flag){
-		StMotDir();
-		if(pulse_count>=pulse_setpoint){
-			//if the motion is finished but setpoint hasn`t been reached yet
-			pulse_count=0;
-			float real_mot_pos;
-			real_mot_pos=(512.0f-(float)AdcGetPos()[st_mot_chosen-1])*0.290323;
-			if((real_mot_pos>=(angle_setpoint-POS_ERR)) && (real_mot_pos<=(angle_setpoint+POS_ERR))) operate_flag=0;
-			else StMotCorrectPos();
-		}
-		else{
-			//if the motion hasn`t been finished yet
-			pulse_count++;
-			StMotPul();
-		}
-	}
-
-}
-
-//test steppers
+//#ifdef SINGLE_MOT //one stepper motor mode
+//
+//
+//uint8_t operate_flag=0, direction_flag=0;
+//uint8_t st_mot_chosen=0;
+//uint16_t pulse_count=0, pulse_setpoint=0;
+//float angle_setpoint=0, current_angle=0, set_angle = 0, real_mot_pos = 0;
+//uint16_t set_counter =0;
+//
+//float info[3]={0, 0 ,0};
+//
+//
+//void StMotTim1Init(void){
+	//////timer in normal mode
+	//TCCR1B|=(1<<CS11) | (1<<CS10); //prescaler 64
+	////TCCR1B|=(1<<CS12); //prescaler 256
+	//
+	//TCNT1=65535-100; //timer period = 400 us, delta = 100
+	//TIMSK1|=(1<<TOIE1);
+//}
+//
+//void StMotInit(void){
+	//StMotTim1Init();
+	//
+	////ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
+	////ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
+	//
+	//ST_MOT_PUL_DDR|=(1<<DD_PUL1);
+	//ST_MOT_DIR_DDR|=(1<<DD_DIR1);
+//
+	//pulse_setpoint=0;
+	//
+//}
+//
 //ISR(TIMER1_OVF_vect){
-//TCNT1=65535-100; //timer period = 400 us
-//if (pulse_count < pulse_setpoint)
-//{
-//ST_MOT_PUL_PORT^=(1<<PORT_PUL1);
-//ST_MOT_PUL_PORT^=(1<<PORT_PUL2) ;
-//ST_MOT_PUL_PORT^=(1<<PORT_PUL3) ;
-//ST_MOT_PUL_PORT^=(1<<PORT_PUL4) ;
-//pulse_count++;
+	//TCNT1=65535-100; //timer period = 400 us
+//
+	////StMotGo();
+	//if (operate_flag)
+	//{
+		//if (pulse_count < pulse_setpoint){
+			//StMotPul();
+			//pulse_count++;
+			//
+		//}
+		//else
+		//{
+			//real_mot_pos = GetMotPos();
+			//StMotCorrectPos();
+			//
+		//}
+	//}
 //}
-//else{
-////change dir
-//ST_MOT_DIR_PORT^=(1<<PORT_DIR1);
-//ST_MOT_DIR_PORT^=(1<<PORT_DIR2);
-//ST_MOT_DIR_PORT^=(1<<PORT_DIR3);
-//ST_MOT_DIR_PORT^=(1<<PORT_DIR4);
-//pulse_count=0;
+//
+//
+//void StMotCorrectPos(void){
+	//if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+	//{
+		//operate_flag=0;
+		//current_angle=set_angle;
+		//pulse_count=0;
+		//
+	//}
+	//else
+	//{
+		//operate_flag=1;
+		//float angle_setpoint_delta=set_angle-real_mot_pos;
+		//StMotDir(angle_setpoint_delta);
+		//pulse_setpoint=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
+		//pulse_count=0;
+	//}
+	//
+//}
+//float* GetInfo(void){
+	//////if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+	//info[0] = set_angle;
+	//info[1] = POS_ERR;
+	//info[2] = operate_flag;
+	//return info;
+//}
+//
+//
+//
+//void StMotPul(void){
+	//ST_MOT_PUL_PORT^=(1<<PORT_PUL1);
+	//ST_MOT_PUL_PORT^=(1<<PORT_PUL2);
+	//ST_MOT_PUL_PORT^=(1<<PORT_PUL3);
+	//ST_MOT_PUL_PORT^=(1<<PORT_PUL4);
 //
 //}
 //
-////ST_MOT_PUL_PORT^=(1<<(st_mot_chosen-1));
+//void StMotDir(float direction){
+//
+	//if (direction >= 0){
+		//ST_MOT_DIR_PORT|=(1<<PORT_DIR1);
+		//ST_MOT_DIR_PORT|=(1<<PORT_DIR2);
+		//ST_MOT_DIR_PORT|=(1<<PORT_DIR3);
+		//ST_MOT_DIR_PORT|=(1<<PORT_DIR4);
+	//}
+	//else{
+		//ST_MOT_DIR_PORT&=(0<<PORT_DIR1);
+		//ST_MOT_DIR_PORT&=(0<<PORT_DIR2);
+		//ST_MOT_DIR_PORT&=(0<<PORT_DIR3);
+		//ST_MOT_DIR_PORT&=(0<<PORT_DIR4);
+	//}
+//}
+//
+//void SetAngle(float angle){
+//
+	//if(angle<MIN_ANGLE) angle=MIN_ANGLE;
+	//if(angle>MAX_ANGLE) angle=MAX_ANGLE;
+	//if ((angle!=current_angle) & (operate_flag == 0))
+	//{
+		//set_angle = angle;
+		//angle_setpoint = angle - current_angle;
+		//StMotDir(angle_setpoint);
+		//pulse_setpoint=abs(angle_setpoint) * ANGLE_TO_STEPS;
+		//operate_flag = 1;
+	//}
 //
 //}
-
-#endif
+//
+//float GetMotPos(void){
+	//float real_mot_pos;
+	//real_mot_pos=(512.0f-(float)AdcGetPos()[0])*0.268;
+	//return -real_mot_pos;
+	//
+//}
+//#endif
 
