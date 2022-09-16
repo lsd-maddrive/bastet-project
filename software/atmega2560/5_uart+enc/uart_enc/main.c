@@ -13,14 +13,14 @@ int main(void){
 	InitAll();
 	_delay_ms(50);
 	float data;
-	float error;
 	data = 0;
 	while (1)
 	{
 		//получаем данные с терминала 0Е100 Ц скважность Ў»ћ
-		//data = UartReceiveDec();
+		data = UartReceiveData();
 		// выставл€ем скорость вращени€ двигател€
 		SetSpeed(data);
+		
 		// табул€ци€ положени€ курсора в терминале
 		UartTransmitByte('\t');
 		// выводим только что переданное значение
@@ -31,9 +31,6 @@ int main(void){
 			//UartSendDec(data - GetSpeed()[i]);
 			
 		}
-		//UartTransmitByte('\t');
-		//error = data - GetSpeed();
-		//UartSendDec(error);
 	
 		UartTransmitByte('\r');
 		
