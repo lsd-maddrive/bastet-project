@@ -4,6 +4,11 @@
 #include "uart.h"
 
 void InitAll(void);
+void GoRobot(int16_t speed);
+void Cmd(uint16_t speed);
+void ShowAngles();
+void ShowSpeeds();
+
 
 int main(void)
 {
@@ -11,41 +16,75 @@ int main(void)
 	float data = 0;
 	while (1)
 	{
-		//получаем данные с терминала
-		data = UartReceiveData();
-		// выставляем скорость вращения двигателя
+		//Cmd(300);
+		//data = UartReceiveData();
 		//if ((data >=-90) & (data <=90)) SetAngle(data);
 		//else if (data == 1000) SetSpeed(0);
 		//else SetSpeed(data);
-		
-		SetSpeed(data);
-		UartTransmitByte('\t');
-		UartSendDec(data);
-		UartTransmitByte('\t');
-					
-		// выводим только что переданное значение
-		//for (int i = 0; i < 4; i++){
-		//UartSendDec(GetMotPos(i));
-		//UartTransmitByte('\t');
-		//}
-		
-		
-		for (int i = 0; i < 4; i++){
-			UartSendDec(data-GetSpeed()[i]);
-			UartTransmitByte('\t');
-		}
-		
-		UartTransmitByte('\r');
+		ShowAngles();
+		//ShowSpeeds();
+
+
 	}
 }
 
 void InitAll(void){
 	UartInit();
-	DDRF|=(1<<5);
+	DDRB|=(1<<7);
 	AdcInit();
 	StMotInit();
 	DcMotInit();
-	//StMotGo(0);
+	//SetAngle(1);
+	//SetSpeed(0);
 	_delay_ms(100);
 	sei();
+}
+void GoRobot(int16_t speed){
+	SetSpeed(speed);
+	_delay_ms(1000);
+	SetSpeed(0);
+	_delay_ms(500);
+}
+
+void ShowAngles(){
+	UartTransmitByte('\t');
+	for (int i = 0; i < 4; i++){
+		UartSendDec(GetMotPos(i));
+		UartTransmitByte('\t');
+	}
+	UartTransmitByte('\r');
+	
+}
+void ShowSpeeds(){
+
+	UartTransmitByte('\t');
+	for (int i = 0; i < 4; i++){
+		UartSendDec(GetSpeed()[i]);
+		UartTransmitByte('\t');
+	}
+	UartTransmitByte('\r');
+}
+
+void Cmd(uint16_t speed){
+	uint16_t robot_speed = speed;
+	
+	_delay_ms(1000);
+	SetAngle(1);
+	_delay_ms(1000);
+	GoRobot(robot_speed);
+	_delay_ms(1000);
+	SetAngle(90);
+	_delay_ms(1000);
+	GoRobot(robot_speed);
+	_delay_ms(1000);
+	SetAngle(0);
+	_delay_ms(1000);
+	GoRobot(-robot_speed);
+	_delay_ms(1000);
+	
+	SetAngle(-90);
+	_delay_ms(1000);
+	GoRobot(robot_speed);
+	_delay_ms(1000);
+
 }

@@ -38,6 +38,7 @@ void InitAll(void);
 int main(void){
 	InitAll();
 	// задержка для завершения процесса программирования
+	DDRB|=(1 << PB7);
 	_delay_ms(50);
 	float data;
 	while (1)
@@ -46,6 +47,7 @@ int main(void){
 		data = UartReceiveDec();
 		// выставляем скорость вращения двигателя
 		DcMotGo(data);
+		if (data > 50) PORTB^=(1 << PB7);
 		// табуляция положения курсора в терминале
 		UartTransmitByte('\t');
 		// выводим только что переданное значение

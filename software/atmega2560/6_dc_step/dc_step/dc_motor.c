@@ -16,16 +16,13 @@ void Tim2DcMotInit(void){
 	//вывод PH3(OC4A), PH5(OC4C) – ШИМ
 	TCCR4A |= (1<<COM4A1);
 	TCCR4A |= (1<<COM4C1);
-	/* TIMER2 - настройка таймера: быстрый ШИМ,
-	неинвертированный режим, предделитель на 256 244hz */
-	TCCR2A |= (1<<WGM20) | (1<<WGM21);
-	//phase correct
-	//TCCR2A |= (1<<WGM20);
+	/* TIMER2 - настройка таймера: ШИМ с фазовой коррекцией,
+	неинвертированный режим, предделитель на 256 122.55hz */
+	TCCR2A |= (1<<WGM20);
 	TCCR2B |= (1<<CS22) | (1<<CS21);
 	/* TIMER4 - настройка таймера: быстрый ШИМ,
 	неинвертированный режим, 8 bit, TOP = 0xFF, предделитель на 256*/
 	TCCR4A |= (1 << WGM40);
-	TCCR4B |= (1 << WGM42);
 	TCCR4B |= (1<<CS42);
 }
 
@@ -103,11 +100,11 @@ ISR (INT3_vect)
 	dc_mot_enc_count[3]+=1;
 }
 
-ISR(TIMER2_OVF_vect){ //isr executes every 4 ms
-	if(tim2_count<50) tim2_count++; //every 200 ms
+ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
+	if(tim2_count<10) tim2_count++; //every 80 ms
 	else{
 		for(uint8_t i=0; i<4; i++){
-			enc_result[i]=((uint32_t)dc_mot_enc_count[i]*5*60)/115; //rev per minute
+			enc_result[i]=((uint32_t)dc_mot_enc_count[i]*12.5*60)/115; //rev per minute
 			dc_mot_enc_count[i]=0;
 		}
 		DcMotPIDGo(set_speed);
@@ -120,12 +117,12 @@ ISR(TIMER2_OVF_vect){ //isr executes every 4 ms
 float ComputePI(uint16_t input, float setpoint, uint8_t integral_num){
 	float kp = 0.7;
 	float ki = 0.3;
-	float dt = 0.2;
+	float dt = 0.08;
 	float error = setpoint - input;
 	integral[integral_num] = integral[integral_num] + (error*dt);
 	float control = (error * kp) + (integral[integral_num] * ki);
 	if(control > 255) //ограничение сигнала управления сверху
-	control = 255;
+	control = 100;
 	if(control < 0) //ограничение сигнала управления снизу
 	control = 0;
 	return(control);
