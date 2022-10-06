@@ -1,5 +1,7 @@
 #include "ros.h"
-#include "std_msgs/Float32MultiArray.h"
+// #include "std_msgs/Float32MultiArray.h"
+#include "kitty_msgs/KittyState.h"
+
 // Include C headers (ie, non C++ headers) in this block
 extern "C"
 {
@@ -19,13 +21,13 @@ void __cxa_pure_virtual(void) {}
 
 ros::NodeHandle nh;
 
-void messageCb(const std_msgs::Float32MultiArray &speed_msg)
+void messageCb(const kitty_msgs::KittyState &speed_msg)
 {
-  SetSpeed(speed_msg.data[0]);
-  SetAngle(speed_msg.data[1]);
+  SetSpeed(speed_msg.rotation_speed);
+  SetAngle(speed_msg.angle_steering);
 }
 
-ros::Subscriber<std_msgs::Float32MultiArray> sub("set_speed", &messageCb);
+ros::Subscriber<kitty_msgs::KittyState> sub("set_speed", &messageCb);
 
 int main()
 {

@@ -1,0 +1,155 @@
+   1               		.file	"avr_uart.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               	.global	avr_uart_init
+  13               	avr_uart_init:
+  14               	.LFB0:
+  15               		.file 1 "avr_uart.c"
+   1:avr_uart.c    **** #include <avr/io.h>
+   2:avr_uart.c    **** 
+   3:avr_uart.c    **** #define BAUD 57600
+   4:avr_uart.c    **** // #define BAUD 57605000000
+   5:avr_uart.c    **** 
+   6:avr_uart.c    **** 
+   7:avr_uart.c    **** 
+   8:avr_uart.c    **** #define UBRR_VAL ((F_CPU / (16UL * BAUD)) - 1)
+   9:avr_uart.c    **** 
+  10:avr_uart.c    **** 
+  11:avr_uart.c    **** // Initialize the UART
+  12:avr_uart.c    **** void avr_uart_init(void)
+  13:avr_uart.c    **** {
+  16               		.loc 1 13 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  14:avr_uart.c    ****   // Enable bidirectional UART
+  15:avr_uart.c    ****   UCSR0B |= _BV(RXEN0) | _BV(TXEN0);
+  22               		.loc 1 15 0
+  23 0000 E1EC      		ldi r30,lo8(-63)
+  24 0002 F0E0      		ldi r31,0
+  25 0004 8081      		ld r24,Z
+  26 0006 8861      		ori r24,lo8(24)
+  27 0008 8083      		st Z,r24
+  16:avr_uart.c    ****   // Use 8-bit characters
+  17:avr_uart.c    ****   UCSR0C |= _BV(UCSZ00) | _BV(UCSZ01);
+  28               		.loc 1 17 0
+  29 000a E2EC      		ldi r30,lo8(-62)
+  30 000c F0E0      		ldi r31,0
+  31 000e 8081      		ld r24,Z
+  32 0010 8660      		ori r24,lo8(6)
+  33 0012 8083      		st Z,r24
+  18:avr_uart.c    ****   // Set the Baud rate
+  19:avr_uart.c    ****   UBRR0H = (UBRR_VAL >> 8);
+  34               		.loc 1 19 0
+  35 0014 1092 C500 		sts 197,__zero_reg__
+  20:avr_uart.c    ****   UBRR0L = UBRR_VAL;
+  36               		.loc 1 20 0
+  37 0018 80E1      		ldi r24,lo8(16)
+  38 001a 8093 C400 		sts 196,r24
+  39 001e 0895      		ret
+  40               		.cfi_endproc
+  41               	.LFE0:
+  43               	.global	avr_uart_send_byte
+  45               	avr_uart_send_byte:
+  46               	.LFB1:
+  21:avr_uart.c    ****   
+  22:avr_uart.c    **** }
+  23:avr_uart.c    **** 
+  24:avr_uart.c    **** 
+  25:avr_uart.c    **** // Send one char (blocking)
+  26:avr_uart.c    **** void avr_uart_send_byte(uint8_t tx_byte)
+  27:avr_uart.c    **** {
+  47               		.loc 1 27 0
+  48               		.cfi_startproc
+  49               	.LVL0:
+  50               	/* prologue: function */
+  51               	/* frame size = 0 */
+  52               	/* stack size = 0 */
+  53               	.L__stack_usage = 0
+  54               	.L3:
+  28:avr_uart.c    ****   // Wait to be able to transmit
+  29:avr_uart.c    ****   while((UCSR0A & _BV(UDRE0)) == 0)
+  55               		.loc 1 29 0
+  56 0020 9091 C000 		lds r25,192
+  57 0024 95FD      		sbrc r25,5
+  58 0026 00C0      		rjmp .L6
+  30:avr_uart.c    ****     asm volatile("nop"::);
+  59               		.loc 1 30 0
+  60               	/* #APP */
+  61               	 ;  30 "avr_uart.c" 1
+  62 0028 0000      		nop
+  63               	 ;  0 "" 2
+  64               	/* #NOAPP */
+  65 002a 00C0      		rjmp .L3
+  66               	.L6:
+  31:avr_uart.c    ****   // Put the data into the send buffer
+  32:avr_uart.c    ****   UDR0 = tx_byte;
+  67               		.loc 1 32 0
+  68 002c 8093 C600 		sts 198,r24
+  69 0030 0895      		ret
+  70               		.cfi_endproc
+  71               	.LFE1:
+  73               	.global	avr_uart_receive_byte
+  75               	avr_uart_receive_byte:
+  76               	.LFB2:
+  33:avr_uart.c    **** }
+  34:avr_uart.c    **** 
+  35:avr_uart.c    **** 
+  36:avr_uart.c    **** // Get one char if available, otherwise -1
+  37:avr_uart.c    **** int16_t avr_uart_receive_byte(void)
+  38:avr_uart.c    **** {
+  77               		.loc 1 38 0
+  78               		.cfi_startproc
+  79               	/* prologue: function */
+  80               	/* frame size = 0 */
+  81               	/* stack size = 0 */
+  82               	.L__stack_usage = 0
+  39:avr_uart.c    ****   if((UCSR0A & _BV(RXC0)) != 0)
+  83               		.loc 1 39 0
+  84 0032 8091 C000 		lds r24,192
+  85 0036 87FF      		sbrs r24,7
+  86 0038 00C0      		rjmp .L9
+  40:avr_uart.c    ****   {
+  41:avr_uart.c    ****     return UDR0;
+  87               		.loc 1 41 0
+  88 003a 8091 C600 		lds r24,198
+  89 003e 90E0      		ldi r25,0
+  90 0040 0895      		ret
+  91               	.L9:
+  42:avr_uart.c    ****   }
+  43:avr_uart.c    ****   else
+  44:avr_uart.c    ****   {
+  45:avr_uart.c    ****     return -1;
+  92               		.loc 1 45 0
+  93 0042 8FEF      		ldi r24,lo8(-1)
+  94 0044 9FEF      		ldi r25,lo8(-1)
+  46:avr_uart.c    ****   }
+  47:avr_uart.c    **** }
+  95               		.loc 1 47 0
+  96 0046 0895      		ret
+  97               		.cfi_endproc
+  98               	.LFE2:
+ 100               	.Letext0:
+ 101               		.file 2 "/usr/lib/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 avr_uart.c
+     /tmp/ccTufxmn.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccTufxmn.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccTufxmn.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccTufxmn.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/ccTufxmn.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccTufxmn.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccTufxmn.s:13     .text:0000000000000000 avr_uart_init
+     /tmp/ccTufxmn.s:45     .text:0000000000000020 avr_uart_send_byte
+     /tmp/ccTufxmn.s:75     .text:0000000000000032 avr_uart_receive_byte
+
+NO UNDEFINED SYMBOLS

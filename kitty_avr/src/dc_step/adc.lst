@@ -1,0 +1,700 @@
+   1               		.file	"adc.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               	.global	AdcInit
+  13               	AdcInit:
+  14               	.LFB10:
+  15               		.file 1 "dc_step/adc.c"
+   1:dc_step/adc.c **** #include "adc.h"
+   2:dc_step/adc.c **** 
+   3:dc_step/adc.c **** uint16_t pot_res[12]={0,0,0,0,0,0,0,0,0,0,0,0};
+   4:dc_step/adc.c **** float pot_av[4]={0,0,0,0}, filtered_pot[4]={0,0,0,0}, lp_fil_a =0.93, lp_fil_b=0.07;
+   5:dc_step/adc.c **** uint8_t adc_channel=ST_MOT1_POT, measure_number=0;
+   6:dc_step/adc.c **** uint16_t adc_res[4]={0,0,0,0};
+   7:dc_step/adc.c **** 
+   8:dc_step/adc.c **** void AdcInit(void){
+  16               		.loc 1 8 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+   9:dc_step/adc.c **** 	#ifdef ARM_READ
+  10:dc_step/adc.c **** 	
+  11:dc_step/adc.c **** 	//ExpPinModePort(EXP_DEF_ADDR, ((1<<0)|(1<<1)|(1<<2)|(1<<3)), INPUT); //pins 0,1,2,3 - input
+  12:dc_step/adc.c **** 	//ExpWriteCmd(EXP_DEF_ADDR, EXP_ADC_LOWPASS_FILTER_ON); //ON by default
+  13:dc_step/adc.c **** 	//ExpWriteCmd8BitVal(EXP_DEF_ADDR, EXP_ADC_SPEED, 6); //6 by default
+  14:dc_step/adc.c **** 	
+  15:dc_step/adc.c **** 	#endif
+  16:dc_step/adc.c **** 	
+  17:dc_step/adc.c **** 	#ifdef AVR_READ
+  18:dc_step/adc.c **** 	
+  19:dc_step/adc.c **** 	ADCSRA=(1<<ADEN)|(1<<ADSC)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS0);
+  22               		.loc 1 19 0
+  23 0000 8DEC      		ldi r24,lo8(-51)
+  24 0002 8093 7A00 		sts 122,r24
+  20:dc_step/adc.c **** 	ADMUX=(1<<REFS0)|adc_channel;
+  25               		.loc 1 20 0
+  26 0006 8091 0000 		lds r24,adc_channel
+  27 000a 8064      		ori r24,lo8(64)
+  28 000c 8093 7C00 		sts 124,r24
+  29 0010 0895      		ret
+  30               		.cfi_endproc
+  31               	.LFE10:
+  33               	.global	AdcGetPos
+  35               	AdcGetPos:
+  36               	.LFB11:
+  21:dc_step/adc.c **** 	
+  22:dc_step/adc.c **** 	#endif
+  23:dc_step/adc.c **** }
+  24:dc_step/adc.c **** 
+  25:dc_step/adc.c **** uint16_t* AdcGetPos(void){
+  37               		.loc 1 25 0
+  38               		.cfi_startproc
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	/* stack size = 0 */
+  42               	.L__stack_usage = 0
+  26:dc_step/adc.c **** 	#ifdef ARM_READ
+  27:dc_step/adc.c **** 	
+  28:dc_step/adc.c **** 	for(uint8_t i=0; i<4; i++) adc_res[i]=ExpAnalogRead(EXP_DEF_ADDR, i);
+  29:dc_step/adc.c **** 
+  30:dc_step/adc.c **** 	#endif
+  31:dc_step/adc.c **** 	return adc_res;
+  32:dc_step/adc.c **** }
+  43               		.loc 1 32 0
+  44 0012 80E0      		ldi r24,lo8(adc_res)
+  45 0014 90E0      		ldi r25,hi8(adc_res)
+  46 0016 0895      		ret
+  47               		.cfi_endproc
+  48               	.LFE11:
+  50               	.global	__floatunsisf
+  51               	.global	__mulsf3
+  52               	.global	__addsf3
+  53               	.global	__fixunssfsi
+  54               	.global	__vector_29
+  56               	__vector_29:
+  57               	.LFB12:
+  33:dc_step/adc.c **** 
+  34:dc_step/adc.c **** ISR(ADC_vect){
+  58               		.loc 1 34 0
+  59               		.cfi_startproc
+  60 0018 1F92      		push r1
+  61               	.LCFI0:
+  62               		.cfi_def_cfa_offset 4
+  63               		.cfi_offset 1, -3
+  64 001a 0F92      		push r0
+  65               	.LCFI1:
+  66               		.cfi_def_cfa_offset 5
+  67               		.cfi_offset 0, -4
+  68 001c 0FB6      		in r0,__SREG__
+  69 001e 0F92      		push r0
+  70 0020 1124      		clr __zero_reg__
+  71 0022 0BB6      		in r0,__RAMPZ__
+  72 0024 0F92      		push r0
+  73 0026 2F92      		push r2
+  74               	.LCFI2:
+  75               		.cfi_def_cfa_offset 6
+  76               		.cfi_offset 2, -5
+  77 0028 3F92      		push r3
+  78               	.LCFI3:
+  79               		.cfi_def_cfa_offset 7
+  80               		.cfi_offset 3, -6
+  81 002a 4F92      		push r4
+  82               	.LCFI4:
+  83               		.cfi_def_cfa_offset 8
+  84               		.cfi_offset 4, -7
+  85 002c 5F92      		push r5
+  86               	.LCFI5:
+  87               		.cfi_def_cfa_offset 9
+  88               		.cfi_offset 5, -8
+  89 002e 6F92      		push r6
+  90               	.LCFI6:
+  91               		.cfi_def_cfa_offset 10
+  92               		.cfi_offset 6, -9
+  93 0030 7F92      		push r7
+  94               	.LCFI7:
+  95               		.cfi_def_cfa_offset 11
+  96               		.cfi_offset 7, -10
+  97 0032 8F92      		push r8
+  98               	.LCFI8:
+  99               		.cfi_def_cfa_offset 12
+ 100               		.cfi_offset 8, -11
+ 101 0034 9F92      		push r9
+ 102               	.LCFI9:
+ 103               		.cfi_def_cfa_offset 13
+ 104               		.cfi_offset 9, -12
+ 105 0036 AF92      		push r10
+ 106               	.LCFI10:
+ 107               		.cfi_def_cfa_offset 14
+ 108               		.cfi_offset 10, -13
+ 109 0038 BF92      		push r11
+ 110               	.LCFI11:
+ 111               		.cfi_def_cfa_offset 15
+ 112               		.cfi_offset 11, -14
+ 113 003a CF92      		push r12
+ 114               	.LCFI12:
+ 115               		.cfi_def_cfa_offset 16
+ 116               		.cfi_offset 12, -15
+ 117 003c DF92      		push r13
+ 118               	.LCFI13:
+ 119               		.cfi_def_cfa_offset 17
+ 120               		.cfi_offset 13, -16
+ 121 003e EF92      		push r14
+ 122               	.LCFI14:
+ 123               		.cfi_def_cfa_offset 18
+ 124               		.cfi_offset 14, -17
+ 125 0040 FF92      		push r15
+ 126               	.LCFI15:
+ 127               		.cfi_def_cfa_offset 19
+ 128               		.cfi_offset 15, -18
+ 129 0042 0F93      		push r16
+ 130               	.LCFI16:
+ 131               		.cfi_def_cfa_offset 20
+ 132               		.cfi_offset 16, -19
+ 133 0044 1F93      		push r17
+ 134               	.LCFI17:
+ 135               		.cfi_def_cfa_offset 21
+ 136               		.cfi_offset 17, -20
+ 137 0046 2F93      		push r18
+ 138               	.LCFI18:
+ 139               		.cfi_def_cfa_offset 22
+ 140               		.cfi_offset 18, -21
+ 141 0048 3F93      		push r19
+ 142               	.LCFI19:
+ 143               		.cfi_def_cfa_offset 23
+ 144               		.cfi_offset 19, -22
+ 145 004a 4F93      		push r20
+ 146               	.LCFI20:
+ 147               		.cfi_def_cfa_offset 24
+ 148               		.cfi_offset 20, -23
+ 149 004c 5F93      		push r21
+ 150               	.LCFI21:
+ 151               		.cfi_def_cfa_offset 25
+ 152               		.cfi_offset 21, -24
+ 153 004e 6F93      		push r22
+ 154               	.LCFI22:
+ 155               		.cfi_def_cfa_offset 26
+ 156               		.cfi_offset 22, -25
+ 157 0050 7F93      		push r23
+ 158               	.LCFI23:
+ 159               		.cfi_def_cfa_offset 27
+ 160               		.cfi_offset 23, -26
+ 161 0052 8F93      		push r24
+ 162               	.LCFI24:
+ 163               		.cfi_def_cfa_offset 28
+ 164               		.cfi_offset 24, -27
+ 165 0054 9F93      		push r25
+ 166               	.LCFI25:
+ 167               		.cfi_def_cfa_offset 29
+ 168               		.cfi_offset 25, -28
+ 169 0056 AF93      		push r26
+ 170               	.LCFI26:
+ 171               		.cfi_def_cfa_offset 30
+ 172               		.cfi_offset 26, -29
+ 173 0058 BF93      		push r27
+ 174               	.LCFI27:
+ 175               		.cfi_def_cfa_offset 31
+ 176               		.cfi_offset 27, -30
+ 177 005a EF93      		push r30
+ 178               	.LCFI28:
+ 179               		.cfi_def_cfa_offset 32
+ 180               		.cfi_offset 30, -31
+ 181 005c FF93      		push r31
+ 182               	.LCFI29:
+ 183               		.cfi_def_cfa_offset 33
+ 184               		.cfi_offset 31, -32
+ 185 005e CF93      		push r28
+ 186               	.LCFI30:
+ 187               		.cfi_def_cfa_offset 34
+ 188               		.cfi_offset 28, -33
+ 189 0060 DF93      		push r29
+ 190               	.LCFI31:
+ 191               		.cfi_def_cfa_offset 35
+ 192               		.cfi_offset 29, -34
+ 193 0062 00D0      		rcall .
+ 194 0064 00D0      		rcall .
+ 195               	.LCFI32:
+ 196               		.cfi_def_cfa_offset 41
+ 197 0066 CDB7      		in r28,__SP_L__
+ 198 0068 DEB7      		in r29,__SP_H__
+ 199               	.LCFI33:
+ 200               		.cfi_def_cfa_register 28
+ 201               	/* prologue: Signal */
+ 202               	/* frame size = 6 */
+ 203               	/* stack size = 40 */
+ 204               	.L__stack_usage = 40
+  35:dc_step/adc.c **** 	switch(adc_channel){
+ 205               		.loc 1 35 0
+ 206 006a 8091 0000 		lds r24,adc_channel
+ 207 006e E091 0000 		lds r30,measure_number
+ 208 0072 8230      		cpi r24,lo8(2)
+ 209 0074 01F0      		breq .L5
+ 210 0076 00F4      		brsh .L6
+ 211 0078 8130      		cpi r24,lo8(1)
+ 212 007a 01F0      		breq .+2
+ 213 007c 00C0      		rjmp .L4
+  36:dc_step/adc.c **** 		case ST_MOT1_POT:{
+  37:dc_step/adc.c **** 			pot_res[measure_number]=ADCL|(ADCH<<8);
+ 214               		.loc 1 37 0
+ 215 007e 8091 7800 		lds r24,120
+ 216 0082 2091 7900 		lds r18,121
+ 217 0086 F0E0      		ldi r31,0
+ 218 0088 EE0F      		lsl r30
+ 219 008a FF1F      		rol r31
+ 220 008c E050      		subi r30,lo8(-(pot_res))
+ 221 008e F040      		sbci r31,hi8(-(pot_res))
+ 222 0090 90E0      		ldi r25,0
+ 223 0092 922B      		or r25,r18
+ 224 0094 9183      		std Z+1,r25
+ 225 0096 8083      		st Z,r24
+  38:dc_step/adc.c **** 			adc_channel=ST_MOT2_POT;
+ 226               		.loc 1 38 0
+ 227 0098 82E0      		ldi r24,lo8(2)
+ 228 009a 8093 0000 		sts adc_channel,r24
+  39:dc_step/adc.c **** 			ADMUX=(1<<REFS0)|adc_channel;
+ 229               		.loc 1 39 0
+ 230 009e 82E4      		ldi r24,lo8(66)
+ 231 00a0 00C0      		rjmp .L14
+ 232               	.L6:
+  35:dc_step/adc.c **** 		case ST_MOT1_POT:{
+ 233               		.loc 1 35 0
+ 234 00a2 8330      		cpi r24,lo8(3)
+ 235 00a4 01F0      		breq .L8
+ 236 00a6 8430      		cpi r24,lo8(4)
+ 237 00a8 01F4      		brne .L4
+  40:dc_step/adc.c **** 			break;
+  41:dc_step/adc.c **** 		}
+  42:dc_step/adc.c **** 		case ST_MOT2_POT:{
+  43:dc_step/adc.c **** 			pot_res[measure_number]=ADCL|(ADCH<<8);
+  44:dc_step/adc.c **** 			adc_channel=ST_MOT3_POT;
+  45:dc_step/adc.c **** 			ADMUX=(1<<REFS0)|adc_channel;
+  46:dc_step/adc.c **** 			break;
+  47:dc_step/adc.c **** 		}
+  48:dc_step/adc.c **** 		case ST_MOT3_POT:{
+  49:dc_step/adc.c **** 			pot_res[measure_number]=ADCL|(ADCH<<8);
+  50:dc_step/adc.c **** 			adc_channel=ST_MOT4_POT;
+  51:dc_step/adc.c **** 			ADMUX=(1<<REFS0)|adc_channel;
+  52:dc_step/adc.c **** 			break;
+  53:dc_step/adc.c **** 		}
+  54:dc_step/adc.c **** 		case ST_MOT4_POT:{
+  55:dc_step/adc.c **** 			pot_res[measure_number]=ADCL|(ADCH<<8);
+ 238               		.loc 1 55 0
+ 239 00aa 8091 7800 		lds r24,120
+ 240 00ae 2091 7900 		lds r18,121
+ 241 00b2 F0E0      		ldi r31,0
+ 242 00b4 EE0F      		lsl r30
+ 243 00b6 FF1F      		rol r31
+ 244 00b8 E050      		subi r30,lo8(-(pot_res))
+ 245 00ba F040      		sbci r31,hi8(-(pot_res))
+ 246 00bc 90E0      		ldi r25,0
+ 247 00be 922B      		or r25,r18
+ 248 00c0 9183      		std Z+1,r25
+ 249 00c2 8083      		st Z,r24
+  56:dc_step/adc.c **** 			adc_channel=ST_MOT1_POT;
+ 250               		.loc 1 56 0
+ 251 00c4 81E0      		ldi r24,lo8(1)
+ 252 00c6 8093 0000 		sts adc_channel,r24
+  57:dc_step/adc.c **** 			ADMUX=(1<<REFS0)|adc_channel;
+ 253               		.loc 1 57 0
+ 254 00ca 81E4      		ldi r24,lo8(65)
+ 255 00cc 00C0      		rjmp .L14
+ 256               	.L5:
+  43:dc_step/adc.c **** 			adc_channel=ST_MOT3_POT;
+ 257               		.loc 1 43 0
+ 258 00ce 8091 7800 		lds r24,120
+ 259 00d2 2091 7900 		lds r18,121
+ 260 00d6 F0E0      		ldi r31,0
+ 261 00d8 EE0F      		lsl r30
+ 262 00da FF1F      		rol r31
+ 263 00dc E050      		subi r30,lo8(-(pot_res))
+ 264 00de F040      		sbci r31,hi8(-(pot_res))
+ 265 00e0 90E0      		ldi r25,0
+ 266 00e2 922B      		or r25,r18
+ 267 00e4 9183      		std Z+1,r25
+ 268 00e6 8083      		st Z,r24
+  44:dc_step/adc.c **** 			ADMUX=(1<<REFS0)|adc_channel;
+ 269               		.loc 1 44 0
+ 270 00e8 83E0      		ldi r24,lo8(3)
+ 271 00ea 8093 0000 		sts adc_channel,r24
+  45:dc_step/adc.c **** 			break;
+ 272               		.loc 1 45 0
+ 273 00ee 83E4      		ldi r24,lo8(67)
+ 274 00f0 00C0      		rjmp .L14
+ 275               	.L8:
+  49:dc_step/adc.c **** 			adc_channel=ST_MOT4_POT;
+ 276               		.loc 1 49 0
+ 277 00f2 8091 7800 		lds r24,120
+ 278 00f6 2091 7900 		lds r18,121
+ 279 00fa F0E0      		ldi r31,0
+ 280 00fc EE0F      		lsl r30
+ 281 00fe FF1F      		rol r31
+ 282 0100 E050      		subi r30,lo8(-(pot_res))
+ 283 0102 F040      		sbci r31,hi8(-(pot_res))
+ 284 0104 90E0      		ldi r25,0
+ 285 0106 922B      		or r25,r18
+ 286 0108 9183      		std Z+1,r25
+ 287 010a 8083      		st Z,r24
+  50:dc_step/adc.c **** 			ADMUX=(1<<REFS0)|adc_channel;
+ 288               		.loc 1 50 0
+ 289 010c 84E0      		ldi r24,lo8(4)
+ 290 010e 8093 0000 		sts adc_channel,r24
+  51:dc_step/adc.c **** 			break;
+ 291               		.loc 1 51 0
+ 292 0112 84E4      		ldi r24,lo8(68)
+ 293               	.L14:
+ 294               		.loc 1 57 0
+ 295 0114 8093 7C00 		sts 124,r24
+ 296               	.L4:
+  58:dc_step/adc.c **** 			break;
+  59:dc_step/adc.c **** 		}
+  60:dc_step/adc.c **** 	}
+  61:dc_step/adc.c **** 	if(measure_number<11) measure_number++;
+ 297               		.loc 1 61 0
+ 298 0118 8091 0000 		lds r24,measure_number
+ 299 011c 8B30      		cpi r24,lo8(11)
+ 300 011e 00F4      		brsh .L10
+ 301               		.loc 1 61 0 is_stmt 0 discriminator 1
+ 302 0120 8F5F      		subi r24,lo8(-(1))
+ 303 0122 8093 0000 		sts measure_number,r24
+ 304 0126 00C0      		rjmp .L11
+ 305               	.L10:
+  62:dc_step/adc.c **** 	else{
+  63:dc_step/adc.c **** 		measure_number=0;
+ 306               		.loc 1 63 0 is_stmt 1
+ 307 0128 1092 0000 		sts measure_number,__zero_reg__
+  64:dc_step/adc.c **** 		#ifdef MAX_MIN
+  65:dc_step/adc.c **** 		
+  66:dc_step/adc.c **** 		adc_res[0]=(FindMaxValue(pot_res[0],pot_res[4],pot_res[8])+FindMinValue(pot_res[0],pot_res[4],pot
+  67:dc_step/adc.c **** 		adc_res[1]=(FindMaxValue(pot_res[1],pot_res[5],pot_res[9])+FindMinValue(pot_res[1],pot_res[5],pot
+  68:dc_step/adc.c **** 		adc_res[2]=(FindMaxValue(pot_res[2],pot_res[6],pot_res[10])+FindMinValue(pot_res[2],pot_res[6],po
+  69:dc_step/adc.c **** 		adc_res[3]=(FindMaxValue(pot_res[3],pot_res[7],pot_res[11])+FindMinValue(pot_res[3],pot_res[7],po
+  70:dc_step/adc.c **** 		
+  71:dc_step/adc.c **** 		#endif
+  72:dc_step/adc.c **** 		#ifdef MIDDLE
+  73:dc_step/adc.c **** 		
+  74:dc_step/adc.c **** 		adc_res[0]=FindMiddleValue(pot_res[0],pot_res[4],pot_res[8]);
+  75:dc_step/adc.c **** 		adc_res[1]=FindMiddleValue(pot_res[1],pot_res[5],pot_res[9]);
+  76:dc_step/adc.c **** 		adc_res[2]=FindMiddleValue(pot_res[2],pot_res[6],pot_res[10]);
+  77:dc_step/adc.c **** 		adc_res[3]=FindMiddleValue(pot_res[3],pot_res[7],pot_res[11]);
+  78:dc_step/adc.c **** 		
+  79:dc_step/adc.c **** 		#endif
+  80:dc_step/adc.c **** 		#ifdef LOW_PASS_FILTER
+  81:dc_step/adc.c **** 		
+  82:dc_step/adc.c **** 		pot_av[0]=(pot_res[0]+pot_res[4]+pot_res[8])/3;
+ 308               		.loc 1 82 0
+ 309 012c 2091 0000 		lds r18,pot_res
+ 310 0130 3091 0000 		lds r19,pot_res+1
+ 311 0134 8091 0000 		lds r24,pot_res+8
+ 312 0138 9091 0000 		lds r25,pot_res+8+1
+ 313 013c 820F      		add r24,r18
+ 314 013e 931F      		adc r25,r19
+ 315 0140 2091 0000 		lds r18,pot_res+16
+ 316 0144 3091 0000 		lds r19,pot_res+16+1
+ 317 0148 820F      		add r24,r18
+ 318 014a 931F      		adc r25,r19
+ 319 014c 63E0      		ldi r22,lo8(3)
+ 320 014e 70E0      		ldi r23,0
+ 321 0150 0E94 0000 		call __udivmodhi4
+ 322 0154 80E0      		ldi r24,0
+ 323 0156 90E0      		ldi r25,0
+ 324 0158 0E94 0000 		call __floatunsisf
+ 325               	.LVL0:
+ 326 015c 6093 0000 		sts pot_av,r22
+ 327 0160 7093 0000 		sts pot_av+1,r23
+ 328 0164 8093 0000 		sts pot_av+2,r24
+ 329 0168 9093 0000 		sts pot_av+3,r25
+  83:dc_step/adc.c **** 		pot_av[1]=(pot_res[1]+pot_res[5]+pot_res[9])/3;
+ 330               		.loc 1 83 0
+ 331 016c 2091 0000 		lds r18,pot_res+2
+ 332 0170 3091 0000 		lds r19,pot_res+2+1
+ 333 0174 8091 0000 		lds r24,pot_res+10
+ 334 0178 9091 0000 		lds r25,pot_res+10+1
+ 335 017c 820F      		add r24,r18
+ 336 017e 931F      		adc r25,r19
+ 337 0180 2091 0000 		lds r18,pot_res+18
+ 338 0184 3091 0000 		lds r19,pot_res+18+1
+ 339 0188 820F      		add r24,r18
+ 340 018a 931F      		adc r25,r19
+ 341 018c 63E0      		ldi r22,lo8(3)
+ 342 018e 70E0      		ldi r23,0
+ 343 0190 0E94 0000 		call __udivmodhi4
+ 344 0194 80E0      		ldi r24,0
+ 345 0196 90E0      		ldi r25,0
+ 346 0198 0E94 0000 		call __floatunsisf
+ 347               	.LVL1:
+ 348 019c 6093 0000 		sts pot_av+4,r22
+ 349 01a0 7093 0000 		sts pot_av+4+1,r23
+ 350 01a4 8093 0000 		sts pot_av+4+2,r24
+ 351 01a8 9093 0000 		sts pot_av+4+3,r25
+  84:dc_step/adc.c **** 		pot_av[2]=(pot_res[2]+pot_res[6]+pot_res[10])/3;
+ 352               		.loc 1 84 0
+ 353 01ac 2091 0000 		lds r18,pot_res+4
+ 354 01b0 3091 0000 		lds r19,pot_res+4+1
+ 355 01b4 8091 0000 		lds r24,pot_res+12
+ 356 01b8 9091 0000 		lds r25,pot_res+12+1
+ 357 01bc 820F      		add r24,r18
+ 358 01be 931F      		adc r25,r19
+ 359 01c0 2091 0000 		lds r18,pot_res+20
+ 360 01c4 3091 0000 		lds r19,pot_res+20+1
+ 361 01c8 820F      		add r24,r18
+ 362 01ca 931F      		adc r25,r19
+ 363 01cc 63E0      		ldi r22,lo8(3)
+ 364 01ce 70E0      		ldi r23,0
+ 365 01d0 0E94 0000 		call __udivmodhi4
+ 366 01d4 80E0      		ldi r24,0
+ 367 01d6 90E0      		ldi r25,0
+ 368 01d8 0E94 0000 		call __floatunsisf
+ 369               	.LVL2:
+ 370 01dc 6093 0000 		sts pot_av+8,r22
+ 371 01e0 7093 0000 		sts pot_av+8+1,r23
+ 372 01e4 8093 0000 		sts pot_av+8+2,r24
+ 373 01e8 9093 0000 		sts pot_av+8+3,r25
+  85:dc_step/adc.c **** 		pot_av[3]=(pot_res[3]+pot_res[7]+pot_res[11])/3;
+ 374               		.loc 1 85 0
+ 375 01ec 2091 0000 		lds r18,pot_res+6
+ 376 01f0 3091 0000 		lds r19,pot_res+6+1
+ 377 01f4 8091 0000 		lds r24,pot_res+14
+ 378 01f8 9091 0000 		lds r25,pot_res+14+1
+ 379 01fc 820F      		add r24,r18
+ 380 01fe 931F      		adc r25,r19
+ 381 0200 2091 0000 		lds r18,pot_res+22
+ 382 0204 3091 0000 		lds r19,pot_res+22+1
+ 383 0208 820F      		add r24,r18
+ 384 020a 931F      		adc r25,r19
+ 385 020c 63E0      		ldi r22,lo8(3)
+ 386 020e 70E0      		ldi r23,0
+ 387 0210 0E94 0000 		call __udivmodhi4
+ 388 0214 80E0      		ldi r24,0
+ 389 0216 90E0      		ldi r25,0
+ 390 0218 0E94 0000 		call __floatunsisf
+ 391               	.LVL3:
+ 392 021c 6093 0000 		sts pot_av+12,r22
+ 393 0220 7093 0000 		sts pot_av+12+1,r23
+ 394 0224 8093 0000 		sts pot_av+12+2,r24
+ 395 0228 9093 0000 		sts pot_av+12+3,r25
+ 396               	.LVL4:
+ 397               	.LBB2:
+  86:dc_step/adc.c **** 		for(uint8_t i=0; i<4; i++){
+  87:dc_step/adc.c **** 			filtered_pot[i]=lp_fil_a*filtered_pot[i]+lp_fil_b*pot_av[i];
+ 398               		.loc 1 87 0
+ 399 022c 4090 0000 		lds r4,lp_fil_a
+ 400 0230 5090 0000 		lds r5,lp_fil_a+1
+ 401 0234 6090 0000 		lds r6,lp_fil_a+2
+ 402 0238 7090 0000 		lds r7,lp_fil_a+3
+ 403 023c 8091 0000 		lds r24,lp_fil_b
+ 404 0240 9091 0000 		lds r25,lp_fil_b+1
+ 405 0244 A091 0000 		lds r26,lp_fil_b+2
+ 406 0248 B091 0000 		lds r27,lp_fil_b+3
+ 407 024c 8983      		std Y+1,r24
+ 408 024e 9A83      		std Y+2,r25
+ 409 0250 AB83      		std Y+3,r26
+ 410 0252 BC83      		std Y+4,r27
+ 411 0254 00E0      		ldi r16,lo8(pot_av)
+ 412 0256 10E0      		ldi r17,hi8(pot_av)
+ 413 0258 A0E0      		ldi r26,lo8(filtered_pot)
+ 414 025a B0E0      		ldi r27,hi8(filtered_pot)
+ 415 025c BE83      		std Y+6,r27
+ 416 025e AD83      		std Y+5,r26
+ 417 0260 80E0      		ldi r24,lo8(adc_res)
+ 418 0262 282E      		mov r2,r24
+ 419 0264 80E0      		ldi r24,hi8(adc_res)
+ 420 0266 382E      		mov r3,r24
+ 421               	.LVL5:
+ 422               	.L12:
+ 423               		.loc 1 87 0 is_stmt 0 discriminator 3
+ 424 0268 F801      		movw r30,r16
+ 425 026a 8190      		ld r8,Z+
+ 426 026c 9190      		ld r9,Z+
+ 427 026e A190      		ld r10,Z+
+ 428 0270 B190      		ld r11,Z+
+ 429 0272 8F01      		movw r16,r30
+ 430 0274 AD81      		ldd r26,Y+5
+ 431 0276 BE81      		ldd r27,Y+6
+ 432 0278 2D91      		ld r18,X+
+ 433 027a 3D91      		ld r19,X+
+ 434 027c 4D91      		ld r20,X+
+ 435 027e 5C91      		ld r21,X
+ 436 0280 C301      		movw r24,r6
+ 437 0282 B201      		movw r22,r4
+ 438 0284 0E94 0000 		call __mulsf3
+ 439               	.LVL6:
+ 440 0288 6B01      		movw r12,r22
+ 441 028a 7C01      		movw r14,r24
+ 442 028c 2981      		ldd r18,Y+1
+ 443 028e 3A81      		ldd r19,Y+2
+ 444 0290 4B81      		ldd r20,Y+3
+ 445 0292 5C81      		ldd r21,Y+4
+ 446 0294 C501      		movw r24,r10
+ 447 0296 B401      		movw r22,r8
+ 448 0298 0E94 0000 		call __mulsf3
+ 449               	.LVL7:
+ 450 029c 9B01      		movw r18,r22
+ 451 029e AC01      		movw r20,r24
+ 452 02a0 C701      		movw r24,r14
+ 453 02a2 B601      		movw r22,r12
+ 454 02a4 0E94 0000 		call __addsf3
+ 455               	.LVL8:
+ 456 02a8 ED81      		ldd r30,Y+5
+ 457 02aa FE81      		ldd r31,Y+6
+ 458 02ac 6193      		st Z+,r22
+ 459 02ae 7193      		st Z+,r23
+ 460 02b0 8193      		st Z+,r24
+ 461 02b2 9193      		st Z+,r25
+ 462 02b4 FE83      		std Y+6,r31
+ 463 02b6 ED83      		std Y+5,r30
+  88:dc_step/adc.c **** 			adc_res[i]=(uint16_t)filtered_pot[i];
+ 464               		.loc 1 88 0 is_stmt 1 discriminator 3
+ 465 02b8 0E94 0000 		call __fixunssfsi
+ 466               	.LVL9:
+ 467 02bc D101      		movw r26,r2
+ 468 02be 6D93      		st X+,r22
+ 469 02c0 7D93      		st X+,r23
+ 470 02c2 1D01      		movw r2,r26
+  86:dc_step/adc.c **** 		for(uint8_t i=0; i<4; i++){
+ 471               		.loc 1 86 0 discriminator 3
+ 472 02c4 B0E0      		ldi r27,hi8(pot_av+16)
+ 473 02c6 0030      		cpi r16,lo8(pot_av+16)
+ 474 02c8 1B07      		cpc r17,r27
+ 475 02ca 01F4      		brne .L12
+ 476               	.L11:
+ 477               	.LBE2:
+  89:dc_step/adc.c **** 		}
+  90:dc_step/adc.c **** 		
+  91:dc_step/adc.c **** 		#endif
+  92:dc_step/adc.c **** 	}
+  93:dc_step/adc.c **** 	ADCSRA|=(1<<ADSC);
+ 478               		.loc 1 93 0
+ 479 02cc 8091 7A00 		lds r24,122
+ 480 02d0 8064      		ori r24,lo8(64)
+ 481 02d2 8093 7A00 		sts 122,r24
+ 482               	/* epilogue start */
+  94:dc_step/adc.c **** }...
+ 483               		.loc 1 94 0
+ 484 02d6 2696      		adiw r28,6
+ 485 02d8 0FB6      		in __tmp_reg__,__SREG__
+ 486 02da F894      		cli
+ 487 02dc DEBF      		out __SP_H__,r29
+ 488 02de 0FBE      		out __SREG__,__tmp_reg__
+ 489 02e0 CDBF      		out __SP_L__,r28
+ 490 02e2 DF91      		pop r29
+ 491 02e4 CF91      		pop r28
+ 492 02e6 FF91      		pop r31
+ 493 02e8 EF91      		pop r30
+ 494 02ea BF91      		pop r27
+ 495 02ec AF91      		pop r26
+ 496 02ee 9F91      		pop r25
+ 497 02f0 8F91      		pop r24
+ 498 02f2 7F91      		pop r23
+ 499 02f4 6F91      		pop r22
+ 500 02f6 5F91      		pop r21
+ 501 02f8 4F91      		pop r20
+ 502 02fa 3F91      		pop r19
+ 503 02fc 2F91      		pop r18
+ 504 02fe 1F91      		pop r17
+ 505 0300 0F91      		pop r16
+ 506 0302 FF90      		pop r15
+ 507 0304 EF90      		pop r14
+ 508 0306 DF90      		pop r13
+ 509 0308 CF90      		pop r12
+ 510 030a BF90      		pop r11
+ 511 030c AF90      		pop r10
+ 512 030e 9F90      		pop r9
+ 513 0310 8F90      		pop r8
+ 514 0312 7F90      		pop r7
+ 515 0314 6F90      		pop r6
+ 516 0316 5F90      		pop r5
+ 517 0318 4F90      		pop r4
+ 518 031a 3F90      		pop r3
+ 519 031c 2F90      		pop r2
+ 520 031e 0F90      		pop r0
+ 521 0320 0BBE      		out __RAMPZ__,r0
+ 522 0322 0F90      		pop r0
+ 523 0324 0FBE      		out __SREG__,r0
+ 524 0326 0F90      		pop r0
+ 525 0328 1F90      		pop r1
+ 526 032a 1895      		reti
+ 527               		.cfi_endproc
+ 528               	.LFE12:
+ 530               	.global	adc_res
+ 531               		.section .bss
+ 534               	adc_res:
+ 535 0000 0000 0000 		.zero	8
+ 535      0000 0000 
+ 536               	.global	measure_number
+ 539               	measure_number:
+ 540 0008 00        		.zero	1
+ 541               	.global	adc_channel
+ 542               		.data
+ 545               	adc_channel:
+ 546 0000 01        		.byte	1
+ 547               	.global	lp_fil_b
+ 550               	lp_fil_b:
+ 551 0001 29        		.byte	41
+ 552 0002 5C        		.byte	92
+ 553 0003 8F        		.byte	-113
+ 554 0004 3D        		.byte	61
+ 555               	.global	lp_fil_a
+ 558               	lp_fil_a:
+ 559 0005 7B        		.byte	123
+ 560 0006 14        		.byte	20
+ 561 0007 6E        		.byte	110
+ 562 0008 3F        		.byte	63
+ 563               	.global	filtered_pot
+ 564               		.section .bss
+ 567               	filtered_pot:
+ 568 0009 0000 0000 		.zero	16
+ 568      0000 0000 
+ 568      0000 0000 
+ 568      0000 0000 
+ 569               	.global	pot_av
+ 572               	pot_av:
+ 573 0019 0000 0000 		.zero	16
+ 573      0000 0000 
+ 573      0000 0000 
+ 573      0000 0000 
+ 574               	.global	pot_res
+ 577               	pot_res:
+ 578 0029 0000 0000 		.zero	24
+ 578      0000 0000 
+ 578      0000 0000 
+ 578      0000 0000 
+ 578      0000 0000 
+ 579               		.text
+ 580               	.Letext0:
+ 581               		.file 2 "/usr/lib/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 adc.c
+     /tmp/ccMMQMs9.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccMMQMs9.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccMMQMs9.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccMMQMs9.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/ccMMQMs9.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccMMQMs9.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccMMQMs9.s:13     .text:0000000000000000 AdcInit
+     /tmp/ccMMQMs9.s:545    .data:0000000000000000 adc_channel
+     /tmp/ccMMQMs9.s:35     .text:0000000000000012 AdcGetPos
+     /tmp/ccMMQMs9.s:534    .bss:0000000000000000 adc_res
+     /tmp/ccMMQMs9.s:56     .text:0000000000000018 __vector_29
+     /tmp/ccMMQMs9.s:539    .bss:0000000000000008 measure_number
+     /tmp/ccMMQMs9.s:577    .bss:0000000000000029 pot_res
+     /tmp/ccMMQMs9.s:572    .bss:0000000000000019 pot_av
+     /tmp/ccMMQMs9.s:558    .data:0000000000000005 lp_fil_a
+     /tmp/ccMMQMs9.s:550    .data:0000000000000001 lp_fil_b
+     /tmp/ccMMQMs9.s:567    .bss:0000000000000009 filtered_pot
+
+UNDEFINED SYMBOLS
+__floatunsisf
+__mulsf3
+__addsf3
+__fixunssfsi
+__udivmodhi4
+__do_copy_data
+__do_clear_bss

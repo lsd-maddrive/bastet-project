@@ -1,16 +1,33 @@
 #!/usr/bin/env python3
 from logging import shutdown
 import rospy
-from std_msgs.msg import Float32MultiArray
+from kitty_msgs.msg import KittyState
+from geometry_msgs.msg import Twist
+from math import pi
+
+def callback(msg):
+    # m/s to rev/min
+    my_msg.rotation_speed = msg.linear.x * rev_convertation
+    my_msg.angle_steering = msg.angular.z * deg_convertation
+    rospy.loginfo("Linear is %.2f \n angular is %.2f", my_msg.rotation_speed, my_msg.angle_steering)
+
+# rospy.spin()
+
 
 rospy.init_node('cmd_publisher')
-pub = rospy.Publisher('set_speed', Float32MultiArray, queue_size=10)
-rate = rospy.Rate(1)
-my_msg = Float32MultiArray()
+pub = rospy.Publisher('set_speed', KittyState, queue_size=10)
+rospy.Subscriber('/kitty/cmd_vel', Twist, callback, queue_size=10)
+
+rate = rospy.Rate(5)
+my_msg = KittyState()
+wheel_d = 0.065 
+rev_convertation = 60 / (pi*wheel_d)
+deg_convertation = 180/pi
+
 while not rospy.is_shutdown():  
-    my_msg.data = [0.0,0.0]
     pub.publish(my_msg)
     rate.sleep()
+
 
 
 # rospy.init_node('talker')
