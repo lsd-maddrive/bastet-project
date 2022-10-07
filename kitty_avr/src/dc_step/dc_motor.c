@@ -45,11 +45,11 @@ uint16_t* GetSpeed(void){
 void SetSpeed(float desired_speed){
 	if(desired_speed>=0) DC_MOT_FOR;
 	else DC_MOT_REV;
-	if (desired_speed==0){
-		for (int i = 0; i < 4; i++){
-			integral[i]=0;
-		}
-	}
+	// if (desired_speed==0)\{
+	// 	for (int i = 0; i < 4; i++){
+	// 		integral[i]=0;
+	// 	}
+	// }
 	set_speed = abs(desired_speed);
 }
 
@@ -108,7 +108,7 @@ ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 	if(tim2_count<10) tim2_count++; //every 80 ms
 	else{
 		for(uint8_t i=0; i<4; i++){
-			enc_result[i]=((uint32_t)dc_mot_enc_count[i]*12.5*60)/115; //rev per minute
+			enc_result[i]=dc_mot_enc_count[i]*ENC_TO_REV_PER_MIN;
 			dc_mot_enc_count[i]=0;
 		}
 		DcMotPIDGo(set_speed);
@@ -120,7 +120,7 @@ ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 
 float ComputePI(uint16_t input, float setpoint, uint8_t integral_num){
 	float kp = 0.7;
-	float ki = 0.3;
+	float ki = 0.0;
 	float dt = 0.08;
 	float error = setpoint - input;
 	integral[integral_num] = integral[integral_num] + (error*dt);

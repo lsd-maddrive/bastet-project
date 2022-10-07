@@ -31,8 +31,8 @@ void StMotInit(void){
 	
 	ST_MOT_PUL_DDR|=(1<<DD_PUL1)|(1<<DD_PUL2)|(1<<DD_PUL3)|(1<<DD_PUL4);
 	ST_MOT_DIR_DDR|=(1<<DD_DIR1)|(1<<DD_DIR2)|(1<<DD_DIR3)|(1<<DD_DIR4);
-	//ST_MOT_PUL_DDR|=(1<<DD_PUL1);
-	//ST_MOT_DIR_DDR|=(1<<DD_DIR1); 
+	// ST_MOT_PUL_DDR|=(1<<DD_PUL1);
+	// ST_MOT_DIR_DDR|=(1<<DD_DIR1); 
 
 }
 
@@ -101,12 +101,11 @@ void StMotDir(float direction, uint8_t n){
 }
 
 void SetAngle(float angle){
-
-	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
-	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
 	operate_master_flag = operate_flag[0] | operate_flag[1] | operate_flag[2] | operate_flag[3];
 	if ((angle!=current_angle) & (operate_master_flag == 0))
 	{
+		if(angle<MIN_ANGLE) angle=MIN_ANGLE;
+		if(angle>MAX_ANGLE) angle=MAX_ANGLE;
 		set_angle = angle;
 		angle_setpoint = angle - current_angle;
 		for (int i=0; i<4; i++)

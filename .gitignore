@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# avr-gcc compile files
+*hex
+*elf
+*eep
+*lss
+*lst
+*map
+*o
+*sym
+*d

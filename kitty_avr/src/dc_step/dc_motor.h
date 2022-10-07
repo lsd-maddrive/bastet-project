@@ -38,6 +38,7 @@
 #define MOVE_REV 0
 #define DC_MOT_REV DC_MOT_DIR_PORT|=(1<<DC_MOT_DIR_PORT_PIN)
 #define DC_MOT_FOR DC_MOT_DIR_PORT&=~(1<<DC_MOT_DIR_PORT_PIN)
+#define ENC_TO_REV_PER_MIN (12.5*60)/115
 
 void Tim2DcMotInit(void);
 void DcMotInit(void);

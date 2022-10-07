@@ -22,7 +22,7 @@ rate = rospy.Rate(5)
 my_msg = KittyState()
 wheel_d = 0.065 
 rev_convertation = 60 / (pi*wheel_d)
-deg_convertation = 180/pi
+deg_convertation = -180/pi
 
 while not rospy.is_shutdown():  
     pub.publish(my_msg)
