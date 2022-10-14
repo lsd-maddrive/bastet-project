@@ -2,12 +2,13 @@
 
 #ifdef ALL_MOT //4WD mode
 uint8_t operate_flag[4]={0, 0, 0, 0};
-uint8_t st_mot_chosen=0;
-uint8_t	operate_master_flag=0;
+uint8_t	operate_master_flag=0; angle_master_flag=0;
 
 uint16_t pulse_count[4]={0,0,0,0}, pulse_setpoint[4]={0,0,0,0};
-float angle_setpoint=0, current_angle=0, set_angle = 0, real_mot_pos = 0;
-uint16_t set_counter =0;
+float angle_setpoint[4]={0,0,0,0}, current_angle[4]={0,0,0,0}, set_angle[4]={0,0,0,0};
+float real_mot_pos = 0;
+
+// uint16_t set_counter =0;
 
 
 //pot_koefs
@@ -58,17 +59,17 @@ ISR(TIMER1_OVF_vect){
 
 
 void StMotCorrectPos(uint8_t n, float real_mot_pos){
-	if((real_mot_pos>=(set_angle-POS_ERR)) && (real_mot_pos<=(set_angle+POS_ERR)))
+	if((real_mot_pos>=(set_angle[n]-POS_ERR)) && (real_mot_pos<=(set_angle[n]+POS_ERR)))
 	{
 		operate_flag[n]=0;
-		current_angle=set_angle;
+		current_angle[n]=set_angle[n];
 		pulse_count[n]=0;
 		
 	}
 	else
 	{
 		operate_flag[n]=1;
-		float angle_setpoint_delta=set_angle-real_mot_pos;
+		float angle_setpoint_delta=set_angle[n]-real_mot_pos;
 		StMotDir(angle_setpoint_delta, n);
 		pulse_setpoint[n]=abs(angle_setpoint_delta) * ANGLE_TO_STEPS;
 		pulse_count[n]=0;
@@ -76,10 +77,10 @@ void StMotCorrectPos(uint8_t n, float real_mot_pos){
 	
 }
 float* GetInfo(void){
-	info[0] = set_angle;
-	info[1] = POS_ERR;
-	//info[2] = operate_flag;
-	return info;
+	// info[0] = set_angle;
+	// info[1] = POS_ERR;
+	// //info[2] = operate_flag;
+	// return info;
 }
 
 
@@ -102,16 +103,26 @@ void StMotDir(float direction, uint8_t n){
 
 void SetAngle(float angle){
 	operate_master_flag = operate_flag[0] | operate_flag[1] | operate_flag[2] | operate_flag[3];
-	if ((angle!=current_angle) & (operate_master_flag == 0))
+	angle_master_flag= angle!=current_angle[0] & angle!=current_angle[1] & angle!=current_angle[2] & angle!=current_angle[3];
+	if (angle_master_flag & (operate_master_flag == 0))
 	{
 		if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 		if(angle>MAX_ANGLE) angle=MAX_ANGLE;
-		set_angle = angle;
-		angle_setpoint = angle - current_angle;
-		for (int i=0; i<4; i++)
+
+		for (int i=0; i<2; i++)
 		{
-			StMotDir(angle_setpoint, i);
-			pulse_setpoint[i]=abs(angle_setpoint) * ANGLE_TO_STEPS;
+			set_angle[i] = angle;
+			angle_setpoint[i] = angle - current_angle[i];
+			StMotDir(angle_setpoint[i], i);
+			pulse_setpoint[i]=abs(angle_setpoint[i]) * ANGLE_TO_STEPS;
+			operate_flag[i] = 1;
+		}
+		for (int i=2; i<4; i++)
+		{
+			set_angle[i] = -angle;
+			angle_setpoint[i] = -angle - current_angle[i];
+			StMotDir(angle_setpoint[i], i);
+			pulse_setpoint[i]=abs(angle_setpoint[i]) * ANGLE_TO_STEPS;
 			operate_flag[i] = 1;
 		}
 	}
