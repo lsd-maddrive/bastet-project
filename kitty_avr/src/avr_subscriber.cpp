@@ -1,6 +1,7 @@
 #include "ros.h"
-// #include "std_msgs/Float32MultiArray.h"
+#include "std_msgs/Float32MultiArray.h"
 #include "kitty_msgs/KittyState.h"
+#include "std_msgs/String.h"
 
 // Include C headers (ie, non C++ headers) in this block
 extern "C"
@@ -10,7 +11,6 @@ extern "C"
 #include "dc_step/dc_motor.h"
 #include "dc_step/utils.h"
 #include "dc_step/adc.h"
-
 }
 
 void InitAll(void);
@@ -29,29 +29,41 @@ void messageCb(const kitty_msgs::KittyState &speed_msg)
 
 ros::Subscriber<kitty_msgs::KittyState> sub("set_speed", &messageCb);
 
+// std_msgs::Float32MultiArray angle_msg;
+// ros::Publisher angle_chatter("angle_chatter", &angle_msg);
+
+
+
 int main()
 {
   uint32_t lasttime = 0UL;
   // Initialize ROS
   nh.initNode();
   nh.subscribe(sub);
+  // nh.advertise(angle_chatter);
+  // angle_msg.layout.dim[0].size = 4;
+
   InitAll();
 
   while (1)
   {
     // Send the message every second
-    // if(avr_time_now() - lasttime > my_delay)
+    // if (avr_time_now() - lasttime > 500)
     // {
-    //   PORTB ^= (1 << PB7);
-    //   lasttime = avr_time_now();
 
+    //   PORTB ^= (1 << PB7);
+    //   for (int i = 0; i < 4; i++)
+    //   {
+    //     angle_msg.data[i] = lasttime * i;
+    //   }
+    //   angle_chatter.publish(&angle_msg);
+    //   lasttime = avr_time_now();
     // }
     nh.spinOnce();
   }
 
   return 0;
 }
-
 
 void InitAll(void)
 {
