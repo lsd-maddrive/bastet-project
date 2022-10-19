@@ -25,3 +25,12 @@ sudo dkms status
 ```bash
 8812au, 5.6.4.2_35491.20191025, 5.11.15-1-default, x86_64: installed
 ```
+Если при запуске rosserial python на Jetson Nano пишет, что нет доступа к порту, то нужно сделать:
+
+```bash
+sudo su
+//type your password
+cd /
+cd dev
+chown username ttyUSB0
+```
