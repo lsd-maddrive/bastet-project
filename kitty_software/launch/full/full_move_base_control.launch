@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name='rviz' default="true"/>
+  <arg name='rtabmapviz' default='false'/>
+  <arg name="database_path" default="$(find tigra_maps)/3d_maps/$(arg map_name)"/>
+
+  <include file="$(find kitty_software)/launch/drivers/uc_socket_server.launch" />
+  <include file="$(find kitty_software)/launch/drivers/uc_convertion_layer.launch" />
+  <!-- <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" /> -->
+  
+  <!-- Start hardware -->
+  <include file="$(find kitty_software)/launch/drivers/start_hardware.launch"/>
+
+  <!-- SLAM -->
+  <!-- TODO add hector or amcl -->
+
+  <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true" output="screen">
+    <rosparam command="load" file="$(find kitty_software)/config/ekf/ekf_vo.yaml" />
+    <remap from="odometry/filtered" to="tigra/odometry/filtered/local" />
+  </node> -->
+
+  <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+    <arg name="folder_name" value="move_base_vo" />
+    <arg name="cmd_topic" value="kitty/cmd_vel" />
+  </include>
+
+
+  <node if="$(arg debug)" pkg="rqt_plot" type="rqt_plot" name="steering_plot" output="screen" args="/tigra/cmd_vel_raw/angular/z /tigra/cmd_vel/angular/z" />
+
+  <include if="$(arg rviz)" file="$(find kitty_software)/launch/view/rviz_start.launch">
+    <!-- <arg name="rvizconfig" value="$(find kitty_software)/config/rviz/full_move_base.rviz" /> -->
+    <arg name="rvizconfig" value="$(find kitty_software)/config/rviz/rtab_obstacle.rviz" />
+  </include>
+</launch>
