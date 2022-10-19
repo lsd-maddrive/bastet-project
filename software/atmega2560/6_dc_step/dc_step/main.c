@@ -17,11 +17,13 @@ int main(void)
 	while (1)
 	{
 		//Cmd(300);
-		//data = UartReceiveData();
-		//if ((data >=-90) & (data <=90)) SetAngle(data);
-		//else if (data == 1000) SetSpeed(0);
-		//else SetSpeed(data);
-		ShowAngles();
+		data = UartReceiveData();
+		if ((data >=-90) & (data <=90)) SetAngle(data);
+		else if (data == 1000) SetSpeed(0);
+		else SetSpeed(data);
+		//ShowAngles();
+		ShowSpeeds();
+		
 		//ShowSpeeds();
 
 
