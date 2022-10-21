@@ -8,8 +8,8 @@
     <node pkg="kitty_software" type="joy_ctrl.py" name="joy_ctrl" output="screen" >
     	<param name="debug" value="false" />
 
-    	<param name="speed/frwd_limit" value="3" />
-    	<param name="speed/bkwrd_limit" value="-3" />
+    	<param name="speed/frwd_limit" value="1" />
+    	<param name="speed/bkwrd_limit" value="-1" />
     	<param name="steer/limit" value="90" />
 
         <remap from="cmd_vel" to="kitty/cmd_vel" />
