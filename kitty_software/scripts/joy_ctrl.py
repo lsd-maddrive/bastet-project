@@ -62,9 +62,9 @@ def joy_cb(msg):
         show_clicked(msg)
 
     angular_pos.set_relative(msg.axes[0])
-    # linear_vel.set_relative(msg.axes[4])
+    linear_vel.set_relative(msg.axes[4])
     # triger mode
-    linear_vel.set_relative((msg.axes[5]-1)*(-1))
+    # linear_vel.set_relative((msg.axes[5]-1)*(-1))
 
 
 
