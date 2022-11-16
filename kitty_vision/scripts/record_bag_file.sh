@@ -1,1 +1,0 @@
-rosbag record -o street_record /stereo/right/image_raw /stereo/right/camera_info /stereo/left/image_raw /stereo/left/camera_info

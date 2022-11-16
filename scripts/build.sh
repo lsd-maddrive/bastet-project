@@ -9,19 +9,14 @@ catkin build \
     kitty_software \
     kitty_vision \
     kitty_maps \
-    ackermann_raw_controller_plugin \
-    elp_stereo_camera \
     rtabmap \
     rtabmap_ros \
     spatio_temporal_voxel_layer \
-    ublox \
     cv_bridge \
-    stereo_image_proc \
-    camera_calibration \
     maddrive_urdf_tools \
-    --cmake-args -D OpenCV_DIR="/usr/local/lib/cmake/opencv4" -D RTABMAP_SYNC_MULTI_RGBD=ON
+    realsense2_camera \
+    --cmake-args -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DOpenCV_DIR="/usr/local/lib/cmake/opencv4"
+##TODO - OPENCV_DIR replace like jetson nano
     
-    # serial \
-    # ti_mmwave_rospkg \
-    # viso2 \
-    # orb_slam2_ros \
+    
+ 
