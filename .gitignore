@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # avr-gcc compile files
-*hex
 *elf
 *eep
 *lss
@@ -138,3 +137,4 @@ dmypy.json
 *o
 *sym
 *d
+*srec
