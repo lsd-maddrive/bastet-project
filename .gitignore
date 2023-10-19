@@ -137,4 +137,5 @@ dmypy.json
 *o
 *sym
 *d
-*srec
+
+!.gitkeep

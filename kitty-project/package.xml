@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+    <name>kitty-project</name>
+    <version>0.0.0</version>
+    <description>
+        The kitty-project metapackage that installs kitty_software and related packages.
+    </description>
+    <maintainer email="nlobazev@gmail.com">nikita</maintainer>
+    <license>BSD</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <run_depend>kitty_avr</run_depend>
+    <!-- <run_depend>kitty_description</run_depend> -->
+    <run_depend>kitty_maps</run_depend>
+    <run_depend>kitty_msgs</run_depend>
+    <run_depend>kitty_software</run_depend>
+    <run_depend>kitty_vision</run_depend>
+    <export>
+        <metapackage/>
+    </export>
+</package>
