@@ -30,7 +30,7 @@ void DcMotInit(void){
 	Tim2DcMotInit();
 	IntDcMotEcoderInit();
 	DC_MOT1_SPEED_DDR|=(1<<DC_MOT1_SPEED_DDR_PIN);
-	DC_MOT2_SPEED_DDR|=(1<<DC_MOT2_SPEED_DDR_PIN);
+	 DC_MOT2_SPEED_DDR|=(1<<DC_MOT2_SPEED_DDR_PIN);
 	DC_MOT3_SPEED_DDR|=(1<<DC_MOT3_SPEED_DDR_PIN);
 	DC_MOT4_SPEED_DDR|=(1<<DC_MOT4_SPEED_DDR_PIN);
 	
@@ -53,10 +53,10 @@ void SetSpeed(float desired_speed){
 
 void DcMotGo(float* speed){
 
-	OCR2A = speed[3];
+	OCR4A = speed[0];
+	OCR2A = speed[1];
 	OCR2B = speed[2];
-	OCR4A = speed[1];
-	OCR4C = speed[0];
+	OCR4C = speed[3];
 }
 
 void DcMotPIDGo(float set_speed){
@@ -79,14 +79,13 @@ void IntDcMotEcoderInit(void){
 
 ISR (INT0_vect)
 {
-	PORTB^=(1<<7);
-	dc_mot_enc_count[0]+=1;
+	dc_mot_enc_count[3]+=1;
 }
 
 ISR (INT1_vect)
 {
 	//PORTB^=(1<<7);
-	dc_mot_enc_count[1]+=1;
+	dc_mot_enc_count[0]+=1;
 }
 
 ISR (INT2_vect)
@@ -97,8 +96,8 @@ ISR (INT2_vect)
 
 ISR (INT3_vect)
 {
-	//PORTB^=(1<<7);
-	dc_mot_enc_count[3]+=1;
+	PORTB^=(1<<7);
+	dc_mot_enc_count[1]+=1;
 }
 
 ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
@@ -117,7 +116,7 @@ ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 
 float ComputePI(uint16_t input, float setpoint, uint8_t integral_num){
 	float kp = 0.7;
-	float ki = 0.3;
+	float ki = 0.0;
 	float dt = 0.08;
 	float error = setpoint - input;
 	integral[integral_num] = integral[integral_num] + (error*dt);

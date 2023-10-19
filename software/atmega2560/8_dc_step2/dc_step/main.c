@@ -18,12 +18,15 @@ int main(void)
 	{
 		data = UartReceiveData();
 		// data = 0;
-		//if ((data >=-90) & (data <=90)) SetAngle(data);
-		//else if (data == 1000) SetSpeed(0);
-		//else SetSpeed(data);
-		SetAngle(data);
-		ShowAngles();
-		//ShowSpeeds();
+		// if ((data >=-90) & (data <=90)) SetAngle(data);
+		// else if (data == 1000) SetSpeed(0);
+		// else SetSpeed(data);
+		SetSpeed(data);
+
+
+		// SetAngle(data);
+		// ShowAngles();
+		ShowSpeeds();
 
 
 	}
