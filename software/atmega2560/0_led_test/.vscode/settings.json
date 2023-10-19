@@ -1,0 +1,5 @@
+{
+    "AVR.source.compiler": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avr-gcc.exe",
+    "AVR.programmer.tool": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avrdude.exe",
+    "AVR.source.libraries": []
+}

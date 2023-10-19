@@ -11,25 +11,25 @@
 #define ST_MOT_DIR_DDR DDRA
 #define ST_MOT_DIR_PORT PORTA
 //st_mot #1
-#define DD_PUL1 DDA0
-#define PORT_PUL1 PA0
-#define DD_DIR1 DDA1
-#define PORT_DIR1 PA1
+#define DD_PUL1 DDA2
+#define PORT_PUL1 PA2
+#define DD_DIR1 DDA3
+#define PORT_DIR1 PA3
 //st_mot #2
-#define DD_PUL2 DDA2
-#define PORT_PUL2 PA2
-#define DD_DIR2 DDA3
-#define PORT_DIR2 PA3
+#define DD_PUL2 DDA6
+#define PORT_PUL2 PA6
+#define DD_DIR2 DDA7
+#define PORT_DIR2 PA7
 //st_mot #3
 #define DD_PUL3 DDA4
 #define PORT_PUL3 PA4
 #define DD_DIR3 DDA5
 #define PORT_DIR3 PA5
 //st_mot #4
-#define DD_PUL4 DDA6
-#define PORT_PUL4 PA6
-#define DD_DIR4 DDA7
-#define PORT_DIR4 PA7
+#define DD_PUL4 DDA0
+#define PORT_PUL4 PA0
+#define DD_DIR4 DDA1
+#define PORT_DIR4 PA1
 
 //general settings
 #define POS_CENTER 512
@@ -49,12 +49,12 @@ void StMotInit(void);
 #ifdef SINGLE_MOT
 
 float* GetInfo(void);
-float GetMotPos(void);
-void StMotPul(void);
-void StMotDir(float direction);
+float GetMotPos(uint8_t n);
+void StMotPul(uint8_t n);
+void StMotDir(float direction, uint8_t n);
 void StMotGo();
 void SetAngle(float angle);
-void StMotCorrectPos(void);
+void StMotCorrectPos(uint8_t n, float real_mot_pos);
 
 #endif
 #ifdef ALL_MOT

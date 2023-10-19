@@ -1,7 +1,7 @@
-#include "st_mot.h"
-#include "dc_motor.h"
-#include "utils.h"
-#include "uart.h"
+#include "include/st_mot.h"
+#include "include/dc_motor.h"
+#include "include/utils.h"
+#include "include/uart.h"
 
 void InitAll(void);
 void GoRobot(int16_t speed);
@@ -17,6 +17,7 @@ int main(void)
 	while (1)
 	{
 		data = UartReceiveData();
+		// data = 0;
 		//if ((data >=-90) & (data <=90)) SetAngle(data);
 		//else if (data == 1000) SetSpeed(0);
 		//else SetSpeed(data);
