@@ -10,7 +10,7 @@
 
     <buildtool_depend>catkin</buildtool_depend>
     <run_depend>kitty_avr</run_depend>
-    <!-- <run_depend>kitty_description</run_depend> -->
+    <run_depend>kitty_description</run_depend>
     <run_depend>kitty_maps</run_depend>
     <run_depend>kitty_msgs</run_depend>
     <run_depend>kitty_software</run_depend>
