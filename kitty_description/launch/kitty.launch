@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- gazebo -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="world_name" default="worlds/empty.world"/>
+    <arg name="use_clock_frequency" default="true"/>
+    <arg name="pub_clock_frequency" default="100"/>
+    <!-- urdf model -->
+    <arg name="model" default="$(find kitty_description)/urdf/config.urdf.xacro"/>
+    <!-- urdf spawner -->
+    <arg name="robot_pose_x" default="0.0"/>
+    <arg name="robot_pose_y" default="0.0"/>
+    <arg name="robot_pose_z" default="0.05"/>
+    <arg name="robot_pose_R" default="0.0"/>
+    <arg name="robot_pose_P" default="0.0"/>
+    <arg name="robot_pose_Y" default="0.0"/>
+    <!-- rviz -->
+    <arg name="rviz" default="false" />
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="world_name" value="$(arg world_name)"/>
+        <arg name="use_clock_frequency" value="$(arg use_clock_frequency)"/>
+        <arg name="pub_clock_frequency" value="$(arg pub_clock_frequency)"/>
+    </include>
+
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(arg model)'"/>
+
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node pkg="gazebo_ros" type="spawn_model" name="kitty_model_spawner" respawn="false" output="screen"
+          args="-urdf
+                -param robot_description
+                -model kitty
+                -x $(arg robot_pose_x)
+                -y $(arg robot_pose_y)
+                -z $(arg robot_pose_z)
+                -R $(arg robot_pose_R)
+                -P $(arg robot_pose_P)
+                -Y $(arg robot_pose_Y)"/>
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find kitty_description)/config/controllers/joint_state_controller.yaml" command="load"/>
+    <rosparam file="$(find kitty_description)/config/controllers/gazebo_ros_control.yaml" command="load"/>
+    <!-- <rosparam file="$(find kitty_description)/config/controllers/four_wheel_steering_controller.yaml" command="load"/> -->
+    <rosparam file="$(find kitty_description)/config/controllers/swerve_steering_controller.yaml" command="load"/>
+
+    <!-- load the controllers  -->
+    <node name="controller_spawner"
+        pkg="controller_manager"
+        type="spawner"
+        output="screen"
+        args="joint_state_controller swerve_steering_controller">
+    </node>
+
+    <!-- Publish static TFs (fixed joints) -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    </node>
+
+    <!-- Publish dynamic TFs (non-fixed joints) -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    </node>
+
+    <!-- rviz-->
+    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find kitty_description)/config/rqt/rviz/robot_view.rviz" />
+
+</launch>
