@@ -1,0 +1,8 @@
+<launch>
+
+    <include file="$(find kitty_software)/launch/drivers/tf_transforms.launch" />
+
+    <!-- YDLidar -->
+    <include file="$(find ydlidar_ros_driver)/launch/X2.launch" />
+
+</launch>

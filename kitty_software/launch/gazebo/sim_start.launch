@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- gazebo -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="false"/>
+    <arg name="world_name" default="room_with_pillars_asphalt"/>
+    <arg name="use_clock_frequency" default="true"/>
+    <arg name="pub_clock_frequency" default="100"/>
+    <!-- urdf model -->
+    <arg name="model" default="$(find kitty_description)/urdf/config.urdf.xacro"/>
+    <!-- urdf spawner -->
+    <arg name="robot_pose_x" default="0.0"/>
+    <arg name="robot_pose_y" default="0.0"/>
+    <arg name="robot_pose_z" default="0.05"/>
+    <arg name="robot_pose_R" default="0.0"/>
+    <arg name="robot_pose_P" default="0.0"/>
+    <arg name="robot_pose_Y" default="0.0"/>
+    <!-- map file for localization and navigation -->
+    <arg name="map_file" default="$(find kitty_software)/maps/$(arg world_name).yaml"/>
+    <!-- rviz -->
+    <arg name='rviz' default="true" />
+    <!-- rqt_plot's -->
+    <arg name="ekf_debug" default="global" doc="[local, global]"/>
+    <!-- parameter is used to save the map scan with the name of the map from the simulation -->
+    <param name="map_name" value="$(arg world_name)"/>
+
+    <!-- simulation with robot -->
+    <include file="$(find kitty_description)/launch/kitty.launch">
+        <!-- gazebo -->
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="world_name" value="$(find maddrive_worlds)/worlds/$(arg world_name).world"/>
+        <arg name="use_clock_frequency" value="$(arg use_clock_frequency)"/>
+        <arg name="pub_clock_frequency" value="$(arg use_clock_frequency)"/>
+        <!-- urdf spawner -->
+        <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+        <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+        <arg name="robot_pose_z" value="$(arg robot_pose_z)"/>
+        <arg name="robot_pose_R" value="$(arg robot_pose_R)"/>
+        <arg name="robot_pose_P" value="$(arg robot_pose_P)"/>
+        <arg name="robot_pose_Y" value="$(arg robot_pose_Y)"/>
+        <!-- urdf model -->
+        <arg name="model" value="$(arg model)"/>
+    </include>
+
+    <!-- solving slam problem -->
+    <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+    </include>
+
+    <!--- rgbd odom -->
+    <!-- <group ns="rtabmap">
+        <include file="$(find four_ws_robot_software)/launch/drivers/rtabmap_odom.launch">
+            <arg name="algorithm_config" value="$(arg algorithm_config)"/>
+        </include>
+    </group> -->
+
+    <!-- solving localization problem -->
+    <!-- <include file="$(find kitty_software)/launch/drivers/map_server.launch">
+        <arg name="map_file" value="$(arg map_file)"/>
+    </include>
+    <include file="$(find kitty_software)/launch/drivers/amcl.launch">
+        <arg name="algorithm_config" value="$(arg algorithm_config)"/>
+        <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+        <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+    </include> -->
+
+    <!-- robot_localization -->
+    <!-- <include file="$(find kitty_software)/launch/drivers/robot_localization.launch"/> -->
+
+    <!-- keyboard control -->
+    <!-- <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
+        <arg name="turbo/linear_steps" value="4"/>
+        <arg name="turbo/angular_steps" value="4"/>
+        <arg name="turbo/linear_forward_min" value="0.04"/>
+        <arg name="turbo/linear_forward_max" value="0.4"/>
+        <arg name="turbo/linear_backward_min" value="0.03"/>
+        <arg name="turbo/linear_backward_max" value="0.3"/>
+        <arg name="turbo/angular_min" value="0.05"/>
+        <arg name="turbo/angular_max" value="0.5"/>
+        <arg name="cmd_topic" value="key_vel"/>
+    </include> -->
+    <!-- joystick control -->
+    <include file="$(find maddrive_teleop)/launch/start_joy_teleop.launch">
+        <arg name="cmd_topic" value="joy_vel" />
+        <arg name="speed/frwd_limit" value="1"/>
+        <arg name="speed/bkwrd_limit" value="-0.6"/>
+        <arg name="steer/limit" value="45"/>
+    </include>
+    <!-- navigation control -->
+    <!-- <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+        <arg name="algorithm_config" value="$(arg algorithm_config)"/>
+    </include> -->
+    <!-- twist_mux -->
+    <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
+        <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
+        <remap from="cmd_vel_out" to="swerve_steering_controller/cmd_vel"/>
+        <remap from="diagnostics" to="twist_mux/diagnostics"/>
+    </node>
+
+    <!-- rviz -->
+    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find kitty_software)/config/rqt/rviz/full_config.rviz"/>
+
+    <!-- <include file="$(find kitty_software)/launch/debug/ekf_debug.launch">
+        <arg name="ekf_debug" value="$(arg ekf_debug)" />
+    </include> -->
+
+</launch>
