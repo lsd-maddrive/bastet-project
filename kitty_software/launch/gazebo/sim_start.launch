@@ -34,7 +34,7 @@
         <arg name="gui" value="$(arg gui)"/>
         <arg name="world_name" value="$(find maddrive_worlds)/worlds/$(arg world_name).world"/>
         <arg name="use_clock_frequency" value="$(arg use_clock_frequency)"/>
-        <arg name="pub_clock_frequency" value="$(arg use_clock_frequency)"/>
+        <arg name="pub_clock_frequency" value="$(arg pub_clock_frequency)"/>
         <!-- urdf spawner -->
         <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
         <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
@@ -71,7 +71,7 @@
     <!-- <include file="$(find kitty_software)/launch/drivers/robot_localization.launch"/> -->
 
     <!-- keyboard control -->
-    <!-- <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
+    <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
         <arg name="turbo/linear_steps" value="4"/>
         <arg name="turbo/angular_steps" value="4"/>
         <arg name="turbo/linear_forward_min" value="0.04"/>
@@ -81,7 +81,7 @@
         <arg name="turbo/angular_min" value="0.05"/>
         <arg name="turbo/angular_max" value="0.5"/>
         <arg name="cmd_topic" value="key_vel"/>
-    </include> -->
+    </include>
     <!-- joystick control -->
     <include file="$(find maddrive_teleop)/launch/start_joy_teleop.launch">
         <arg name="cmd_topic" value="joy_vel" />
@@ -96,7 +96,7 @@
     <!-- twist_mux -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
         <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
-        <remap from="cmd_vel_out" to="swerve_steering_controller/cmd_vel"/>
+        <remap from="cmd_vel_out" to="four_wheel_steering_controller/cmd_vel"/>
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
     </node>
 
