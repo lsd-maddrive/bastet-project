@@ -1,0 +1,13 @@
+{
+    "C_Cpp.default.compilerPath": "c:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avr-gcc.exe",
+    "files.associations": {
+        "utils.h": "c",
+        "stdlib.h": "c",
+        "io.h": "c"
+    },
+    "AVR.device.type": "atmega2560",
+    "AVR.device.frequency": 16000000,
+    "AVR.source.compiler": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avr-gcc.exe",
+    "AVR.programmer.tool": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avrdude.exe",
+    "AVR.source.libraries": []
+}

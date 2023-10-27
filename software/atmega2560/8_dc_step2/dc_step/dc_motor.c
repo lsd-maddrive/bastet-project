@@ -1,11 +1,15 @@
 #include "include/dc_motor.h"
 #include <avr/io.h>
 
+
 //uint16_t tim2_count=0, dc_mot_enc_count = 0, enc_result = 0;
 uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
 float reg_speed[4]={0,0,0,0}, integral[4]={0,0,0,0};
 //uint32_t enc_result = 0;
 float set_speed = 0;
+float _set_angle = 0; // only for calculate turning radius
+float debug_formuls[6]={0,0,0,0,0,0};
+
 
 
 void Tim2DcMotInit(void){
@@ -42,17 +46,39 @@ uint16_t* GetSpeed(void){
 	return(enc_result);
 }
 
+float* GetFormuls(float _speed,float _angle){
+	float h = 0.5*LEN_WHEEL / tan(0.01745*_angle)-WID_WHEEL/2;
+	float R_left = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL + h),2));
+	float R_centre = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL/2 + h),2));
+	float R_right = sqrt(LEN_WHEEL * LEN_WHEEL + pow(h,2));
+	float lw_speed = _speed * R_left / R_centre;
+	float rw_speed = _speed * R_right / R_centre;  
+	debug_formuls[0] = h;
+	debug_formuls[1] = R_left;
+	debug_formuls[2] = R_centre;
+	debug_formuls[3] = R_right;
+	debug_formuls[4] = lw_speed;
+	debug_formuls[5] = rw_speed;
 
-void SetSpeed(float desired_speed){
+	return (debug_formuls);
+}
+
+
+void SetSpeed(float desired_speed, float desired_angle){
 	if(desired_speed>=0) DC_MOT_FOR;
 	else DC_MOT_REV;
 	
 	set_speed = abs(desired_speed);
+	_set_angle = desired_angle;
 }
 
 
 void DcMotGo(float* speed){
+	// 1 and 2 front
+	// 0 and 4 back
 
+	// 0 and 1 right
+	// 3 and 2 left
 	OCR4A = speed[0];
 	OCR2A = speed[1];
 	OCR2B = speed[2];
@@ -61,9 +87,21 @@ void DcMotGo(float* speed){
 
 void DcMotPIDGo(float set_speed){
 	//float speed_test[4]={0,0,0,0};
+	// calculate each wheel
+
+	float h = 0.5*LEN_WHEEL / tan(0.01745*_set_angle)-WID_WHEEL/2;
+	float R_left = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL + h),2));
+	float R_centre = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL/2 + h),2));
+	float R_right = sqrt(LEN_WHEEL * LEN_WHEEL + pow(h,2));
+	float lw_speed = set_speed * R_left / R_centre;
+	float rw_speed = set_speed * R_right / R_centre;  
+
+	// float differential_speed[4]={rw_speed,rw_speed,lw_speed,lw_speed};
+	float differential_speed[4]={set_speed+100,set_speed+50,set_speed-50,set_speed-100};
+	
 	for(uint8_t i=0; i<4; i++){
-		//reg_speed[i] = ComputePI(GetSpeed()[i], input_speed);
-		reg_speed[i] = ComputePI(GetSpeed()[i], set_speed, i);
+		reg_speed[i] = ComputePI(GetSpeed()[i], differential_speed[i], i);
+		// reg_speed[i] = ComputePI(GetSpeed()[i], set_speed, i);
 	}
 	DcMotGo(reg_speed);
 }

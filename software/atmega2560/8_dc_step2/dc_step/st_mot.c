@@ -9,8 +9,6 @@ uint16_t pulse_count[4]={0,0,0,0}, pulse_setpoint[4]={0,0,0,0};
 float angle_setpoint[4]={0,0,0,0}, current_angle[4]={0,0,0,0}, set_angle[4]={0,0,0,0};
 float real_mot_pos = 0;
 uint16_t set_counter =0;
-uint8_t len_wheel =34;
-uint8_t wid_wheel =34;
 
 //pot_koefs
 float p_k[4]={0.268,0.268,0.268,0.268};
@@ -103,9 +101,15 @@ void StMotDir(float direction, uint8_t n){
 }
 
 void SetAngle(float angle){
-	float angle_l=atan((len_wheel*tan(0.01745*angle))/(len_wheel+0.5*wid_wheel*tan(0.01745*angle)));
-	float angle_r=atan((len_wheel*tan(0.01745*angle))/(len_wheel-0.5*wid_wheel*tan(0.01745*angle)));
-	float angles[4]={0, 57.3*angle_r, 57.3*angle_l, 0};
+	// float angle_l=atan((LEN_WHEEL*tan(0.01745*angle))/(LEN_WHEEL+0.5*WID_WHEEL*tan(0.01745*angle)));
+	// float angle_r=atan((LEN_WHEEL*tan(0.01745*angle))/(LEN_WHEEL-0.5*WID_WHEEL*tan(0.01745*angle)));
+	// float angles[4]={0, 57.3*angle_r, 57.3*angle_l, 0};
+
+	float h = 0.5*LEN_WHEEL / tan(0.01745*angle)-WID_WHEEL/2;
+	float angle_l=atan((LEN_WHEEL/2)/(WID_WHEEL+h));
+	float angle_r=atan((LEN_WHEEL/2)/(h));
+	float angles[4]={-57.3*angle_r, 57.3*angle_r, 57.3*angle_l,  -57.3*angle_l};
+	
 	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
 	operate_master_flag = operate_flag[0] | operate_flag[1] | operate_flag[2] | operate_flag[3];

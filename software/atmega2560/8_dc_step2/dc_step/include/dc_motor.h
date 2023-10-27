@@ -49,8 +49,10 @@ float ComputePI(uint16_t input, float setpoint, uint8_t integral_num);
 
 
 uint16_t* GetSpeed(void);
+float* GetFormuls(float _speed,float _angle);
+
 //void SetSpeed(uint16_t dc_mot_enc_count, uint8_t i);
 //uint16_t GetSpeed(void);
-void SetSpeed(float desired_speed);
+void SetSpeed(float desired_speed, float desired_angle);
 
 #endif /* DC_MOT_H_ */
