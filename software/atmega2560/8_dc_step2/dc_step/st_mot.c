@@ -1,5 +1,5 @@
 #include "include/st_mot.h"
-
+#include "math.h"
 #ifdef ALL_MOT //4WD mode
 uint8_t operate_flag[4]={0, 0, 0, 0};
 uint8_t st_mot_chosen=0;
@@ -9,7 +9,8 @@ uint16_t pulse_count[4]={0,0,0,0}, pulse_setpoint[4]={0,0,0,0};
 float angle_setpoint[4]={0,0,0,0}, current_angle[4]={0,0,0,0}, set_angle[4]={0,0,0,0};
 float real_mot_pos = 0;
 uint16_t set_counter =0;
-
+uint8_t len_wheel =34;
+uint8_t wid_wheel =34;
 
 //pot_koefs
 float p_k[4]={0.268,0.268,0.268,0.268};
@@ -102,7 +103,9 @@ void StMotDir(float direction, uint8_t n){
 }
 
 void SetAngle(float angle){
-
+	float angle_l=atan((len_wheel*tan(0.01745*angle))/(len_wheel+0.5*wid_wheel*tan(0.01745*angle)));
+	float angle_r=atan((len_wheel*tan(0.01745*angle))/(len_wheel-0.5*wid_wheel*tan(0.01745*angle)));
+	float angles[4]={0, 57.3*angle_r, 57.3*angle_l, 0};
 	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
 	operate_master_flag = operate_flag[0] | operate_flag[1] | operate_flag[2] | operate_flag[3];
@@ -113,8 +116,8 @@ void SetAngle(float angle){
 		for (int i=0; i<4; i++)
 		{
 			// if (i==2) angle=-angle;
-			set_angle[i] = angle;
-			angle_setpoint[i] = angle - current_angle[i];
+			set_angle[i] = angles[i];
+			angle_setpoint[i] = angles[i] - current_angle[i];
 			StMotDir(angle_setpoint[i], i);
 			pulse_setpoint[i]=abs(angle_setpoint[i]) * ANGLE_TO_STEPS;
 			operate_flag[i] = 1;
