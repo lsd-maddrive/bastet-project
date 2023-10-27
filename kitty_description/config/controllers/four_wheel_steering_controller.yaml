@@ -30,10 +30,10 @@ four_wheel_steering_controller:
       max_acceleration:        0.78539816
       min_acceleration:        -0.78539816
 
-  track: 0.6
+  track: 0.4
   wheel_steering_y_offset: 0.0
-  wheel_radius: 0.067
-  wheel_base: 0.6
+  wheel_radius: 0.04
+  wheel_base: 0.4
   # params for covariances
   pose_covariance_diagonal: [0.001, 0.001, 0.0, 0.0, 0.0, 0.001]
   twist_covariance_diagonal: [0.001, 0.001, 0.0, 0.0, 0.0, 0.001]

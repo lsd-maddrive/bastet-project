@@ -18,11 +18,9 @@
     <arg name="robot_pose_P" default="0.0"/>
     <arg name="robot_pose_Y" default="0.0"/>
     <!-- map file for localization and navigation -->
-    <arg name="map_file" default="$(find kitty_software)/maps/$(arg world_name).yaml"/>
+    <arg name="map_file" default="$(find kitty_maps)/2d_maps/$(arg world_name).yaml"/>
     <!-- rviz -->
     <arg name='rviz' default="true" />
-    <!-- rqt_plot's -->
-    <arg name="ekf_debug" default="global" doc="[local, global]"/>
     <!-- parameter is used to save the map scan with the name of the map from the simulation -->
     <param name="map_name" value="$(arg world_name)"/>
 
@@ -50,25 +48,14 @@
     <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
     </include>
 
-    <!--- rgbd odom -->
-    <!-- <group ns="rtabmap">
-        <include file="$(find four_ws_robot_software)/launch/drivers/rtabmap_odom.launch">
-            <arg name="algorithm_config" value="$(arg algorithm_config)"/>
-        </include>
-    </group> -->
-
     <!-- solving localization problem -->
     <!-- <include file="$(find kitty_software)/launch/drivers/map_server.launch">
         <arg name="map_file" value="$(arg map_file)"/>
     </include>
     <include file="$(find kitty_software)/launch/drivers/amcl.launch">
-        <arg name="algorithm_config" value="$(arg algorithm_config)"/>
         <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
         <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
     </include> -->
-
-    <!-- robot_localization -->
-    <!-- <include file="$(find kitty_software)/launch/drivers/robot_localization.launch"/> -->
 
     <!-- keyboard control -->
     <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
