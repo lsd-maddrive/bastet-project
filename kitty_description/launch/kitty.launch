@@ -6,8 +6,6 @@
     <arg name="use_sim_time" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="world_name" default="worlds/empty.world"/>
-    <arg name="use_clock_frequency" default="true"/>
-    <arg name="pub_clock_frequency" default="100"/>
     <!-- urdf model -->
     <arg name="model" default="$(find kitty_description)/urdf/config.urdf.xacro"/>
     <!-- urdf spawner -->
@@ -25,8 +23,6 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="gui" value="$(arg gui)"/>
         <arg name="world_name" value="$(arg world_name)"/>
-        <arg name="use_clock_frequency" value="$(arg use_clock_frequency)"/>
-        <arg name="pub_clock_frequency" value="$(arg pub_clock_frequency)"/>
     </include>
 
     <!-- Load the URDF into the ROS Parameter Server -->

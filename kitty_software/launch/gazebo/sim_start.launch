@@ -6,8 +6,6 @@
     <arg name="use_sim_time" default="true"/>
     <arg name="gui" default="false"/>
     <arg name="world_name" default="room_with_pillars_asphalt"/>
-    <arg name="use_clock_frequency" default="true"/>
-    <arg name="pub_clock_frequency" default="100"/>
     <!-- urdf model -->
     <arg name="model" default="$(find kitty_description)/urdf/config.urdf.xacro"/>
     <!-- urdf spawner -->
@@ -17,6 +15,7 @@
     <arg name="robot_pose_R" default="0.0"/>
     <arg name="robot_pose_P" default="0.0"/>
     <arg name="robot_pose_Y" default="0.0"/>
+    <arg name="localization" default="true"/>
     <!-- map file for localization and navigation -->
     <arg name="map_file" default="$(find kitty_maps)/2d_maps/$(arg world_name).yaml"/>
     <!-- rviz -->
@@ -31,8 +30,6 @@
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="gui" value="$(arg gui)"/>
         <arg name="world_name" value="$(find maddrive_worlds)/worlds/$(arg world_name).world"/>
-        <arg name="use_clock_frequency" value="$(arg use_clock_frequency)"/>
-        <arg name="pub_clock_frequency" value="$(arg pub_clock_frequency)"/>
         <!-- urdf spawner -->
         <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
         <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
@@ -45,17 +42,20 @@
     </include>
 
     <!-- solving slam problem -->
-    <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
-    </include>
-
+    <group if="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
+            <arg name="map_file" value="$(arg map_file)"/>
+        </include>
+        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
+            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+        </include>
+    </group>
     <!-- solving localization problem -->
-    <!-- <include file="$(find kitty_software)/launch/drivers/map_server.launch">
-        <arg name="map_file" value="$(arg map_file)"/>
-    </include>
-    <include file="$(find kitty_software)/launch/drivers/amcl.launch">
-        <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
-        <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
-    </include> -->
+    <group unless="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+        </include>
+    </group>
 
     <!-- keyboard control -->
     <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
