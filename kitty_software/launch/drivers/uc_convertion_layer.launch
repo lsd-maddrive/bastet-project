@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+    <node pkg="kitty_software" type="cmd_publisher.py" name="cmd_publisher" output="screen"/>
+
+</launch>

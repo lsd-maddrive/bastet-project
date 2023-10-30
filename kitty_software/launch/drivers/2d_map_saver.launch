@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="kitty_software" name="2d_map_saver" type="2d_map_saver.py" output="screen"/>
+</launch>

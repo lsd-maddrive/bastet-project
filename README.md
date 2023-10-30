@@ -1,2 +1,14 @@
-# Kitty-project
-Kitty robot project
+# kitty-project
+
+## Содержание репозитория
+
+- [docs](docs) - документация по проекту
+    - Инструкции по началу работы (разработке) вы найдете [здесь](docs/DEVELOPMENT.md)
+    - Заметки и полезные ссылки по проекту лежат [здесь](docs/NOTES.MD)
+- [scripts](scripts) - скрипты для настройки/запуска чего либо
+- [kitty_avr](kitty_avr) - прошивка основного микроконтроллера AVR ATmega2560
+- [kitty_description](kitty_description) - описание робота (конфиги, модельки и т.д.)
+- [kitty_maps](kitty_maps) - 2d- и 3d-карты
+- [kitty_msgs](kitty_msgs) - прототипы используемых сообщений
+- [kitty_software](kitty_software) - основной стек скриптов запуска для реального робота и симулятора
+- [kitty_vision](kitty_vision) - пакет по визуальной части робота (работа с камерами, визуальная одометрия и т.д.)

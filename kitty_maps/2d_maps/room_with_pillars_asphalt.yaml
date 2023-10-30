@@ -1,0 +1,7 @@
+image: /home/nikita/catkin_ws/src/kitty-project/kitty_maps/2d_maps/room_with_pillars_asphalt.pgm
+resolution: 0.500000
+origin: [-75.250000, -75.250000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
