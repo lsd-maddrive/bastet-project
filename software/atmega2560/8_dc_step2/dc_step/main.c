@@ -6,7 +6,8 @@
 void InitAll(void);
 void GoRobot(int16_t speed);
 void Cmd(uint16_t speed);
-void ShowAngles();
+void ShowMotorAngles();
+void ShowSetAngles(uint8_t angle);
 void ShowSpeeds();
 void ShowFormuls(uint8_t data, uint8_t angle);
 
@@ -29,9 +30,11 @@ int main(void)
 		else
 			SetSpeed(data, angle);
 
-		// ShowAngles();
+		// ShowMotorAngles();
 		// ShowSpeeds();
-		ShowFormuls(data, angle);
+		// ShowFormuls(data, angle);
+		ShowSetAngles(angle);
+
 	}
 }
 
@@ -55,7 +58,7 @@ void GoRobot(int16_t speed)
 	_delay_ms(500);
 }
 
-void ShowAngles()
+void ShowMotorAngles()
 {
 	UartTransmitByte('\t');
 	for (int i = 0; i < 4; i++)
@@ -65,6 +68,18 @@ void ShowAngles()
 	}
 	UartTransmitByte('\r');
 }
+
+void ShowSetAngles(uint8_t angle)
+{
+	UartTransmitByte('\t');
+	for (int i = 0; i < 3; i++)
+	{
+		UartSendDec(GetAngles(angle)[i]*100);
+		UartTransmitByte('\t');
+	}
+	UartTransmitByte('\r');
+}
+
 void ShowSpeeds()
 {
 

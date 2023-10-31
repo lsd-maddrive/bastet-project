@@ -1,18 +1,10 @@
 {
-  "AVR.source.compiler": "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\bin\\avr-gcc.exe",
-  "AVR.programmer.tool": "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\bin\\avrdude.exe",
-  "AVR.source.libraries": [],
-  "AVR.device.type": "atmega2560",
-  "AVR.device.frequency": 16000000,
-  "AVR.programmer.type": "stk500",
-  "AVR.programmer.port": "COM3",
-  "AVR.programmer.rate": 115200,
-  "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
   "C_Cpp_Runner.debuggerPath": "gdb",
   "C_Cpp_Runner.cStandard": "",
   "C_Cpp_Runner.cppStandard": "",
+  "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.useMsvc": false,
   "C_Cpp_Runner.warnings": [
     "-Wall",
@@ -66,5 +58,19 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "AVR.reporter.arguments": [
     "-A"
-  ]
+  ],
+  "AVR.source.compiler": "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\bin\\avr-gcc.exe",
+  "AVR.programmer.tool": "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\bin\\avrdude.exe",
+  "AVR.source.libraries": [
+    "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\avr\\include",
+    "C:\\Univercity\\kitty-project\\kitty-project\\software\\atmega2560\\6_dc_step\\dc_step\\include"
+  ],
+  "AVR.device.type": "atmega2560",
+  "AVR.device.frequency": 16000000,
+  "files.associations": {
+    "dc_motor.h": "c"
+  },
+  "AVR.programmer.type": "stk500",
+  "AVR.programmer.port": "COM8",
+  "AVR.programmer.rate": 115200
 }

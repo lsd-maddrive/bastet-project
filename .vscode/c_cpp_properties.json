@@ -1,9 +1,31 @@
 {
     "configurations": [
         {
+            "name": "windows-gcc-x64",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "gcc",
+            "cStandard": "${default}",
+            "cppStandard": "${default}",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "compilerArgs": [
+                "-g",
+                "-Os",
+                "-Wall",
+                "-Wextra",
+                "-fpermissive",
+                "-fno-exceptions",
+                "-fno-threadsafe-statics",
+                "-pipe",
+                "-mmcu=atmega2560",
+                "-DF_CPU=16000000UL"
+            ]
+        },
+        {
             "name": "AVR",
             "intelliSenseMode": "${default}",
-            "compilerPath": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avr-gcc.exe",
+            "compilerPath": "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\bin\\avr-gcc.exe",
             "cStandard": "${default}",
             "cppStandard": "${default}",
             "includePath": [],

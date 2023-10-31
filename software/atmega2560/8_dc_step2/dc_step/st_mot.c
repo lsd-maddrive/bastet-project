@@ -8,6 +8,8 @@ uint8_t	operate_master_flag=0;
 uint16_t pulse_count[4]={0,0,0,0}, pulse_setpoint[4]={0,0,0,0};
 float angle_setpoint[4]={0,0,0,0}, current_angle[4]={0,0,0,0}, set_angle[4]={0,0,0,0};
 float real_mot_pos = 0;
+float angle_l, angle_r;
+float debug_angles[3] = {0,0,0};
 uint16_t set_counter =0;
 
 //pot_koefs
@@ -100,16 +102,49 @@ void StMotDir(float direction, uint8_t n){
 	}
 }
 
+
+
+float* GetAngles(float _angle)
+{
+	debug_angles[0] = _angle;
+	debug_angles[1] = angle_l;
+	debug_angles[2] = angle_r;
+	return (debug_angles);
+
+}
+
+
+
+
+
 void SetAngle(float angle){
 	// float angle_l=atan((LEN_WHEEL*tan(0.01745*angle))/(LEN_WHEEL+0.5*WID_WHEEL*tan(0.01745*angle)));
 	// float angle_r=atan((LEN_WHEEL*tan(0.01745*angle))/(LEN_WHEEL-0.5*WID_WHEEL*tan(0.01745*angle)));
 	// float angles[4]={0, 57.3*angle_r, 57.3*angle_l, 0};
-
-	float h = 0.5*LEN_WHEEL / tan(0.01745*angle)-WID_WHEEL/2;
-	float angle_l=atan((LEN_WHEEL/2)/(WID_WHEEL+h));
-	float angle_r=atan((LEN_WHEEL/2)/(h));
-	float angles[4]={-57.3*angle_r, 57.3*angle_r, 57.3*angle_l,  -57.3*angle_l};
+	float destenation, h;
 	
+	if (angle == 0)
+	{
+	angle_l = 0;
+	angle_r = 0;
+	destenation = 1;
+
+	}
+	else
+	{
+	h = LEN_WHEEL / tan(0.01745*angle);
+	destenation = h/abs(h);
+
+
+	angle_l=57.3*atan(fabs((LEN_WHEEL/2)/(WID_WHEEL/2+h)));
+	angle_r=57.3*atan(fabs((LEN_WHEEL/2)/(h-WID_WHEEL/2)));
+	//angle_l=(LEN_WHEEL/2)/(WID_WHEEL/2+h);
+	//angle_r=atfabs((LEN_WHEEL/2)/(WID_WHEEL/2+h));
+	
+	}
+
+	float angles[4]={-1*destenation*angle_r, destenation*angle_r, destenation*angle_l,  -1*destenation*angle_l};
+
 	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
 	operate_master_flag = operate_flag[0] | operate_flag[1] | operate_flag[2] | operate_flag[3];

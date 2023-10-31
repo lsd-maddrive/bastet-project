@@ -65,6 +65,7 @@ void StMotCorrectPos(uint8_t n, float real_mot_pos);
 //void StMotCorrectPos(uint8_t st_mot_chosen);
 
 float* GetInfo(void);
+float* GetAngles(float _angle);
 float GetMotPos(uint8_t n);
 void StMotPul(uint8_t n);
 void StMotDir(float direction, uint8_t n);

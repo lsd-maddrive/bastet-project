@@ -46,14 +46,25 @@ uint16_t* GetSpeed(void){
 	return(enc_result);
 }
 
-float* GetFormuls(float _speed,float _angle){
-	float h = 0.5*LEN_WHEEL / tan(0.01745*_angle)-WID_WHEEL/2;
-	float R_left = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL + h),2));
-	float R_centre = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL/2 + h),2));
-	float R_right = sqrt(LEN_WHEEL * LEN_WHEEL + pow(h,2));
-	float lw_speed = _speed * R_left / R_centre;
-	float rw_speed = _speed * R_right / R_centre;  
-	debug_formuls[0] = h;
+float* GetFormuls(float _speed,float _angle)
+{
+float h = 0 ,R_left = 0 ,R_centre = 0 ,R_right = 0 ,lw_speed,rw_speed;
+	if (_angle ==0)
+		{
+		lw_speed = _speed;
+		rw_speed = _speed;
+		}
+	else
+		{	
+	
+			 h = LEN_WHEEL / tan(0.01745*_angle);
+			 R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
+			 R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
+			 R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
+			 lw_speed = _speed * R_left / R_centre;
+			 rw_speed = _speed * R_right / R_centre;  
+		}
+	debug_formuls[0] = _angle;
 	debug_formuls[1] = R_left;
 	debug_formuls[2] = R_centre;
 	debug_formuls[3] = R_right;
@@ -88,16 +99,23 @@ void DcMotGo(float* speed){
 void DcMotPIDGo(float set_speed){
 	//float speed_test[4]={0,0,0,0};
 	// calculate each wheel
-
-	float h = 0.5*LEN_WHEEL / tan(0.01745*_set_angle)-WID_WHEEL/2;
-	float R_left = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL + h),2));
-	float R_centre = sqrt(LEN_WHEEL * LEN_WHEEL + pow((WID_WHEEL/2 + h),2));
-	float R_right = sqrt(LEN_WHEEL * LEN_WHEEL + pow(h,2));
-	float lw_speed = set_speed * R_left / R_centre;
-	float rw_speed = set_speed * R_right / R_centre;  
-
+	float h, lw_speed = 50, rw_speed=50, R_left, R_centre, R_right;
+	if (_set_angle ==0)
+		{
+		lw_speed = set_speed;
+		rw_speed = set_speed;
+		}
+	else
+		{
+		h = LEN_WHEEL / tan(0.01745*_set_angle);
+		R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
+		R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
+		R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
+		lw_speed = set_speed * R_left / R_centre;
+		rw_speed = set_speed * R_right / R_centre;  
+		}
 	// float differential_speed[4]={rw_speed,rw_speed,lw_speed,lw_speed};
-	float differential_speed[4]={set_speed+100,set_speed+50,set_speed-50,set_speed-100};
+	float differential_speed[4]={lw_speed, rw_speed, rw_speed, lw_speed};
 	
 	for(uint8_t i=0; i<4; i++){
 		reg_speed[i] = ComputePI(GetSpeed()[i], differential_speed[i], i);
