@@ -1,7 +1,7 @@
 # http://wiki.ros.org/gmapping
 inverted_laser: false
 throttle_scans: 1
-base_frame: base_footprint
+base_frame: base_footprint_stabilized
 map_frame: map
 odom_frame: odom
 map_update_interval: 0.5

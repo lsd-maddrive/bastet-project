@@ -15,11 +15,13 @@
     <arg name="robot_pose_R" default="0.0"/>
     <arg name="robot_pose_P" default="0.0"/>
     <arg name="robot_pose_Y" default="0.0"/>
-    <arg name="localization" default="true"/>
+    <!-- selecting mode (slam or localization) -->
+    <arg name="localization" default="false"/>
     <!-- map file for localization and navigation -->
     <arg name="map_file" default="$(find kitty_maps)/2d_maps/$(arg world_name).yaml"/>
-    <!-- rviz -->
+    <!-- data visualization -->
     <arg name='rviz' default="true" />
+    <arg name='foxglove' default="true" />
     <!-- parameter is used to save the map scan with the name of the map from the simulation -->
     <param name="map_name" value="$(arg world_name)"/>
 
@@ -57,6 +59,24 @@
         </include>
     </group>
 
+    <!-- imu_filter -->
+    <include file="$(find kitty_software)/launch/drivers/imu_filter.launch">
+        <arg name="imu/data_raw" value="front_rs_d455_camera/imu"/>
+        <arg name="imu/data_filtered" value="front_rs_d455_camera/imu/filtered"/>
+    </include>
+
+    <!-- base_footprint_stabilized -->
+    <node pkg="rtabmap_util" type="imu_to_tf" name="rtabmap_imu_to_tf" output="screen">
+        <param name="fixed_frame_id" value="base_footprint_stabilized"/>
+        <param name="base_frame_id" value="base_footprint"/>
+        <remap from="imu/data" to="front_rs_d455_camera/imu/filtered"/>
+    </node>
+
+    <!-- robot_localization -->
+    <include file="$(find kitty_software)/launch/drivers/robot_localization.launch">
+        <arg name="publish_tf" value="true"/>
+    </include>
+
     <!-- keyboard control -->
     <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
         <arg name="turbo/linear_steps" value="4"/>
@@ -87,8 +107,15 @@
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
     </node>
 
-    <!-- rviz -->
-    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find kitty_software)/config/rqt/rviz/full_config.rviz"/>
+    <!-- data visualization -->
+    <group if="$(arg rviz)">
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kitty_software)/config/rqt/rviz/full_config.rviz"/>
+    </group>
+    <group if="$(arg foxglove)">
+        <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch">
+            <arg name="port" value="8765" />
+        </include>
+    </group>
 
     <!-- <include file="$(find kitty_software)/launch/debug/ekf_debug.launch">
         <arg name="ekf_debug" value="$(arg ekf_debug)" />

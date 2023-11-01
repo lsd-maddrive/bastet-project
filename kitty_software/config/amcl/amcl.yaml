@@ -40,6 +40,6 @@ odom_alpha3: 0.2
 odom_alpha4: 0.2
 odom_alpha5: 0.2
 odom_frame_id: odom
-base_frame_id: base_footprint
+base_frame_id: base_footprint_stabilized
 global_frame_id: map
 tf_broadcast: true
