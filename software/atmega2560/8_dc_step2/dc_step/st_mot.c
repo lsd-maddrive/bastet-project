@@ -144,6 +144,8 @@ void SetAngle(float angle){
 	}
 
 	float angles[4]={-1*destenation*angle_r, destenation*angle_r, destenation*angle_l,  -1*destenation*angle_l};
+	
+
 
 	if(angle<MIN_ANGLE) angle=MIN_ANGLE;
 	if(angle>MAX_ANGLE) angle=MAX_ANGLE;
