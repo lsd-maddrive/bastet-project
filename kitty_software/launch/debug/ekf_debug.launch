@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="rqt_plot" pkg="rqt_plot" type="rqt_plot"
+        args="
+            /odometry/filtered/local/pose/covariance[0]
+            /odometry/filtered/local/pose/covariance[7]
+            /odometry/filtered/local/pose/covariance[35]
+            /odometry/filtered/local/twist/covariance[0]
+            /odometry/filtered/local/twist/covariance[7]
+            /odometry/filtered/local/twist/covariance[35]
+            "/>
+
+    <node pkg="rqt_multiplot" type="rqt_multiplot" name="rqt_multiplot"
+        args="
+            --multiplot-config $(find kitty_software)/config/rqt/rqt_multiplot/ekf_local.xml
+            --multiplot-run-all
+            "/>
+
+</launch>

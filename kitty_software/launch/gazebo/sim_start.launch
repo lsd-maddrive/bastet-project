@@ -22,6 +22,7 @@
     <!-- data visualization -->
     <arg name='rviz' default="true" />
     <arg name='foxglove' default="true" />
+    <arg name="odom_fusion_debug" default="true"/>
     <!-- parameter is used to save the map scan with the name of the map from the simulation -->
     <param name="map_name" value="$(arg world_name)"/>
 
@@ -122,9 +123,8 @@
             <arg name="port" value="8765" />
         </include>
     </group>
-
-    <!-- <include file="$(find kitty_software)/launch/debug/ekf_debug.launch">
-        <arg name="ekf_debug" value="$(arg ekf_debug)" />
-    </include> -->
+    <group if="$(arg odom_fusion_debug)">
+        <include file="$(find kitty_software)/launch/debug/ekf_debug.launch"/>
+    </group>
 
 </launch>
