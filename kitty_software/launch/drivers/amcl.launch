@@ -8,7 +8,7 @@
         <rosparam file="$(find kitty_software)/config/amcl/amcl.yaml" command="load"/>
         <param name="initial_pose_x" value="$(arg robot_pose_x)"/>
         <param name="initial_pose_y" value="$(arg robot_pose_y)"/>
-        <remap from="scan" to="top_lidar_scan"/>
+        <remap from="scan" to="bottom_lidar_scan/filtered"/>
     </node>
 
 </launch>

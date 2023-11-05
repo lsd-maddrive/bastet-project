@@ -8,10 +8,10 @@
 	<xacro:include filename="$(find maddrive_urdf_tools)/urdf/macros/lidar.urdf.xacro" />
 
 	<xacro:lidar
-		prefix="top"
+		prefix="bottom"
 		parent="base_link"
-		origin_xyz="0.0 0.0 ${body_heigth+0.1}"
-		origin_rpy="0.0 0.0 0.0" />
+		origin_xyz="0.0 0.0 -${wheel_radius/2}"
+		origin_rpy="3.14159 0.0 0.0" />
 
 	<xacro:rs_camera
 		prefix="front"

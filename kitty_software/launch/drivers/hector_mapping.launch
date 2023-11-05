@@ -3,7 +3,7 @@
 
     <node name="hector_mapping" pkg="hector_mapping" type="hector_mapping" output="screen">
         <rosparam file="$(find kitty_software)/config/hector_mapping/hector_mapping.yaml" command="load"/>
-        <remap from="scan" to="top_lidar_scan"/>
+        <remap from="scan" to="bottom_lidar_scan/filtered"/>
     </node>
 
 </launch>
