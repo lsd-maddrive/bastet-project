@@ -15,8 +15,6 @@ catkin build \
     cv_bridge \
     maddrive_ros_shared \
     ydlidar_ros_driver \
-    rtabmap \
-    rtabmap_ros \
     -j$(($(nproc)-2)) \
     --cmake-args \
     -D CATKIN_ENABLE_TESTING=False \
