@@ -9,6 +9,7 @@ def callback(msg):
     # m/s to rev/min
     my_msg.rotation_speed = msg.linear.x * rev_convertation
     my_msg.angle_steering = msg.angular.z * deg_convertation
+    my_msg.front_right_steering_angle = 0
     rospy.loginfo("Linear is %.2f \n angular is %.2f", my_msg.rotation_speed, my_msg.angle_steering)
 
 # rospy.spin()
