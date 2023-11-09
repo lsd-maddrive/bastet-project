@@ -10,7 +10,7 @@
 	<xacro:lidar
 		prefix="bottom"
 		parent="base_link"
-		origin_xyz="0.0 0.0 -${wheel_radius/2}"
+		origin_xyz="-0.15 0.0 -0.043"
 		origin_rpy="3.14159 0.0 0.0" />
 
 	<xacro:rs_camera

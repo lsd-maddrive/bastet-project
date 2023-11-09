@@ -4,7 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded: ~
-      Splitter Ratio: 0.617460310459137
+      Splitter Ratio: 0.6238095164299011
     Tree Height: 403
   - Class: rviz/Selection
     Name: Selection
@@ -153,13 +153,13 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base_footprint:
-          Value: true
+          Value: false
         base_footprint_stabilized:
-          Value: true
+          Value: false
         base_link:
           Value: false
         bottom_lidar_link:
-          Value: true
+          Value: false
         front_axis_link:
           Value: false
         front_left_steer_link:
@@ -191,7 +191,7 @@ Visualization Manager:
         rear_right_wheel_link:
           Value: false
       Marker Alpha: 0.699999988079071
-      Marker Scale: 4
+      Marker Scale: 0.25
       Name: TF
       Show Arrows: true
       Show Axes: true
@@ -589,7 +589,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 32.8247184753418
+      Distance: 20
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

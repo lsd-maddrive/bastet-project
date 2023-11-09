@@ -88,22 +88,22 @@
 	<xacro:steer_wheel
 		prefix="rear_right"
 		parent="rear_axis_link"
-		steer_origin_xyz="0 -${track_width/2} 0"
+		steer_origin_xyz="0 -${track_width/2} -${wheel_suspension}"
 		steer_limit="${wheel_turn_limit}" />
 	<xacro:steer_wheel
 		prefix="rear_left"
 		parent="rear_axis_link"
-		steer_origin_xyz="0 ${track_width/2} 0"
+		steer_origin_xyz="0 ${track_width/2} -${wheel_suspension}"
 		steer_limit="${wheel_turn_limit}" />
 	<xacro:steer_wheel
 		prefix="front_right"
 		parent="front_axis_link"
-		steer_origin_xyz="0 -${track_width/2} 0"
+		steer_origin_xyz="0 -${track_width/2} -${wheel_suspension}"
 		steer_limit="${wheel_turn_limit}" />
 	<xacro:steer_wheel
 		prefix="front_left"
 		parent="front_axis_link"
-		steer_origin_xyz="0 ${track_width/2} 0"
+		steer_origin_xyz="0 ${track_width/2} -${wheel_suspension}"
 		steer_limit="${wheel_turn_limit}" />
 
 	<!-- gazebo plugins -->
