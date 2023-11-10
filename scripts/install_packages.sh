@@ -15,6 +15,8 @@ sudo apt install \
     ros-$ROS_DISTRO-ddynamic-reconfigure \
     ros-$ROS_DISTRO-spatio-temporal-voxel-layer \
     ros-$ROS_DISTRO-robot-upstart \
+    ros-$ROS_DISTRO-rosserial-python \ 
     libopenvdb-dev
     
 #    "ros-$ROS_DISTRO-rtabmap=0.20.18-3*" \
+#  sudo usermod -a -G dialout $USER

@@ -19,10 +19,10 @@
     <remap from="odometry/filtered" to="tigra/odometry/filtered/local" />
   </node> -->
 
-  <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+  <!-- <include file="$(find kitty_software)/launch/drivers/move_base.launch">
     <arg name="folder_name" value="move_base_vo" />
     <arg name="cmd_topic" value="kitty/cmd_vel" />
-  </include>
+  </include> -->
 
 
   <node if="$(arg debug)" pkg="rqt_plot" type="rqt_plot" name="steering_plot" output="screen" args="/tigra/cmd_vel_raw/angular/z /tigra/cmd_vel/angular/z" />
