@@ -60,6 +60,10 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        bottom_lidar_base_link:
+          Value: true
+        bottom_lidar_scan_link:
+          Value: true
         front_axis_link:
           Value: true
         front_left_steer_link:
@@ -76,8 +80,6 @@ Visualization Manager:
           Value: true
         front_rs_d455_camera_optical_frame:
           Value: true
-        odom:
-          Value: true
         rear_axis_link:
           Value: true
         rear_left_steer_link:
@@ -88,39 +90,37 @@ Visualization Manager:
           Value: true
         rear_right_wheel_link:
           Value: true
-        top_lidar_link:
-          Value: true
-      Marker Alpha: 1
-      Marker Scale: 1
+      Marker Alpha: 0.5
+      Marker Scale: 0.5
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_footprint:
-            base_link:
-              front_axis_link:
-                front_left_steer_link:
-                  front_left_wheel_link:
-                    {}
-                front_right_steer_link:
-                  front_right_wheel_link:
-                    {}
-                front_rs_d455_camera_link:
-                  front_rs_d455_camera_imu_link:
-                    {}
-                  front_rs_d455_camera_optical_frame:
-                    {}
-              rear_axis_link:
-                rear_left_steer_link:
-                  rear_left_wheel_link:
-                    {}
-                rear_right_steer_link:
-                  rear_right_wheel_link:
-                    {}
-              top_lidar_link:
+        base_footprint:
+          base_link:
+            bottom_lidar_base_link:
+              bottom_lidar_scan_link:
                 {}
+            front_axis_link:
+              front_left_steer_link:
+                front_left_wheel_link:
+                  {}
+              front_right_steer_link:
+                front_right_wheel_link:
+                  {}
+              front_rs_d455_camera_link:
+                front_rs_d455_camera_imu_link:
+                  {}
+                front_rs_d455_camera_optical_frame:
+                  {}
+            rear_axis_link:
+              rear_left_steer_link:
+                rear_left_wheel_link:
+                  {}
+              rear_right_steer_link:
+                rear_right_wheel_link:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 0.30000001192092896
@@ -143,6 +143,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        bottom_lidar_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bottom_lidar_scan_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_axis_link:
           Alpha: 1
           Show Axes: false
@@ -207,11 +217,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        top_lidar_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -222,7 +227,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -246,7 +251,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.333869457244873
+      Distance: 1.2000000476837158
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
