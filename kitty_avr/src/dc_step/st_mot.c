@@ -132,7 +132,7 @@ void SetAngle(float angle){
 	}
 	else
 	{
-	h = LEN_WHEEL / tan(0.01745*angle);
+	h = LEN_WHEEL/2 / tan(0.01745*angle);
 	destenation = h/abs(h);
 
 

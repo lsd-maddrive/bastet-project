@@ -55,22 +55,16 @@ float h = 0 ,R_left = 0 ,R_centre = 0 ,R_right = 0 , QQ_left=0, QQ_centre=0, QQ_
 		rw_speed = _speed;
 		}
 	else
-		{	
-	
-			 
-			 
-			 
-
-
-			h = LEN_WHEEL / tan(0.01745*_angle);
+		{ 	 
+			h = 0.5*LEN_WHEEL / tan(0.01745*(_set_angle));
 			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
-			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
-			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
-			QQ_left = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((h),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((h-WID_WHEEL/2),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
 			QQ_centre = atan((LEN_WHEEL / 2)/h);
-			QQ_right = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
-			lw_speed = set_speed * QQ_left * R_left / (R_centre * QQ_centre);
-			rw_speed = set_speed * QQ_right * R_right / (R_centre * QQ_centre);
+			QQ_right = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			lw_speed = set_speed  * R_left / (R_centre );
+			rw_speed = set_speed  * R_right / (R_centre ); 
 
     
 		}
@@ -117,15 +111,16 @@ void DcMotPIDGo(float set_speed){
 		}
 	else
 		{
-			h = LEN_WHEEL / tan(0.01745*_set_angle);
+			h = 0.5*LEN_WHEEL / tan(0.01745*(_set_angle));
 			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
-			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
-			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
-			QQ_left = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((h),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((h-WID_WHEEL/2),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
 			QQ_centre = atan((LEN_WHEEL / 2)/h);
-			QQ_right = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
-			lw_speed = set_speed * QQ_left * R_left / (R_centre * QQ_centre);
-			rw_speed = set_speed * QQ_right * R_right / (R_centre * QQ_centre);  
+			QQ_right = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			lw_speed = set_speed * R_left / R_centre;
+			rw_speed = set_speed * R_right / R_centre; 
+
 		}
 	float differential_speed[4]={rw_speed,rw_speed,lw_speed,lw_speed};
 	//float differential_speed[4]={lw_speed, rw_speed, rw_speed, lw_speed};

@@ -47,7 +47,7 @@ int main()
 
   while (1)
   {
-    // Send the message every second
+    // Send the message every 0.2 second
     if (avr_time_now() - lasttime > 200)
     {
 
