@@ -70,7 +70,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        bottom_lidar_link:
+        bottom_lidar_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bottom_lidar_scan_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -85,12 +90,22 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        front_left_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_left_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         front_right_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_suspension_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -124,12 +139,22 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        rear_left_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         rear_right_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_suspension_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -155,18 +180,24 @@ Visualization Manager:
         base_footprint:
           Value: false
         base_footprint_stabilized:
-          Value: false
+          Value: true
         base_link:
           Value: false
-        bottom_lidar_link:
+        bottom_lidar_base_link:
+          Value: false
+        bottom_lidar_scan_link:
           Value: false
         front_axis_link:
           Value: false
         front_left_steer_link:
           Value: false
+        front_left_suspension_link:
+          Value: false
         front_left_wheel_link:
           Value: false
         front_right_steer_link:
+          Value: false
+        front_right_suspension_link:
           Value: false
         front_right_wheel_link:
           Value: false
@@ -184,9 +215,13 @@ Visualization Manager:
           Value: false
         rear_left_steer_link:
           Value: false
+        rear_left_suspension_link:
+          Value: false
         rear_left_wheel_link:
           Value: false
         rear_right_steer_link:
+          Value: false
+        rear_right_suspension_link:
           Value: false
         rear_right_wheel_link:
           Value: false
@@ -202,27 +237,32 @@ Visualization Manager:
             base_footprint_stabilized:
               base_footprint:
                 base_link:
-                  bottom_lidar_link:
-                    {}
+                  bottom_lidar_base_link:
+                    bottom_lidar_scan_link:
+                      {}
                   front_axis_link:
-                    front_left_steer_link:
-                      front_left_wheel_link:
-                        {}
-                    front_right_steer_link:
-                      front_right_wheel_link:
-                        {}
+                    front_left_suspension_link:
+                      front_left_steer_link:
+                        front_left_wheel_link:
+                          {}
+                    front_right_suspension_link:
+                      front_right_steer_link:
+                        front_right_wheel_link:
+                          {}
                     front_rs_d455_camera_link:
                       front_rs_d455_camera_imu_link:
                         {}
                       front_rs_d455_camera_optical_frame:
                         {}
                   rear_axis_link:
-                    rear_left_steer_link:
-                      rear_left_wheel_link:
-                        {}
-                    rear_right_steer_link:
-                      rear_right_wheel_link:
-                        {}
+                    rear_left_suspension_link:
+                      rear_left_steer_link:
+                        rear_left_wheel_link:
+                          {}
+                    rear_right_suspension_link:
+                      rear_right_steer_link:
+                        rear_right_wheel_link:
+                          {}
       Update Interval: 0
       Value: true
     - Alpha: 0.5

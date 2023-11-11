@@ -60,11 +60,11 @@
         </include>
     </group>
 
-    <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="bounding_box_filter">
-        <rosparam command="load" file="$(find kitty_software)/config/laser_filters/bounding_box_filter.yaml" />
-        <remap from="scan" to="bottom_lidar_scan/raw" />
-        <remap from="scan_filtered" to="bottom_lidar_scan/filtered" />
-    </node>
+    <!-- laser_filter -->
+    <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
+        <arg name="scan/data_raw" value="bottom_lidar_scan/raw"/>
+        <arg name="scan/data_filtered" value="bottom_lidar_scan/filtered"/>
+    </include>
 
     <!-- imu_filter -->
     <include file="$(find kitty_software)/launch/drivers/imu_filter.launch">
