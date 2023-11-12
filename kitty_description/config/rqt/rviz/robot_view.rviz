@@ -60,33 +60,41 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        bottom_lidar_base_link:
+        bottom_ydlidar_base_link:
           Value: true
-        bottom_lidar_scan_link:
+        bottom_ydlidar_scan_link:
           Value: true
         front_axis_link:
           Value: true
         front_left_steer_link:
           Value: true
+        front_left_suspension_link:
+          Value: true
         front_left_wheel_link:
           Value: true
         front_right_steer_link:
           Value: true
+        front_right_suspension_link:
+          Value: true
         front_right_wheel_link:
           Value: true
-        front_rs_d455_camera_imu_link:
+        front_rs_d435i_camera_imu_link:
           Value: true
-        front_rs_d455_camera_link:
+        front_rs_d435i_camera_link:
           Value: true
-        front_rs_d455_camera_optical_frame:
+        front_rs_d435i_camera_optical_frame:
           Value: true
         rear_axis_link:
           Value: true
         rear_left_steer_link:
           Value: true
+        rear_left_suspension_link:
+          Value: true
         rear_left_wheel_link:
           Value: true
         rear_right_steer_link:
+          Value: true
+        rear_right_suspension_link:
           Value: true
         rear_right_wheel_link:
           Value: true
@@ -99,28 +107,32 @@ Visualization Manager:
       Tree:
         base_footprint:
           base_link:
-            bottom_lidar_base_link:
-              bottom_lidar_scan_link:
+            bottom_ydlidar_base_link:
+              bottom_ydlidar_scan_link:
                 {}
             front_axis_link:
-              front_left_steer_link:
-                front_left_wheel_link:
-                  {}
-              front_right_steer_link:
-                front_right_wheel_link:
-                  {}
-              front_rs_d455_camera_link:
-                front_rs_d455_camera_imu_link:
-                  {}
-                front_rs_d455_camera_optical_frame:
-                  {}
+              front_left_suspension_link:
+                front_left_steer_link:
+                  front_left_wheel_link:
+                    {}
+              front_right_suspension_link:
+                front_right_steer_link:
+                  front_right_wheel_link:
+                    {}
+            front_rs_d435i_camera_link:
+              front_rs_d435i_camera_imu_link:
+                {}
+              front_rs_d435i_camera_optical_frame:
+                {}
             rear_axis_link:
-              rear_left_steer_link:
-                rear_left_wheel_link:
-                  {}
-              rear_right_steer_link:
-                rear_right_wheel_link:
-                  {}
+              rear_left_suspension_link:
+                rear_left_steer_link:
+                  rear_left_wheel_link:
+                    {}
+              rear_right_suspension_link:
+                rear_right_steer_link:
+                  rear_right_wheel_link:
+                    {}
       Update Interval: 0
       Value: true
     - Alpha: 0.30000001192092896
@@ -143,12 +155,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        bottom_lidar_base_link:
+        bottom_ydlidar_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        bottom_lidar_scan_link:
+        bottom_ydlidar_scan_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -163,6 +175,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        front_left_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_left_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -173,22 +190,27 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        front_right_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_right_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_rs_d455_camera_imu_link:
+        front_rs_d435i_camera_imu_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_rs_d455_camera_link:
+        front_rs_d435i_camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_rs_d455_camera_optical_frame:
+        front_rs_d435i_camera_optical_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -202,12 +224,22 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        rear_left_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         rear_right_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_suspension_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false

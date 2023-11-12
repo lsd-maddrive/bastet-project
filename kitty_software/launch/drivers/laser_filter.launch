@@ -6,8 +6,8 @@
 
     <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="bounding_box_filter">
         <rosparam command="load" file="$(find kitty_software)/config/laser_filters/bounding_box_filter.yaml" />
-        <remap from="scan/data_raw" to="$(arg scan/data_raw)" />
-        <remap from="scan/data_filtered" to="$(arg scan/data_filtered)" />
+        <remap from="scan" to="$(arg scan/data_raw)" />
+        <remap from="scan_filtered" to="$(arg scan/data_filtered)" />
     </node>
 
 </launch>
