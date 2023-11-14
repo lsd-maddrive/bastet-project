@@ -9,6 +9,9 @@ float reg_speed[4]={0,0,0,0}, integral[4]={0,0,0,0};
 float set_speed = 0;
 float _set_angle = 0; // only for calculate turning radius
 float debug_formuls[6]={0,0,0,0,0,0};
+float odom_info[3]={0,0,0};
+
+float x0,y0,alf;
 
 
 
@@ -55,22 +58,16 @@ float h = 0 ,R_left = 0 ,R_centre = 0 ,R_right = 0 , QQ_left=0, QQ_centre=0, QQ_
 		rw_speed = _speed;
 		}
 	else
-		{	
-	
-			 
-			 
-			 
-
-
-			h = LEN_WHEEL / tan(0.01745*_angle);
+		{ 	 
+			h = 0.5*LEN_WHEEL / tan(0.01745*(_set_angle));
 			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
-			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
-			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
-			QQ_left = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((h),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((h-WID_WHEEL/2),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
 			QQ_centre = atan((LEN_WHEEL / 2)/h);
-			QQ_right = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
-			lw_speed = set_speed * QQ_left * R_left / (R_centre * QQ_centre);
-			rw_speed = set_speed * QQ_right * R_right / (R_centre * QQ_centre);
+			QQ_right = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			lw_speed = set_speed  * R_left / (R_centre );
+			rw_speed = set_speed  * R_right / (R_centre ); 
 
     
 		}
@@ -117,15 +114,16 @@ void DcMotPIDGo(float set_speed){
 		}
 	else
 		{
-			h = LEN_WHEEL / tan(0.01745*_set_angle);
+			h = 0.5*LEN_WHEEL / tan(0.01745*(_set_angle));
 			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
-			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
-			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
-			QQ_left = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((h),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((h-WID_WHEEL/2),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
 			QQ_centre = atan((LEN_WHEEL / 2)/h);
-			QQ_right = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
-			lw_speed = set_speed * QQ_left * R_left / (R_centre * QQ_centre);
-			rw_speed = set_speed * QQ_right * R_right / (R_centre * QQ_centre);  
+			QQ_right = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			lw_speed = set_speed * R_left / R_centre;
+			rw_speed = set_speed * R_right / R_centre; 
+
 		}
 	float differential_speed[4]={rw_speed,rw_speed,lw_speed,lw_speed};
 	//float differential_speed[4]={lw_speed, rw_speed, rw_speed, lw_speed};
@@ -177,6 +175,7 @@ ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 			dc_mot_enc_count[i]=0;
 		}
 		DcMotPIDGo(set_speed);
+		Light_Wheel_Odometry(set_speed, _set_angle)
 		//PORTB^=(1<<7);
 		tim2_count=0;
 	}
@@ -197,6 +196,75 @@ float ComputePI(uint16_t input, float setpoint, uint8_t integral_num){
 	return(control);
 }
 
+
+
+GetOdom
+
+float* GetOdom(void){
+
+	odom_info[0] = x;
+	odom_info[1] = y;
+	// odom_info[2] = velocity;
+
+	return(odom_info);
+}
+
+void DcMotGo(float* speed){
+	// 1 and 2 front
+	// 0 and 4 back
+
+	// 0 and 1 right
+	// 3 and 2 left
+	OCR4A = speed[0];
+	OCR2A = speed[1];
+	OCR2B = speed[2];
+	OCR4C = speed[3];
+}
+
+float Light_Wheel_Odometry (float set_speed, float set_angle)
+{
+    float  h, dir_x, dir_y, fi, sf, sa, cf, ca, DeltaY, x1, y1;
+	
+	dir_x= set_speed/ abs(set_speed);
+    dir_y= set_angle/ abs(set_angle);
+    set_angle= abs(set_angle);
+    h = LEN_WHEEL /2/ tan(0.01745*set_angle);
+    fi= set_speed*0.08/h;
+    sf= sin(0.01745*fi);
+    sa= sin(0.01745*alf);
+    cf= cos(0.01745*fi);
+    ca= cos(0.01745*alf);
+    
+	DeltaY=sa*sf*h+ca*power(power(h,2)*power((-1 + cf),2) +power(h,2)*power(sf,2)-power(h,2)*power(sf,2),0.5);
+    if ((abs(alf))<90) && (((abs(alf))>=0))
+       		{
+			x1=x0+ dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2)    ,0.5);
+			y1=y0- dir_y*DeltaY;
+			}
+	   else if ((abs(alf))<180) && (((abs(alf))>=90))
+			{
+			x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2)    ,0.5);
+			y1=y0- dir_y*DeltaY;
+			}
+       else if ((abs(alf))<270) && (((abs(alf))>=180))
+			{
+			x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2)    ,0.5);
+			y1=y0- dir_y*DeltaY;
+			}
+		else if ((abs(alf))<=360) && (((abs(alf))>=270))  
+			{
+			x1=x0+ dir_x *pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2)    ,0.5);
+			y1=y0- dir_y *DeltaY;
+			}
+    
+    x0=x1;
+    y0=y1;
+    alf=alf+fi;
+
+    if (alf>360) alf=alf-360;
+    if (alf<-360) alf=alf+360;
+
+}
 //previous_error = 0;
 //integral = 0;
 //OCRnA = 1500;

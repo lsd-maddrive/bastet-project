@@ -66,5 +66,10 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "AVR.reporter.arguments": [
     "-A"
-  ]
+  ],
+  "files.associations": {
+    "cmath": "c",
+    "complex": "c",
+    "st_mot.h": "c"
+  }
 }
