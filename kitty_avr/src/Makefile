@@ -445,7 +445,7 @@ gccversion :
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep
 #	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
-	avrdude -c usbasp -p m2560 -P usb -U flash:w:$(TARGET).hex
+	avrdude -c stk500 -p m2560 -P /dev/ttyUSB0 -U flash:w:$(TARGET).hex
 
 
 # Generate avr-gdb config/init file which does the following:

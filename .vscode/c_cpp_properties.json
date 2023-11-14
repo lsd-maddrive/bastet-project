@@ -1,21 +1,47 @@
 {
-  "configurations": [
-    {
-      "browse": {
-        "databaseFilename": "${default}",
-        "limitSymbolsToIncludedHeaders": false
-      },
-      "includePath": [
-        "/home/work/kitty_ws/devel/include/**",
-        "/opt/ros/noetic/include/**",
-        "/usr/include/**"
-      ],
-      "name": "ROS",
-      "intelliSenseMode": "gcc-x64",
-      "compilerPath": "/usr/bin/gcc",
-      "cStandard": "gnu11",
-      "cppStandard": "c++14"
-    }
-  ],
-  "version": 4
+    "configurations": [
+        {
+            "name": "windows-gcc-x64",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "gcc",
+            "cStandard": "${default}",
+            "cppStandard": "${default}",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "compilerArgs": [
+                "-g",
+                "-Os",
+                "-Wall",
+                "-Wextra",
+                "-fpermissive",
+                "-fno-exceptions",
+                "-fno-threadsafe-statics",
+                "-pipe",
+                "-mmcu=atmega2560",
+                "-DF_CPU=16000000UL"
+            ]
+        },
+        {
+            "name": "AVR",
+            "intelliSenseMode": "${default}",
+            "compilerPath": "C:\\Program Files\\avr-gcc-12.1.0-x64-windows\\bin\\avr-gcc.exe",
+            "cStandard": "${default}",
+            "cppStandard": "${default}",
+            "includePath": [],
+            "compilerArgs": [
+                "-g",
+                "-Os",
+                "-Wall",
+                "-Wextra",
+                "-fpermissive",
+                "-fno-exceptions",
+                "-fno-threadsafe-statics",
+                "-pipe",
+                "-mmcu=atmega2560",
+                "-DF_CPU=16000000UL"
+            ]
+        }
+    ],
+    "version": 4
 }

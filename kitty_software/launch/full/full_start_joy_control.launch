@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <launch>
-    <include file="$(find kitty_software)/launch/drivers/uc_serial_server.launch" />
-    <include file="$(find kitty_software)/launch/drivers/uc_convertion_layer.launch" />
+
+    <include file="$(find kitty_software)/launch/drivers/start_hardware.launch"/>
+
     <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" />
 
+    <!-- rdbd_odometry -->
+    <include file="$(find kitty_vision)/launch/start_VO.launch">
+        <arg name="rviz" value="false" />
+    </include>
 
-    
+    <!-- laser_filter -->
+    <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
+        <arg name="scan/data_raw" value="bottom_ydlidar_scan/raw"/>
+        <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
+    </include>
+
+    <!-- 2d-slam -->
+    <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+        <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+    </include>
+
 </launch>

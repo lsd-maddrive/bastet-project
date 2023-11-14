@@ -6,53 +6,68 @@
     <node pkg="tf" type="static_transform_publisher"
         name="base_footprint_2_base_link"
         args="
-            0.0 0.0 0.25
+            0.0 0.0 0.105
             0.0 0.0 0.0
             /base_footprint /base_link
             100" />
         <node pkg="tf" type="static_transform_publisher"
             name="base_link_2_rear_axis_link"
             args="
-                -0.5 0.0 0.0
+                -0.17 0.0 0.0
                 0.0 0.0 0.0
                 /base_link /rear_axis_link
                 100" />
             <node pkg="tf" type="static_transform_publisher"
                 name="rear_axis_link_2_rear_right_wheel_link"
                 args="
-                    0.0 -0.5 0.0
+                    0.0 -0.17 0.0
                     0.0 0.0 0.0
                     /rear_axis_link /rear_right_wheel_link
                     100" />
             <node pkg="tf" type="static_transform_publisher"
                 name="rear_axis_link_2_rear_left_wheel_link"
                 args="
-                    0.0 0.5 0.0
+                    0.0 0.17 0.0
                     0.0 0.0 0.0
                     /rear_axis_link /rear_left_wheel_link
                     100" />
         <node pkg="tf" type="static_transform_publisher"
             name="base_link_2_front_axis_link"
             args="
-                0.5 0.0 0.0
+                0.17 0.0 0.0
                 0.0 0.0 0.0
                 /base_link /front_axis_link
                 100" />
             <node pkg="tf" type="static_transform_publisher"
                 name="front_axis_link_2_front_right_wheel_link"
                 args="
-                    0.0 -0.5 0.0
+                    0.0 -0.17 0.0
                     0.0 0.0 0.0
                     /front_axis_link /front_right_wheel_link
                     100" />
             <node pkg="tf" type="static_transform_publisher"
                 name="front_axis_link_2_front_left_wheel_link"
                 args="
-                    0.0 0.5 0.0
+                    0.0 0.17 0.0
                     0.0 0.0 0.0
                     /front_axis_link /front_left_wheel_link
                     100" />
 
     <!-- sensors -->
+    <!-- lidar -->
+    <node pkg="tf" type="static_transform_publisher"
+        name="base_link_2_bottom_ydlidar_scan_link"
+        args="
+            -0.15 0.0 -0.043
+            0.0 0.0 0.04
+            /base_link /bottom_ydlidar_scan_link
+            100" />
+    <node pkg="tf" type="static_transform_publisher"
+        name="base_link_link_2_front_rs_d435i_camera_link"
+        args="
+            0.23 0.12 0.256
+            0.0 0.0 0.0
+            /base_link /rs_camera_link
+            100" />
 
 </launch>

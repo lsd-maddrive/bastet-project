@@ -1,27 +1,31 @@
-#include "dc_motor.h"
+#include "include/dc_motor.h"
 #include <avr/io.h>
+
 
 //uint16_t tim2_count=0, dc_mot_enc_count = 0, enc_result = 0;
 uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
 float reg_speed[4]={0,0,0,0}, integral[4]={0,0,0,0};
 //uint32_t enc_result = 0;
 float set_speed = 0;
+float _set_angle = 0; // only for calculate turning radius
+float debug_formuls[6]={0,0,0,0,0,0};
+
 
 
 void Tim2DcMotInit(void){
-	//вывод PH6(OC2B), PB4(OC2A) – ШИМ, вывод PH4 - направление
+	//пїЅпїЅпїЅпїЅпїЅ PH6(OC2B), PB4(OC2A) пїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ PH4 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	TCCR2A |= (1<<COM2A1);
 	TCCR2A |= (1<<COM2B1);
 	TIMSK2 |=(1<<TOIE2);
-	//вывод PH3(OC4A), PH5(OC4C) – ШИМ
+	//пїЅпїЅпїЅпїЅпїЅ PH3(OC4A), PH5(OC4C) пїЅ пїЅпїЅпїЅ
 	TCCR4A |= (1<<COM4A1);
 	TCCR4A |= (1<<COM4C1);
-	/* TIMER2 - настройка таймера: ШИМ с фазовой коррекцией,
-	неинвертированный режим, предделитель на 256 122.55hz */
+	/* TIMER2 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+	пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 256 122.55hz */
 	TCCR2A |= (1<<WGM20);
 	TCCR2B |= (1<<CS22) | (1<<CS21);
-	/* TIMER4 - настройка таймера: быстрый ШИМ,
-	неинвертированный режим, 8 bit, TOP = 0xFF, предделитель на 256*/
+	/* TIMER4 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ,
+	пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, 8 bit, TOP = 0xFF, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 256*/
 	TCCR4A |= (1 << WGM40);
 	TCCR4B |= (1<<CS42);
 }
@@ -30,7 +34,7 @@ void DcMotInit(void){
 	Tim2DcMotInit();
 	IntDcMotEcoderInit();
 	DC_MOT1_SPEED_DDR|=(1<<DC_MOT1_SPEED_DDR_PIN);
-	DC_MOT2_SPEED_DDR|=(1<<DC_MOT2_SPEED_DDR_PIN);
+	 DC_MOT2_SPEED_DDR|=(1<<DC_MOT2_SPEED_DDR_PIN);
 	DC_MOT3_SPEED_DDR|=(1<<DC_MOT3_SPEED_DDR_PIN);
 	DC_MOT4_SPEED_DDR|=(1<<DC_MOT4_SPEED_DDR_PIN);
 	
@@ -42,28 +46,93 @@ uint16_t* GetSpeed(void){
 	return(enc_result);
 }
 
+float* GetFormuls(float _speed,float _angle)
+{
+float h = 0 ,R_left = 0 ,R_centre = 0 ,R_right = 0 , QQ_left=0, QQ_centre=0, QQ_right=0, lw_speed,rw_speed;
+	if (_angle ==0)
+		{
+		lw_speed = _speed;
+		rw_speed = _speed;
+		}
+	else
+		{	
+	
+			 
+			 
+			 
 
-void SetSpeed(float desired_speed){
+
+			h = LEN_WHEEL / tan(0.01745*_angle);
+			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			QQ_centre = atan((LEN_WHEEL / 2)/h);
+			QQ_right = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
+			lw_speed = set_speed * QQ_left * R_left / (R_centre * QQ_centre);
+			rw_speed = set_speed * QQ_right * R_right / (R_centre * QQ_centre);
+
+    
+		}
+	debug_formuls[0] = _angle;
+	debug_formuls[1] = R_left;
+	debug_formuls[2] = R_centre;
+	debug_formuls[3] = R_right;
+	debug_formuls[4] = lw_speed;
+	debug_formuls[5] = rw_speed;
+
+	return (debug_formuls);
+}
+
+
+void SetSpeed(float desired_speed, float desired_angle){
 	if(desired_speed>=0) DC_MOT_FOR;
 	else DC_MOT_REV;
 	
 	set_speed = abs(desired_speed);
+	_set_angle = desired_angle;
 }
 
 
 void DcMotGo(float* speed){
+	// 1 and 2 front
+	// 0 and 4 back
 
-	OCR2A = speed[3];
+	// 0 and 1 right
+	// 3 and 2 left
+	OCR4A = speed[0];
+	OCR2A = speed[1];
 	OCR2B = speed[2];
-	OCR4A = speed[1];
-	OCR4C = speed[0];
+	OCR4C = speed[3];
 }
 
 void DcMotPIDGo(float set_speed){
 	//float speed_test[4]={0,0,0,0};
+	// calculate each wheel
+	float h, lw_speed = 50, rw_speed=50, R_left, R_centre, R_right, QQ_left=0, QQ_centre=0, QQ_right=0;
+	if (_set_angle ==0)
+		{
+		lw_speed = set_speed;
+		rw_speed = set_speed;
+		}
+	else
+		{
+			h = LEN_WHEEL / tan(0.01745*_set_angle);
+			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2-h),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			QQ_centre = atan((LEN_WHEEL / 2)/h);
+			QQ_right = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
+			lw_speed = set_speed * QQ_left * R_left / (R_centre * QQ_centre);
+			rw_speed = set_speed * QQ_right * R_right / (R_centre * QQ_centre);  
+		}
+	float differential_speed[4]={rw_speed,rw_speed,lw_speed,lw_speed};
+	//float differential_speed[4]={lw_speed, rw_speed, rw_speed, lw_speed};
+	
 	for(uint8_t i=0; i<4; i++){
-		//reg_speed[i] = ComputePI(GetSpeed()[i], input_speed);
-		reg_speed[i] = ComputePI(GetSpeed()[i], set_speed, i);
+		reg_speed[i] = ComputePI(GetSpeed()[i], differential_speed[i], i);
+		// reg_speed[i] = ComputePI(GetSpeed()[i], set_speed, i);
 	}
 	DcMotGo(reg_speed);
 }
@@ -79,14 +148,13 @@ void IntDcMotEcoderInit(void){
 
 ISR (INT0_vect)
 {
-	PORTB^=(1<<7);
-	dc_mot_enc_count[0]+=1;
+	dc_mot_enc_count[3]+=1;
 }
 
 ISR (INT1_vect)
 {
 	//PORTB^=(1<<7);
-	dc_mot_enc_count[1]+=1;
+	dc_mot_enc_count[0]+=1;
 }
 
 ISR (INT2_vect)
@@ -97,8 +165,8 @@ ISR (INT2_vect)
 
 ISR (INT3_vect)
 {
-	//PORTB^=(1<<7);
-	dc_mot_enc_count[3]+=1;
+	PORTB^=(1<<7);
+	dc_mot_enc_count[1]+=1;
 }
 
 ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
@@ -117,14 +185,14 @@ ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 
 float ComputePI(uint16_t input, float setpoint, uint8_t integral_num){
 	float kp = 0.7;
-	float ki = 0.3;
+	float ki = 0.0;
 	float dt = 0.08;
 	float error = setpoint - input;
 	integral[integral_num] = integral[integral_num] + (error*dt);
 	float control = (error * kp) + (integral[integral_num] * ki);
-	if(control > 255) //ограничение сигнала управления сверху
+	if(control > 255) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	control = 255;
-	if(control < 0) //ограничение сигнала управления снизу
+	if(control < 0) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	control = 0;
 	return(control);
 }

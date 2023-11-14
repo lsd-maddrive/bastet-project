@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "dc_motor.h": "c",
+        "st_mot.h": "c"
+    },
+    "C_Cpp.dimInactiveRegions": false,
+    "AVR.programmer.type": "stk500",
+    "AVR.programmer.port": "COM5",
+    "AVR.programmer.rate": 115200,
+    "AVR.source.compiler": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avr-gcc.exe",
+    "AVR.programmer.tool": "C:\\Users\\GET-NOTE-USER\\avr-gcc-12.1.0_avrdude-7.0\\bin\\avrdude.exe",
+    "AVR.source.libraries": [],
+    "AVR.device.type": "atmega2560",
+    "AVR.device.frequency": 16000000
+}

@@ -1,4 +1,4 @@
-#include "adc.h"
+#include "include/adc.h"
 
 uint16_t pot_res[12]={0,0,0,0,0,0,0,0,0,0,0,0};
 float pot_av[4]={0,0,0,0}, filtered_pot[4]={0,0,0,0}, lp_fil_a =0.93, lp_fil_b=0.07;

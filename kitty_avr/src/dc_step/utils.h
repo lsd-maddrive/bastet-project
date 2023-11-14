@@ -10,10 +10,12 @@
 #define UTILS_H_
 
 #include <avr/io.h>
-// #define F_CPU 16000000
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
+
+#define LEN_WHEEL 34
+#define WID_WHEEL 34
 
 uint8_t Digit(uint16_t d, uint8_t m);
 uint16_t FindMiddleValue(uint16_t a, uint16_t b, uint16_t c);

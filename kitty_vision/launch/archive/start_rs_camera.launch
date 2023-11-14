@@ -8,7 +8,7 @@
   <arg name="camera_info_topic" default="color/camera_info" />
   
   <group ns="rs_camera">
-    <include file="$(find kitty_vision)/launch/drivers/driver_realsense.launch">
+    <include file="$(find maddrive_hardware_tools)/launch/driver_realsense.launch">
       <arg name="tf_prefix" value="rs_camera" />
       <arg name="align_depth" value="true" />
       <arg name="linear_accel_cov" value="1.0" />
@@ -20,7 +20,7 @@
       <arg name="initial_reset" default="false" />
     </include>
 
-    <node pkg="nodelet" type="nodelet" name="rgbd_sync" args="load rtabmap_ros/rgbd_sync realsense2_camera_manager" output="screen">
+    <node pkg="nodelet" type="nodelet" name="rgbd_sync" args="load rtabmap_sync/rgbd_sync realsense2_camera_manager" output="screen">
       <remap from="rgb/image" to="$(arg rgb_topic)" />
       <remap from="depth/image" to="$(arg depth_topic)" />
       <remap from="rgb/camera_info" to="$(arg camera_info_topic)" />
