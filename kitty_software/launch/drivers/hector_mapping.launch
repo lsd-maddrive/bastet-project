@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <launch>
 
+    <arg name="scan_input_topic" default="scan" />
+
     <node name="hector_mapping" pkg="hector_mapping" type="hector_mapping" output="screen">
         <rosparam file="$(find kitty_software)/config/hector_mapping/hector_mapping.yaml" command="load"/>
-        <remap from="scan" to="scan"/>
+        <remap from="scan" to="$(arg scan_input_topic)"/>
     </node>
 
 </launch>
