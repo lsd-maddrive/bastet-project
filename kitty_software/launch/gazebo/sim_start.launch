@@ -57,6 +57,7 @@
     <!-- solving slam problem -->
     <group unless="$(arg localization)">
         <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
         </include>
     </group>
 
