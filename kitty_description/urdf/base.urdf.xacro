@@ -51,62 +51,30 @@
 		<selfCollide>false</selfCollide>
 	</gazebo>
 
-	<!-- REAR AXIS LINK -->
-
-	<joint name="base_link_2_rear_axis_link" type="fixed">
-		<parent link="base_link" />
-		<child link="rear_axis_link" />
-		<origin xyz="${-(body_length/2-rear_wheel_2_rear_bumper)} 0 0" rpy="0 0 0" />
-	</joint>
-
-	<link name="rear_axis_link">
-		<xacro:null_visual/>
-		<xacro:null_collision/>
-		<xacro:null_inertia/>
-	</link>
-
-	<gazebo reference="rear_axis_link" />
-
-	<!-- FRONT AXIS LINK -->
-
-	<joint name="base_link_2_front_axis_link" type="fixed">
-		<parent link="base_link" />
-		<child link="front_axis_link" />
-		<origin xyz="${body_length/2-front_wheel_2_front_bumper} 0 0" rpy="0 0 0" />
-	</joint>
-
-	<link name="front_axis_link">
-		<xacro:null_visual/>
-		<xacro:null_collision/>
-		<xacro:null_inertia/>
-	</link>
-
-	<gazebo reference="front_axis_link" />
-
 	<!-- WHEELS -->
 
 	<xacro:steer_wheel
 		prefix="rear_right"
-		parent="rear_axis_link"
-		suspension_origin_xyz="0 -${track_width/2} 0"
+		parent="base_link"
+		suspension_origin_xyz="${-(body_length/2-rear_wheel_2_rear_bumper)} -${track_width/2} 0"
 		suspension_height="${suspension_height}"
 		steer_limit="${steer_limit}" />
 	<xacro:steer_wheel
 		prefix="rear_left"
-		parent="rear_axis_link"
-		suspension_origin_xyz="0 ${track_width/2} 0"
+		parent="base_link"
+		suspension_origin_xyz="${-(body_length/2-rear_wheel_2_rear_bumper)} ${track_width/2} 0"
 		suspension_height="${suspension_height}"
 		steer_limit="${steer_limit}" />
 	<xacro:steer_wheel
 		prefix="front_right"
-		parent="front_axis_link"
-		suspension_origin_xyz="0 -${track_width/2} 0"
+		parent="base_link"
+		suspension_origin_xyz="${body_length/2-front_wheel_2_front_bumper} -${track_width/2} 0"
 		suspension_height="${suspension_height}"
 		steer_limit="${steer_limit}" />
 	<xacro:steer_wheel
 		prefix="front_left"
-		parent="front_axis_link"
-		suspension_origin_xyz="0 ${track_width/2} 0"
+		parent="base_link"
+		suspension_origin_xyz="${body_length/2-front_wheel_2_front_bumper} ${track_width/2} 0"
 		suspension_height="${suspension_height}"
 		steer_limit="${steer_limit}" />
 
