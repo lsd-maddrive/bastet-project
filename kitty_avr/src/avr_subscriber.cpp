@@ -55,6 +55,9 @@ int main()
       // kitty_state.rotation_speed = ;
       // kitty_state.angle_steering =  ;
 
+      // kitty_state.front_right_rotation_speed = GetOdom()[0];
+      // kitty_state.front_left_rotation_speed = GetOdom()[1];
+
       kitty_state.front_right_rotation_speed = GetSpeed()[1];
       kitty_state.front_left_rotation_speed = GetSpeed()[2];
       kitty_state.rear_right_rotation_speed = GetSpeed()[0];
