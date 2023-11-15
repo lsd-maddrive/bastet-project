@@ -8,7 +8,7 @@
   <arg name="camera_info_topic" default="color/camera_info" />
   
   <group ns="rs_camera">
-    <include file="$(find kitty_vision)/launch/drivers/driver_realsense.launch">
+    <include file="$(find maddrive_hardware_tools)/launch/driver_realsense.launch">
       <arg name="tf_prefix" value="rs_camera" />
       <arg name="align_depth" value="true" />
       <arg name="linear_accel_cov" value="1.0" />

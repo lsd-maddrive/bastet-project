@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="scan/data_raw" default="scan/data_raw" />
+    <arg name="scan/data_filtered" default="scan/data_filtered" />
+
+    <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="bounding_box_filter">
+        <rosparam command="load" file="$(find kitty_software)/config/laser_filters/bounding_box_filter.yaml" />
+        <remap from="scan" to="$(arg scan/data_raw)" />
+        <remap from="scan_filtered" to="$(arg scan/data_filtered)" />
+    </node>
+
+</launch>
