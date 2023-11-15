@@ -1,7 +1,7 @@
 <launch>
 
     <include file="$(find kitty_software)/launch/drivers/uc_serial_server.launch">
-        <arg name="port" value="/dev/ttyUSB1" />
+        <arg name="port" value="/dev/m2560" />
     </include>
     <include file="$(find kitty_software)/launch/drivers/uc_convertion_layer.launch" />
     <include file="$(find kitty_software)/launch/drivers/tf_transforms.launch" />
@@ -12,6 +12,7 @@
         <arg name="point_cloud_output_topic" value="bottom_ydlidar_point_cloud/raw" />
         <arg name="frame_id" value="bottom_ydlidar_scan_link" />
     </include>
+
     <!-- realsence -->
     <include file="$(find kitty_vision)/launch/drivers/start_rs_camera.launch" />
 
