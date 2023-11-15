@@ -4,13 +4,26 @@
 
     <include file="$(find kitty_software)/launch/drivers/start_hardware.launch"/>
 
-    <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" />
+    <!-- joystick control -->
+    <include file="$(find maddrive_teleop)/launch/start_joy_teleop.launch">
+        <arg name="cmd_topic" value="joy_vel" />
+        <arg name="speed/frwd_limit" value="1"/>
+        <arg name="speed/bkwrd_limit" value="-0.6"/>
+        <arg name="steer/limit" value="15"/>
+    </include>
+    <!-- navigation control -->
+    <!-- <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+        <arg name="algorithm_config" value="$(arg algorithm_config)"/>
+    </include> -->
+    <!-- twist_mux -->
+    <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
+        <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
+        <remap from="cmd_vel_out" to="cmd_vel"/>
+        <remap from="diagnostics" to="twist_mux/diagnostics"/>
+    </node>
 
     <!-- rdbd_odometry -->
-    <include file="$(find kitty_vision)/launch/rgbd_odom.launch">
-        <arg name="publish_tf" value="true" />
-        <arg name="camera_name" value="false" />
-    </include>
+    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch"/>
 
     <!-- laser_filter -->
     <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">

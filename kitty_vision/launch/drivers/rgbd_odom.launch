@@ -1,46 +1,13 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="publish_tf" default="false"/>
-    <arg name="camera_name" default="front_rs_d435i_camera" />
-
-    <node pkg="rtabmap_odom" type="rgbd_odometry" name="visual_odometry" output="log">
-        <!-- http://wiki.ros.org/rtabmap_odom -->
-        <!-- inputs -->
-        <remap from="rgb/image" to="$(arg camera_name)/color/image_raw" />
-        <remap from="depth/image" to="$(arg camera_name)/aligned_depth_to_color/image_raw" />
-        <remap from="rgb/camera_info" to="$(arg camera_name)/color/camera_info" />
-        <remap from="imu" to="$(arg camera_name)/imu" />
-        <!-- outputs -->
-        <remap from="odom" to="visual_odometry" />
-
-        <param name="guess_frame_id"  type="string" value="base_footprint_stabilized"/>
-        <param name="frame_id"        type="string" value="base_footprint"/>
-        <param name="odom_frame_id"   type="string" value="odom"/>
-        <param name="publish_tf" type="bool" value="$(arg publish_tf)" />
-        <param name="wait_for_transform_duration" type="double" value="0.2" />
-        <param name="publish_null_when_lost" type="bool" value="true" />
-
-        <param name="Reg/Force3DoF" type="bool" value="true" />
-        <param name="Odom/ResetCountdown" type="string" value="1" />
-        <param name="Odom/Strategy"      type="string" value="0"/> <!-- 0=Frame-to-Map, 1=Frame=to=Frame -->
-        <param name="Odom/GuessMotion" type="string" value="true"/>
-        <param name="OdomF2M/MaxSize"    type="string" value="1000"/>
-        <param name="Vis/EstimationType" type="string" value="1"/> <!-- 0=3D->3D 1=3D->2D (PnP) -->
-        <param name="Vis/MaxDepth"       type="string" value="0"/>
-        <param name="Vis/MinInliers"     type="string" value="10"/>
-        <param name="GFTT/MinDistance"   type="string" value="10"/>
-        <param name="GFTT/QualityLevel"  type="string" value="0.00001"/>
-        <param name="GFTT/QualityLevel"  type="string" value="0.00001"/>
-    </node>
-
     <!-- start_VO.launch -->
-    <!-- <node pkg="rtabmap_odom" type="rgbd_odometry" name="rgbd_odometry" output="screen">
+    <node pkg="rtabmap_odom" type="rgbd_odometry" name="rgbd_odometry" output="screen">
         <param name="subscribe_rgbd" type="bool" value="true" />
         <param name="frame_id" type="string" value="base_footprint" />
         <param name="publish_tf" type="bool" value="true" />
-        <remap from="rgbd_image" to="/rs_camera/rgbd_image" />
-        <remap from="odom" to="/kitty/vo" />
-    </node> -->
+        <remap from="rgbd_image" to="front_rs_d435i_camera/rgbd_image" />
+        <remap from="odom" to="visual_odometry" />
+    </node>
 
 </launch>
