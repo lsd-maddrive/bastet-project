@@ -7,8 +7,9 @@
     <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" />
 
     <!-- rdbd_odometry -->
-    <include file="$(find kitty_vision)/launch/start_VO.launch">
-        <arg name="rviz" value="false" />
+    <include file="$(find kitty_vision)/launch/rgbd_odom.launch">
+        <arg name="publish_tf" value="true" />
+        <arg name="camera_name" value="false" />
     </include>
 
     <!-- laser_filter -->
