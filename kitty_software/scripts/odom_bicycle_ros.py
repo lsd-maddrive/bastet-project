@@ -4,7 +4,6 @@
 
 import rospy
 import roslib
-# roslib.load_manifest('differential_drive')
 from math import sin, cos, pi, tan, atan,atan2,isclose
 
 from kitty_msgs.msg import KittyState
@@ -27,13 +26,15 @@ class KinematicBicycleModelTf:
         
         #### parameters #######
         self.rate = rospy.get_param('~rate',10.0)  # the rate at which to publish the transform
-        self.wheelbase = float(rospy.get_param('~wheelbase', 0.175)) # The wheel base width in meters
+        self.wheelbase = float(rospy.get_param('~wheelbase', 0.17)) # The wheel base width in meters
         self.max_steer = float(rospy.get_param('~max_steer', 0.8)) # Radians
         self.base_frame_id = rospy.get_param('~base_frame_id','base_link') # the name of the base frame of the robot
         self.odom_frame_id = rospy.get_param('~odom_frame_id', 'odom') # the name of the odometry reference frame
         self.publish_tf = rospy.get_param('~publish_tf', 'false')
-        self.self.robot_len = 0.35
-        self.robot_width = 0.35
+        self.robot_len = 0.34
+        self.robot_width = 0.34
+        self.wheel_d = 0.065
+        self.revmin2ms = pi * self.wheel_d / 60
 
         
         self.t_delta = rospy.Duration(1.0/self.rate)
@@ -140,7 +141,7 @@ class KinematicBicycleModelTf:
         left_steering_angle = abs(np.deg2rad((abs(msg.front_left_steering_angle) + abs(msg.rear_left_steering_angle)) / 2))
         # print(right_steering_angle,left_steering_angle)
 
-        if isclose(right_steering_angle, 0,abs_tol=0.02) or isclose(left_steering_angle,0, abs_tol=0.02):
+        if isclose(right_steering_angle, 0,abs_tol=0.02) or isclose(left_steering_angle,0, abs_tol=0.02) or isclose(msg.front_right_steering_angle,0, abs_tol=0.02):
             cc_angle = 0 
         else:
             dir = msg.front_right_steering_angle / abs(msg.front_right_steering_angle)
@@ -157,15 +158,26 @@ class KinematicBicycleModelTf:
         print(self.steering_angle)
 
     def CalculateRealSpeed(self, msg):
+        left_rotation_speed = (msg.front_left_rotation_speed + msg.rear_left_rotation_speed) / 2
+        right_rotation_speed = (msg.front_right_rotation_speed + msg.rear_right_rotation_speed) / 2
 
-        h = 0.5*self.robot_len / tan(0.01745*(self.steering_angle))
-        left_rotation_speed = (msg.front_left_rotation_speed + msg.rear_left_rotation_speed) /2 
-        right_rotation_speed = (msg.front_right_rotation_speed + msg.rear_right_rotation_speed) /2 
+        if isclose(self.steering_angle, 0,abs_tol=0.02):
+            Vc = (left_rotation_speed + right_rotation_speed) / 2
+        else:
+            h = 0.5*self.robot_len / tan(0.01745*(self.steering_angle)) + self.robot_width/2
+            if abs(right_rotation_speed) < abs(left_rotation_speed):
+                Vcl = (left_rotation_speed * h) / (h + self.robot_width/2)
+                Vcr = (right_rotation_speed * h) / (h - self.robot_width/2)
+            else:
+                Vcl = (left_rotation_speed * h) / (h - self.robot_width/2)
+                Vcr = (right_rotation_speed * h) / (h + self.robot_width/2)
+            Vc = (Vcl + Vcr) / 2
+        #REV/MIN to M/S convertation
 
-        Vcl = (left_rotation_speed * h) / (h + self.robot_width/2)
-        Vcr = (right_rotation_speed * h) / (h - self.robot_width/2)
-        Vc = (Vcl + Vcr) / 2
         self.velocity = Vc
+        # print(self.velocity)
+
+
 
     def RealVelociityAngleCb(self,msg):
         self.CalculateRealAngle(msg)

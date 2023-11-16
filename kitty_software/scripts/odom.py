@@ -96,14 +96,21 @@ robot_len = 0.35
 robot_width = 0.35
 
 ## reverse task
-front_left_rotation_speed = 418.33402701145803
-front_right_rotation_speed = 192.7029002943127
+front_right_rotation_speed = 418.33402701145803
+rear_right_rotation_speed = 418
+front_left_rotation_speed = 192.7029002943127
+rear_left_rotation_speed = 192
 set_angle = 25
 h = 0.5*robot_len / tan(0.01745*(set_angle)) + robot_width/2
+left_rotation_speed = (front_left_rotation_speed + rear_left_rotation_speed) / 2
+right_rotation_speed = (front_right_rotation_speed + rear_right_rotation_speed) / 2
 
-
-Vcl = (front_left_rotation_speed * h) / (h + robot_width/2)
-Vcr = (front_right_rotation_speed * h) / (h - robot_width/2)
+if abs(front_right_rotation_speed) < abs(front_left_rotation_speed):
+    Vcl = (left_rotation_speed * h) / (h + robot_width/2)
+    Vcr = (right_rotation_speed * h) / (h - robot_width/2)
+else:
+    Vcl = (left_rotation_speed * h) / (h - robot_width/2)
+    Vcr = (right_rotation_speed * h) / (h + robot_width/2)
 Vc = (Vcl + Vcr) / 2
 
 print(Vc)

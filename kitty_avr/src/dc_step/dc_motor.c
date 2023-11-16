@@ -5,9 +5,10 @@
 
 //uint16_t tim2_count=0, dc_mot_enc_count = 0, enc_result = 0;
 uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
+int16_t rotation_dir = 1;
 float reg_speed[4]={0,0,0,0}, integral[4]={0,0,0,0};
 //uint32_t enc_result = 0;
-float speed_ms = 0; //for odom calculate
+float speed_ms[4] = {0,0,0,0}; //for odom calculate
 float set_speed = 0;
 float _set_angle = 0; // only for calculate turning radius
 float debug_formuls[6]={0,0,0,0,0,0};
@@ -47,8 +48,18 @@ void DcMotInit(void){
 }
 
 
+
 uint16_t* GetSpeed(void){
 	return(enc_result);
+}
+
+
+float* GetSpeedMS(void){
+	speed_ms[0] = (int16_t)enc_result[0] * rotation_dir * REVMIN_2_MS;
+	speed_ms[1] = (int16_t)enc_result[1] * rotation_dir * REVMIN_2_MS;
+	speed_ms[2] = (int16_t)enc_result[2] * rotation_dir * REVMIN_2_MS;
+	speed_ms[3] = (int16_t)enc_result[3] * rotation_dir * REVMIN_2_MS;
+	return(speed_ms);
 }
 
 float* GetFormuls(float _speed,float _angle)
@@ -85,12 +96,18 @@ float h = 0 ,R_left = 0 ,R_centre = 0 ,R_right = 0 , QQ_left=0, QQ_centre=0, QQ_
 
 
 void SetSpeed(float desired_speed, float desired_angle){
-	if(desired_speed>=0) DC_MOT_FOR;
-	else DC_MOT_REV;
+	if(desired_speed>0){
+		rotation_dir = 1;
+		DC_MOT_FOR;
+	}
+	else if (desired_speed<0){
+		rotation_dir = -1;
+		DC_MOT_REV;
+	} 
 	
 	set_speed = abs(desired_speed);
 	_set_angle = desired_angle;
-	speed_ms = desired_speed * REVMIN_2_MS;
+	// speed_ms = desired_speed * REVMIN_2_MS;
 }
 
 
@@ -178,7 +195,7 @@ ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 			dc_mot_enc_count[i]=0;
 		}
 		DcMotPIDGo(set_speed);
-		Light_Wheel_Odometry(set_speed, _set_angle);
+		// Light_Wheel_Odometry(set_speed, _set_angle);
 		//PORTB^=(1<<7);
 		tim2_count=0;
 	}
@@ -213,54 +230,54 @@ float* GetOdom(void){
 float Light_Wheel_Odometry (float set_speed, float set_angle)
 {
     float h, dir_x, dir_y, fi, sf, sa, cf, ca, DeltaY, x1, y1, len_wheel_m, h_angle;
-	float t = 0.08;
+	// float t = 0.08;
 
-	if (set_angle == 0){
- 		x1 = x0 + speed_ms * t;
-		x0 = x1;
-	}
+	// if (set_angle == 0){
+ 	// 	x1 = x0 + speed_ms * t;
+	// 	x0 = x1;
+	// }
 	
-	else if (speed_ms !=0){
+	// else if (speed_ms !=0){
 
-		len_wheel_m = LEN_WHEEL / 100;
-		dir_x= speed_ms/ fabs(speed_ms);
-		dir_y= set_angle/ abs(set_angle);
-		h_angle = abs(set_angle)
-		h = len_wheel_m /2/ tan(0.01745*h_angle);
-		fi= speed_ms*t/h;
-		sf= sin(0.01745*fi);
-		sa= sin(0.01745*alf);
-		cf= cos(0.01745*fi);
-		ca= cos(0.01745*alf);
+	// 	len_wheel_m = LEN_WHEEL / 100;
+	// 	dir_x= speed_ms/ fabs(speed_ms);
+	// 	dir_y= set_angle/ abs(set_angle);
+	// 	h_angle = abs(set_angle)
+	// 	h = len_wheel_m /2/ tan(0.01745*h_angle);
+	// 	fi= speed_ms*t/h;
+	// 	sf= sin(0.01745*fi);
+	// 	sa= sin(0.01745*alf);
+	// 	cf= cos(0.01745*fi);
+	// 	ca= cos(0.01745*alf);
 		
-		DeltaY=sa*sf*h+ca*pow(pow(h,2)*pow((-1 + cf),2) +pow(h,2)*pow(sf,2)-pow(h,2)*pow(sf,2),0.5);
-		if (((fabs(alf))<90) && (((fabs(alf))>=0)))
-			{
-			x1=x0+ dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
-			y1=y0- dir_y*DeltaY;
-			}
-		else if (((fabs(alf))<180) && (((fabs(alf))>=90)))
-			{
-			x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
-			y1=y0- dir_y*DeltaY;
-			}
-		else if (((fabs(alf))<270) && (((fabs(alf))>=180)))
-			{
-			x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
-			y1=y0- dir_y*DeltaY;
-			}
-		else if (((fabs(alf))<=360) && (((fabs(alf))>=270)))
-			{
-			x1=x0+ dir_x *pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
-			y1=y0- dir_y *DeltaY;
-			}
+	// 	DeltaY=sa*sf*h+ca*pow(pow(h,2)*pow((-1 + cf),2) +pow(h,2)*pow(sf,2)-pow(h,2)*pow(sf,2),0.5);
+	// 	if (((fabs(alf))<90) && (((fabs(alf))>=0)))
+	// 		{
+	// 		x1=x0+ dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y*DeltaY;
+	// 		}
+	// 	else if (((fabs(alf))<180) && (((fabs(alf))>=90)))
+	// 		{
+	// 		x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y*DeltaY;
+	// 		}
+	// 	else if (((fabs(alf))<270) && (((fabs(alf))>=180)))
+	// 		{
+	// 		x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y*DeltaY;
+	// 		}
+	// 	else if (((fabs(alf))<=360) && (((fabs(alf))>=270)))
+	// 		{
+	// 		x1=x0+ dir_x *pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y *DeltaY;
+	// 		}
 		
-		alf=alf+fi;
-		if (alf>360) alf=alf-360;
-		if (alf<-360) alf=alf+360;
-		x0=x1;
-    	y0=y1;
-	}
+	// 	alf=alf+fi;
+	// 	if (alf>360) alf=alf-360;
+	// 	if (alf<-360) alf=alf+360;
+	// 	x0=x1;
+    // 	y0=y1;
+	// }
 }
 //previous_error = 0;
 //integral = 0;

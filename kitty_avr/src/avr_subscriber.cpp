@@ -20,9 +20,11 @@ extern "C" void __cxa_pure_virtual(void);
 void __cxa_pure_virtual(void) {}
 
 ros::NodeHandle nh;
+// int rotation_dir = 1
 
 void messageCb(const kitty_msgs::KittyState &speed_msg)
 {
+  // rotation_dir = speed_msg.rotation_speed 
   SetSpeed(speed_msg.rotation_speed, speed_msg.angle_steering);
   SetAngle(speed_msg.angle_steering);
 }
@@ -47,7 +49,7 @@ int main()
 
   while (1)
   {
-    // Send the message every 0.2 second
+    // Send the message every 0.1 second
     if (avr_time_now() - lasttime > 200)
     {
 
@@ -58,14 +60,14 @@ int main()
       // kitty_state.front_right_rotation_speed = GetOdom()[0];
       // kitty_state.front_left_rotation_speed = GetOdom()[1];
 
-      kitty_state.front_right_rotation_speed = GetSpeed()[1];
-      kitty_state.front_left_rotation_speed = GetSpeed()[2];
-      kitty_state.rear_right_rotation_speed = GetSpeed()[0];
-      kitty_state.rear_left_rotation_speed = GetSpeed()[3];
+      kitty_state.rear_right_rotation_speed = GetSpeedMS()[0];
+      kitty_state.front_right_rotation_speed = GetSpeedMS()[1];
+      kitty_state.front_left_rotation_speed = GetSpeedMS()[2];
+      kitty_state.rear_left_rotation_speed = GetSpeedMS()[3];
 
+      kitty_state.rear_right_steering_angle = GetMotPos(0);
       kitty_state.front_right_steering_angle = GetMotPos(1);
       kitty_state.front_left_steering_angle = GetMotPos(2);
-      kitty_state.rear_right_steering_angle = GetMotPos(0);
       kitty_state.rear_left_steering_angle = GetMotPos(3);
 
 

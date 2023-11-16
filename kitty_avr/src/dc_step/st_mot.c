@@ -125,21 +125,21 @@ void SetAngle(float angle){
 	
 	if (angle == 0)
 	{
-	angle_l = 0;
-	angle_r = 0;
-	destenation = 1;
+		angle_l = 0;
+		angle_r = 0;
+		destenation = 1;
 
 	}
 	else
 	{
-	h = LEN_WHEEL/2 / tan(0.01745*angle);
-	destenation = h/abs(h);
+		h = LEN_WHEEL/2 / tan(0.01745*angle);
+		destenation = h/abs(h);
 
 
-	angle_l=57.3*atan(fabs((LEN_WHEEL/2)/(WID_WHEEL/2+h)));
-	angle_r=57.3*atan(fabs((LEN_WHEEL/2)/(h-WID_WHEEL/2)));
-	//angle_l=(LEN_WHEEL/2)/(WID_WHEEL/2+h);
-	//angle_r=atfabs((LEN_WHEEL/2)/(WID_WHEEL/2+h));
+		angle_l=57.3*atan(fabs((LEN_WHEEL/2)/(WID_WHEEL/2+h)));
+		angle_r=57.3*atan(fabs((LEN_WHEEL/2)/(h-WID_WHEEL/2)));
+		//angle_l=(LEN_WHEEL/2)/(WID_WHEEL/2+h);
+		//angle_r=atfabs((LEN_WHEEL/2)/(WID_WHEEL/2+h));
 	
 	}
 

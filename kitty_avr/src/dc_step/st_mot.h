@@ -33,7 +33,7 @@
 
 //general settings
 #define POS_CENTER 512
-#define POS_ERR 2
+#define POS_ERR 0.5
 #define MAX_ANGLE 90
 #define MIN_ANGLE -90
 #define MODE 16 //step divide by n

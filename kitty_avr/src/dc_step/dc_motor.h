@@ -59,6 +59,8 @@ float Light_Wheel_Odometry (float set_speed, float set_angle);
 
 
 uint16_t* GetSpeed(void);
+float* GetSpeedMS(void);
+
 float* GetFormuls(float _speed,float _angle);
 float* GetOdom(void);
 
