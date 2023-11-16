@@ -67,23 +67,10 @@
         <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
     </include>
 
-    <!-- imu_filter -->
-    <include file="$(find kitty_software)/launch/drivers/imu_filter.launch">
-        <arg name="imu/data_raw" value="front_rs_d435i_camera/imu"/>
-        <arg name="imu/data_filtered" value="front_rs_d435i_camera/imu/filtered"/>
-    </include>
-
-    <!-- base_footprint_stabilized -->
-    <node pkg="rtabmap_util" type="imu_to_tf" name="rtabmap_imu_to_tf" output="screen">
-        <param name="fixed_frame_id" value="base_footprint_stabilized"/>
-        <param name="base_frame_id" value="base_footprint"/>
-        <remap from="imu/data" to="front_rs_d435i_camera/imu/filtered"/>
-    </node>
-
     <!-- robot_localization -->
-    <include file="$(find kitty_software)/launch/drivers/robot_localization.launch">
+    <!-- <include file="$(find kitty_software)/launch/drivers/robot_localization.launch">
         <arg name="publish_tf" value="false"/>
-    </include>
+    </include> -->
 
     <!-- rgbd odometry -->
     <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">

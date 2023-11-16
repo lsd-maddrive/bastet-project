@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <launch>
 
     <include file="$(find kitty_software)/launch/drivers/start_hardware.launch"/>
@@ -7,8 +6,8 @@
     <!-- joystick control -->
     <include file="$(find maddrive_teleop)/launch/start_joy_teleop.launch">
         <arg name="cmd_topic" value="joy_vel" />
-        <arg name="speed/frwd_limit" value="1"/>
-        <arg name="speed/bkwrd_limit" value="-0.6"/>
+        <arg name="speed/frwd_limit" value="1.0"/>
+        <arg name="speed/bkwrd_limit" value="-1.0"/>
         <arg name="steer/limit" value="15"/>
     </include>
     <!-- navigation control -->
@@ -23,7 +22,10 @@
     </node>
 
     <!-- rdbd_odometry -->
-    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch"/>
+    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
+        <arg name="camera_name" value="front_rs_d435i_camera"/>
+        <arg name="publish_tf" value="true"/>
+    </include>
 
     <!-- laser_filter -->
     <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
@@ -31,8 +33,8 @@
         <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
     </include>
 
-    <!-- 2d-slam -->
-    <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+        <!-- 2d-slam -->
+    <include file="$(find kitty_software)/launch/drivers/slam_gmapping.launch">
         <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
     </include>
 

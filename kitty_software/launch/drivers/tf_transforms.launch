@@ -22,8 +22,8 @@
     <node pkg="tf" type="static_transform_publisher"
         name="base_link_link_2_front_rs_d435i_camera_link"
         args="
-            0.23 0.12 0.256
-            0.0 -0.1 0.0
+            0.21 0.12 0.295
+            0.0 0.226893.0 0.0
             /base_link /front_rs_d435i_camera_link
             100" />
 
