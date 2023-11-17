@@ -14,8 +14,10 @@ catkin build \
     hector_gazebo \
     cv_bridge \
     maddrive_ros_shared \
-    ydlidar_ros_driver \
     rtabmap_ros \
+    ydlidar_ros_driver \
+    realsense2_camera \
+    realsense2_description \
     -j$(($(nproc)-2)) \
     --cmake-args \
     -D CATKIN_ENABLE_TESTING=False \
