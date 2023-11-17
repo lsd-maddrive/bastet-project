@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
+    <!-- selecting mode (slam or localization) -->
+    <arg name="localization" default="false"/>
+    <!-- map file for localization and navigation -->
+    <arg name="map_file" default="$(find kitty_maps)/2d_maps/my_map.yaml"/>
+
     <include file="$(find kitty_software)/launch/drivers/start_hardware.launch"/>
 
     <!-- joystick control -->
@@ -21,21 +26,33 @@
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
     </node>
 
-    <!-- rdbd_odometry -->
-    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
-        <arg name="camera_name" value="front_rs_d435i_camera"/>
-        <arg name="publish_tf" value="true"/>
-    </include>
-
     <!-- laser_filter -->
     <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
         <arg name="scan/data_raw" value="bottom_ydlidar_scan/raw"/>
         <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
     </include>
 
-        <!-- 2d-slam -->
-    <include file="$(find kitty_software)/launch/drivers/slam_gmapping.launch">
-        <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+    <!-- solving localization problem -->
+    <group if="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
+            <arg name="map_file" value="$(arg map_file)"/>
+        </include>
+        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
+            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+        </include>
+    </group>
+    <!-- solving slam problem -->
+    <group unless="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+        </include>
+    </group>
+
+    <!-- rdbd_odometry -->
+    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
+        <arg name="camera_name" value="front_rs_d435i_camera"/>
+        <arg name="publish_tf" value="true"/>
     </include>
 
 </launch>

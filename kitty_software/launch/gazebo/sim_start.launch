@@ -19,10 +19,6 @@
     <arg name="localization" default="false"/>
     <!-- map file for localization and navigation -->
     <arg name="map_file" default="$(find kitty_maps)/2d_maps/$(arg world_name).yaml"/>
-    <!-- data visualization -->
-    <arg name='rviz' default="true" />
-    <arg name='foxglove' default="true" />
-    <arg name="odom_fusion_debug" default="false"/>
     <!-- parameter is used to save the map scan with the name of the map from the simulation -->
     <param name="map_name" value="$(arg world_name)"/>
 
@@ -42,40 +38,6 @@
         <arg name="robot_pose_Y" value="$(arg robot_pose_Y)"/>
         <!-- urdf model -->
         <arg name="model" value="$(arg model)"/>
-    </include>
-
-    <!-- solving localization problem -->
-    <group if="$(arg localization)">
-        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
-            <arg name="map_file" value="$(arg map_file)"/>
-        </include>
-        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
-            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
-            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
-        </include>
-    </group>
-    <!-- solving slam problem -->
-    <group unless="$(arg localization)">
-        <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
-            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
-        </include>
-    </group>
-
-    <!-- laser_filter -->
-    <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
-        <arg name="scan/data_raw" value="bottom_ydlidar_scan/raw"/>
-        <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
-    </include>
-
-    <!-- robot_localization -->
-    <!-- <include file="$(find kitty_software)/launch/drivers/robot_localization.launch">
-        <arg name="publish_tf" value="false"/>
-    </include> -->
-
-    <!-- rgbd odometry -->
-    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
-        <arg name="camera_name" value="front_rs_d435i_camera"/>
-        <arg name="publish_tf" value="true"/>
     </include>
 
     <!-- keyboard control -->
@@ -108,17 +70,33 @@
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
     </node>
 
-    <!-- data visualization -->
-    <group if="$(arg rviz)">
-        <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kitty_software)/config/rqt/rviz/full_config.rviz"/>
-    </group>
-    <group if="$(arg foxglove)">
-        <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch">
-            <arg name="port" value="8765" />
+    <!-- laser_filter -->
+    <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
+        <arg name="scan/data_raw" value="bottom_ydlidar_scan/raw"/>
+        <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
+    </include>
+
+    <!-- solving localization problem -->
+    <group if="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
+            <arg name="map_file" value="$(arg map_file)"/>
+        </include>
+        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
+            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
         </include>
     </group>
-    <group if="$(arg odom_fusion_debug)">
-        <include file="$(find kitty_software)/launch/debug/ekf_debug.launch"/>
+    <!-- solving slam problem -->
+    <group unless="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+        </include>
     </group>
+
+    <!-- rgbd odometry -->
+    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
+        <arg name="camera_name" value="front_rs_d435i_camera"/>
+        <arg name="publish_tf" value="true"/>
+    </include>
 
 </launch>
