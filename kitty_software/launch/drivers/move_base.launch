@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <!-- costmap -->
+        <rosparam file="$(find kitty_software)/config/move_base/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+        <rosparam file="$(find kitty_software)/config/move_base/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+        <rosparam file="$(find kitty_software)/config/move_base/local_costmap_params.yaml" command="load"/>
+        <rosparam file="$(find kitty_software)/config/move_base/global_costmap_params.yaml" command="load"/>
+        <!-- base global planner -->
+        <rosparam file="$(find kitty_software)/config/move_base/global_planner_params.yaml" command="load"/>
+        <!-- base local planner -->
+        <rosparam file="$(find kitty_software)/config/move_base/teb_local_planner_params.yaml" command="load"/>
+        <!-- move base -->
+        <rosparam file="$(find kitty_software)/config/move_base/move_base_params.yaml" command="load"/>
+        <!-- remap cmd_vel topic for gazebo -->
+        <remap from="cmd_vel" to="nav_vel"/>
+        <remap from="odom" to="visual_odometry"/>
+    </node>
+
+</launch>

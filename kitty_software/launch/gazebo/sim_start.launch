@@ -60,9 +60,7 @@
         <arg name="steer/limit" value="45"/>
     </include>
     <!-- navigation control -->
-    <!-- <include file="$(find kitty_software)/launch/drivers/move_base.launch">
-        <arg name="algorithm_config" value="$(arg algorithm_config)"/>
-    </include> -->
+    <include file="$(find kitty_software)/launch/drivers/move_base.launch"/>
     <!-- twist_mux -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
         <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
