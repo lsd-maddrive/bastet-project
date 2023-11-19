@@ -26,6 +26,11 @@
         <param name="GFTT/QualityLevel" type="string" value="0.00001"/>
 
         <!-- inputs -->
+        <!-- if subscribe_rgbd=false -->
+        <remap from="rgb/image" to="$(arg camera_name)/color/image_raw" />
+        <remap from="rgb/camera_info" to="$(arg camera_name)/color/camera_info" />
+        <remap from="depth/image" to="$(arg camera_name)/aligned_depth_to_color/image_raw" />
+        <!-- if subscribe_rgbd=true -->
         <remap from="rgbd_image" to="$(arg camera_name)/rgbd_image" />
         <!-- outputs -->
         <remap from="odom" to="visual_odometry" />

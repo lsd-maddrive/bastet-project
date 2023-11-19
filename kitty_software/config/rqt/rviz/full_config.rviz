@@ -169,14 +169,12 @@ Visualization Manager:
         All Enabled: false
         base_footprint:
           Value: true
-        base_footprint_stabilized:
-          Value: true
         base_link:
-          Value: false
+          Value: true
         bottom_ydlidar_base_link:
-          Value: false
+          Value: true
         bottom_ydlidar_scan_link:
-          Value: false
+          Value: true
         front_left_steer_link:
           Value: false
         front_left_suspension_link:
@@ -192,7 +190,7 @@ Visualization Manager:
         front_rs_d435i_camera_imu_link:
           Value: false
         front_rs_d435i_camera_link:
-          Value: false
+          Value: true
         front_rs_d435i_camera_optical_frame:
           Value: false
         map:
@@ -220,33 +218,32 @@ Visualization Manager:
       Tree:
         map:
           odom:
-            base_footprint_stabilized:
-              base_footprint:
-                base_link:
-                  bottom_ydlidar_base_link:
-                    bottom_ydlidar_scan_link:
+            base_footprint:
+              base_link:
+                bottom_ydlidar_base_link:
+                  bottom_ydlidar_scan_link:
+                    {}
+                front_left_suspension_link:
+                  front_left_steer_link:
+                    front_left_wheel_link:
                       {}
-                  front_left_suspension_link:
-                    front_left_steer_link:
-                      front_left_wheel_link:
-                        {}
-                  front_right_suspension_link:
-                    front_right_steer_link:
-                      front_right_wheel_link:
-                        {}
-                  front_rs_d435i_camera_link:
-                    front_rs_d435i_camera_imu_link:
+                front_right_suspension_link:
+                  front_right_steer_link:
+                    front_right_wheel_link:
                       {}
-                    front_rs_d435i_camera_optical_frame:
+                front_rs_d435i_camera_link:
+                  front_rs_d435i_camera_imu_link:
+                    {}
+                  front_rs_d435i_camera_optical_frame:
+                    {}
+                rear_left_suspension_link:
+                  rear_left_steer_link:
+                    rear_left_wheel_link:
                       {}
-                  rear_left_suspension_link:
-                    rear_left_steer_link:
-                      rear_left_wheel_link:
-                        {}
-                  rear_right_suspension_link:
-                    rear_right_steer_link:
-                      rear_right_wheel_link:
-                        {}
+                rear_right_suspension_link:
+                  rear_right_steer_link:
+                    rear_right_wheel_link:
+                      {}
       Update Interval: 0
       Value: true
     - Alpha: 0.5
@@ -280,7 +277,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.5
+      Size (m): 0.20000000298023224
       Style: Flat Squares
       Topic: /bottom_ydlidar_scan/raw
       Unreliable: false
@@ -308,7 +305,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.5
+      Size (m): 0.20000000298023224
       Style: Flat Squares
       Topic: /bottom_ydlidar_scan/filtered
       Unreliable: false
@@ -375,7 +372,7 @@ Visualization Manager:
       Enabled: true
       Name: front_rs_d435i_camera_imu_filtered
       Queue Size: 10
-      Topic: /front_rs_d435i_camera/imu/filtered
+      Topic: /front_rs_d435i_camera/imu
       Unreliable: false
       Value: true
       fixed_frame_orientation: true

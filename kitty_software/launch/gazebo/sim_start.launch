@@ -93,6 +93,18 @@
         </include>
     </group>
 
+    <!-- rgbd_sync -->
+    <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync">
+        <!-- inputs -->
+        <remap from="rgb/image" to="front_rs_d435i_camera/color/image_raw" />
+        <remap from="depth/image" to="front_rs_d435i_camera/aligned_depth_to_color/image_raw" />
+        <remap from="rgb/camera_info" to="front_rs_d435i_camera/color/camera_info" />
+        <!-- outputs -->
+        <remap from="rgbd_image" to="front_rs_d435i_camera/rgbd_image" />
+        <remap from="rgbd_image/compressed" to="front_rs_d435i_camera/rgbd_image/compressed" />
+        <param name="approx_sync" value="false" />
+    </node>
+
     <!-- rgbd odometry -->
     <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
         <arg name="camera_name" value="front_rs_d435i_camera"/>
