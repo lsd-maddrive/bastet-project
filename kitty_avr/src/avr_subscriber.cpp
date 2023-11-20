@@ -68,15 +68,15 @@ int main()
       kitty_state.stamp.sec = avr_time_now()/1000;
       kitty_state.stamp.nsec = (avr_time_now()%1000)*1000000;
 
-      kitty_state.rear_right_rotation_speed = GetSpeedMS()[0];
-      kitty_state.front_right_rotation_speed = GetSpeedMS()[1];
-      kitty_state.front_left_rotation_speed = GetSpeedMS()[2];
-      kitty_state.rear_left_rotation_speed = GetSpeedMS()[3];
+      kitty_state.rear_right_rotation_speed = GetSpeedMS()[3];
+      kitty_state.front_right_rotation_speed = GetSpeedMS()[0]; 
+      kitty_state.front_left_rotation_speed = GetSpeedMS()[1];
+      kitty_state.rear_left_rotation_speed = GetSpeedMS()[2]; 
 
-      kitty_state.rear_right_steering_angle = GetMotPos(0);
-      kitty_state.front_right_steering_angle = GetMotPos(1);
-      kitty_state.front_left_steering_angle = GetMotPos(2);
-      kitty_state.rear_left_steering_angle = GetMotPos(3);
+      kitty_state.rear_right_steering_angle = GetMotPos(3);
+      kitty_state.front_right_steering_angle = GetMotPos(0);
+      kitty_state.front_left_steering_angle = GetMotPos(1);
+      kitty_state.rear_left_steering_angle = GetMotPos(2);
 
 
 

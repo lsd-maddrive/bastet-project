@@ -117,10 +117,17 @@ void DcMotGo(float* speed){
 
 	// 0 and 1 right
 	// 3 and 2 left
+
+
+	// 0 and 1 front
+	// 3 and 2 back
+
+	// 0 and 3 right
+	// 1 and 2 left
 	OCR4A = speed[0];
-	OCR2A = speed[1];
+	OCR2A = speed[3];
 	OCR2B = speed[2];
-	OCR4C = speed[3];
+	OCR4C = speed[1];
 }
 
 void DcMotPIDGo(float set_speed){

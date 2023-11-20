@@ -445,9 +445,9 @@ gccversion :
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep
 #	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
-	# avrdude -c stk500 -p m2560 -P /dev/ttyACM0 -U flash:w:$(TARGET).hex
+	avrdude -c stk500 -p m2560 -P /dev/ttyUSB0 -U flash:w:$(TARGET).hex
 
-	/snap/arduino/85/hardware/tools/avr/bin/avrdude -C/snap/arduino/85/hardware/tools/avr/etc/avrdude.conf -v -patmega2560 -cwiring -P/dev/ttyACM0 -b57600 -D -Uflash:w:$(TARGET).hex
+	# /snap/arduino/85/hardware/tools/avr/bin/avrdude -C/snap/arduino/85/hardware/tools/avr/etc/avrdude.conf -v -patmega2560 -cwiring -P/dev/ttyACM0 -b57600 -D -Uflash:w:$(TARGET).hex
 	
 
 

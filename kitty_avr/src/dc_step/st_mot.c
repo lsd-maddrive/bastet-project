@@ -13,7 +13,7 @@ float debug_angles[3] = {0,0,0};
 uint16_t set_counter =0;
 
 //pot_koefs
-float p_k[4]={0.268,0.268,0.268,0.268};
+float p_k[4]={0.35,0.35,0.35,0.35};
 float info[3]={0, 0 ,0};
 
 
@@ -143,7 +143,9 @@ void SetAngle(float angle){
 	
 	}
 
-	float angles[4]={-1*destenation*angle_r, destenation*angle_r, destenation*angle_l,  -1*destenation*angle_l};
+	// float angles[4]={-1*destenation*angle_r, destenation*angle_r, destenation*angle_l,  -1*destenation*angle_l};
+	float angles[4]={destenation*angle_r, destenation*angle_l, -1*destenation*angle_l, -1*destenation*angle_r};
+
 	
 
 
@@ -180,10 +182,10 @@ void SetAngle(float angle){
 
 float GetMotPos(uint8_t n){
 	float real_mot_pos;
-	// real_mot_pos=(512.0f-(float)AdcGetPos()[n])*p_k[n];
-	real_mot_pos=(float)AdcGetPos()[n];
+	real_mot_pos=(512.0f-(float)AdcGetPos()[n])*p_k[n];
+	// real_mot_pos=(float)AdcGetPos()[n];
 
-	return -real_mot_pos;
+	return real_mot_pos;
 	
 }
 
