@@ -74,3 +74,26 @@ ssh {USERNAME}@{IP ADRESS}
 ## Joy
 
 Джойстик используется в режиме XInput (переключатель находится на передней части геймпада)
+
+## Input/output Error
+https://www.chippiko.com/arduino-input-output-error
+
+How to Fix Input/output Error
+To be able to fix it is to modify the grub file that is on the linux system itself. The steps are:
+
+Open the group file using a text editor via terminal. I use gedit text editor
+
+sudo gedit /etc/default/grub
+- Look for the line containing the word GRUB_CMDLINE_LINUX_DEFAULT=””
+- Then enter the word usbcore.autosuspend=-1 to ” “. and becoming GRUB_CMDLINE_LINUX_DEFAULT=”usbcore.autosuspend=-1”
+
+If by default your linux is GRUB_CMDLINE_LINUX_DEFAULT=”qui ```et splash”, and then becoming to GRUB_CMDLINE_LINUX_DEFAULT=”quiet splash usbcore.autosuspend=-1″
+
+after that save the file.
+- Update grub with command:
+
+sudo update-grub
+Reboot
+After that, reconnect the Arduino board to the computer, reopen the Arduino IDE, re-upload it and upload the code will successfully.
+
+Hopefully this Arduino Input/output Error article can help you in learning the Arduino Environment. If this Arduino error article is useful, please share it using the share button below.

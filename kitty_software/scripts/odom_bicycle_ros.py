@@ -25,7 +25,7 @@ class KinematicBicycleModelTf:
         rospy.loginfo("-I- %s started" % self.nodename)
         
         #### parameters #######
-        self.rate = rospy.get_param('~rate',10.0)  # the rate at which to publish the transform
+        self.rate = rospy.get_param('~rate', 4.68603)  # the rate at which to publish the transform
         self.wheelbase = float(rospy.get_param('~wheelbase', 0.17)) # The wheel base width in meters
         self.max_steer = float(rospy.get_param('~max_steer', 0.8)) # Radians
         self.base_frame_id = rospy.get_param('~base_frame_id','base_link') # the name of the base frame of the robot
@@ -75,6 +75,7 @@ class KinematicBicycleModelTf:
             elapsed = now - self.then
             self.then = now
             elapsed = elapsed.to_sec()
+            print(elapsed)
             
             # calculate odometry
 
@@ -155,7 +156,7 @@ class KinematicBicycleModelTf:
             cc_angle = atan((tan_cl_angle + tan_cr_angle)/2) * dir
         #return
         self.steering_angle = -cc_angle
-        print(self.steering_angle)
+        # print(self.steering_angle)
 
     def CalculateRealSpeed(self, msg):
         left_rotation_speed = (msg.front_left_rotation_speed + msg.rear_left_rotation_speed) / 2

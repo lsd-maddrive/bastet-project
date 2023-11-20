@@ -180,7 +180,9 @@ void SetAngle(float angle){
 
 float GetMotPos(uint8_t n){
 	float real_mot_pos;
-	real_mot_pos=(512.0f-(float)AdcGetPos()[n])*p_k[n];
+	// real_mot_pos=(512.0f-(float)AdcGetPos()[n])*p_k[n];
+	real_mot_pos=(float)AdcGetPos()[n];
+
 	return -real_mot_pos;
 	
 }

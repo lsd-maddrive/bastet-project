@@ -25,6 +25,8 @@ ros::NodeHandle nh;
 void messageCb(const kitty_msgs::KittyState &speed_msg)
 {
   // rotation_dir = speed_msg.rotation_speed 
+  // rotation_speed_cmd = speed_msg.rotation_speed;
+  // angle_steering_cmd = speed_msg.angle_steering;  
   SetSpeed(speed_msg.rotation_speed, speed_msg.angle_steering);
   SetAngle(speed_msg.angle_steering);
 }
@@ -32,6 +34,9 @@ void messageCb(const kitty_msgs::KittyState &speed_msg)
 ros::Subscriber<kitty_msgs::KittyState> sub("set_speed", &messageCb);
 
 kitty_msgs::KittyState kitty_state;
+float rotation_speed_cmd;
+float angle_steering_cmd;
+
 // std_msgs::Float32MultiArray angle_msg;
 ros::Publisher kitty_state_pub("kitty_state", &kitty_state);
 
@@ -49,7 +54,7 @@ int main()
 
   while (1)
   {
-    // Send the message every 0.1 second
+    // Send the message every 0.2 second
     if (avr_time_now() - lasttime > 200)
     {
 
@@ -59,6 +64,9 @@ int main()
 
       // kitty_state.front_right_rotation_speed = GetOdom()[0];
       // kitty_state.front_left_rotation_speed = GetOdom()[1];
+
+      kitty_state.stamp.sec = avr_time_now()/1000;
+      kitty_state.stamp.nsec = (avr_time_now()%1000)*1000000;
 
       kitty_state.rear_right_rotation_speed = GetSpeedMS()[0];
       kitty_state.front_right_rotation_speed = GetSpeedMS()[1];

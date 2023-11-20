@@ -2,7 +2,9 @@
 
 <launch>
     <include file="$(find kitty_software)/launch/drivers/uc_serial_server.launch">
-        <arg name="port" value="/dev/m2560" />
+        <!-- <arg name="port" value="/dev/m2560" /> -->
+        <arg name="port" value="/dev/ttyACM0" />
+
     </include>
     <include file="$(find kitty_software)/launch/drivers/uc_convertion_layer.launch" />
     <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" />
