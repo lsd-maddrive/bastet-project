@@ -21,6 +21,6 @@
         <arg name="publish_tf" value="true"/>
     </include>
 
-    <!-- rosbag record /front_rs_d435i_camera/rgbd_image /bottom_ydlidar_scan/filtered /tf_static -->
+    <!-- rosbag record /front_rs_d435i_camera/rgbd_image /bottom_ydlidar_scan/filtered /tf /tf_static -->
 
 </launch>
