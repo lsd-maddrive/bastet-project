@@ -60,7 +60,12 @@
         <arg name="steer/limit" value="45"/>
     </include>
     <!-- navigation control -->
-    <include file="$(find kitty_software)/launch/drivers/move_base.launch"/>
+    <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+        <arg name="odom_topic" value="visual_odometry"/>
+        <arg name="scan_topic" value="bottom_ydlidar_scan/filtered"/>
+        <arg name="map_topic" value="map"/>
+        <arg name="cmd_vel_topic" value="joy_vel" />
+    </include>
     <!-- twist_mux -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
         <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />

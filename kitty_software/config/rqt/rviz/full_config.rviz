@@ -60,100 +60,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        bottom_ydlidar_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        bottom_ydlidar_scan_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_left_steer_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_left_suspension_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_left_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_right_steer_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_right_suspension_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_right_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_rs_d435i_camera_imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_rs_d435i_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_rs_d435i_camera_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rear_left_steer_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rear_left_suspension_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rear_left_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rear_right_steer_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rear_right_suspension_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rear_right_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -171,44 +77,32 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        bottom_ydlidar_base_link:
-          Value: true
         bottom_ydlidar_scan_link:
           Value: true
-        front_left_steer_link:
-          Value: false
-        front_left_suspension_link:
-          Value: false
-        front_left_wheel_link:
-          Value: false
-        front_right_steer_link:
-          Value: false
-        front_right_suspension_link:
-          Value: false
-        front_right_wheel_link:
-          Value: false
-        front_rs_d435i_camera_imu_link:
-          Value: false
+        front_rs_d435i_camera_accel_frame:
+          Value: true
+        front_rs_d435i_camera_accel_optical_frame:
+          Value: true
+        front_rs_d435i_camera_aligned_depth_to_color_frame:
+          Value: true
+        front_rs_d435i_camera_color_frame:
+          Value: true
+        front_rs_d435i_camera_color_optical_frame:
+          Value: true
+        front_rs_d435i_camera_depth_frame:
+          Value: true
+        front_rs_d435i_camera_depth_optical_frame:
+          Value: true
+        front_rs_d435i_camera_gyro_frame:
+          Value: true
+        front_rs_d435i_camera_imu_optical_frame:
+          Value: true
         front_rs_d435i_camera_link:
           Value: true
-        front_rs_d435i_camera_optical_frame:
-          Value: false
         map:
           Value: true
         odom:
           Value: true
-        rear_left_steer_link:
-          Value: false
-        rear_left_suspension_link:
-          Value: false
-        rear_left_wheel_link:
-          Value: false
-        rear_right_steer_link:
-          Value: false
-        rear_right_suspension_link:
-          Value: false
-        rear_right_wheel_link:
-          Value: false
       Marker Alpha: 0.699999988079071
       Marker Scale: 0.25
       Name: TF
@@ -220,29 +114,22 @@ Visualization Manager:
           odom:
             base_footprint:
               base_link:
-                bottom_ydlidar_base_link:
-                  bottom_ydlidar_scan_link:
-                    {}
-                front_left_suspension_link:
-                  front_left_steer_link:
-                    front_left_wheel_link:
-                      {}
-                front_right_suspension_link:
-                  front_right_steer_link:
-                    front_right_wheel_link:
-                      {}
+                bottom_ydlidar_scan_link:
+                  {}
                 front_rs_d435i_camera_link:
-                  front_rs_d435i_camera_imu_link:
-                    {}
-                  front_rs_d435i_camera_optical_frame:
-                    {}
-                rear_left_suspension_link:
-                  rear_left_steer_link:
-                    rear_left_wheel_link:
+                  front_rs_d435i_camera_accel_frame:
+                    front_rs_d435i_camera_accel_optical_frame:
                       {}
-                rear_right_suspension_link:
-                  rear_right_steer_link:
-                    rear_right_wheel_link:
+                  front_rs_d435i_camera_aligned_depth_to_color_frame:
+                    front_rs_d435i_camera_color_optical_frame:
+                      {}
+                  front_rs_d435i_camera_color_frame:
+                    {}
+                  front_rs_d435i_camera_depth_frame:
+                    front_rs_d435i_camera_depth_optical_frame:
+                      {}
+                  front_rs_d435i_camera_gyro_frame:
+                    front_rs_d435i_camera_imu_optical_frame:
                       {}
       Update Interval: 0
       Value: true
@@ -293,8 +180,8 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/LaserScan
-      Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color: 255; 0; 0
+      Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -305,7 +192,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.20000000298023224
+      Size (m): 0.10000000149011612
       Style: Flat Squares
       Topic: /bottom_ydlidar_scan/filtered
       Unreliable: false
@@ -621,7 +508,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10
+      Distance: 7.907418251037598
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

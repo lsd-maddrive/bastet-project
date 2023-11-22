@@ -5,7 +5,7 @@
     <node pkg="tf2_ros" type="static_transform_publisher"
         name="base_footprint_2_base_link"
         args="
-            0.0 0.0 0.105
+            0.0 0.0 0.109
             0.0 0.0 0.0
             /base_footprint /base_link" />
 
@@ -14,13 +14,13 @@
     <node pkg="tf2_ros" type="static_transform_publisher"
         name="base_link_2_bottom_ydlidar_scan_link"
         args="
-            -0.15 0.0 -0.043
-            -1.570796 0.0 -3.141593
+            0.0 0.0 -0.009
+            0.0 0.0 0.0
             /base_link /bottom_ydlidar_scan_link" />
     <node pkg="tf2_ros" type="static_transform_publisher"
         name="base_link_2_front_rs_d435i_camera_link"
         args="
-            0.21 0.12 0.295
+            -0.045 0.0 0.29
             0.0 0.226893.0 0.0
             /base_link /front_rs_d435i_camera_link" />
 

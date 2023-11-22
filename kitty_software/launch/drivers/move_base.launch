@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <launch>
 
+    <arg name="odom_topic" default="odom" />
+    <arg name="scan_topic" default="scan" />
+    <arg name="map_topic" default="map" />
+    <arg name="cmd_vel_topic" default="cmd_vel" />
+
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
         <!-- costmap -->
         <rosparam file="$(find kitty_software)/config/move_base/costmap_common_params.yaml" command="load" ns="global_costmap"/>
@@ -13,9 +18,12 @@
         <rosparam file="$(find kitty_software)/config/move_base/teb_local_planner_params.yaml" command="load"/>
         <!-- move base -->
         <rosparam file="$(find kitty_software)/config/move_base/move_base_params.yaml" command="load"/>
-        <!-- remap cmd_vel topic for gazebo -->
-        <remap from="cmd_vel" to="nav_vel"/>
-        <remap from="odom" to="visual_odometry"/>
+        <!-- remap -->
+        
+        <remap from="odom" to="$(arg odom_topic)"/>
+        <remap from="scan" to="$(arg scan_topic)"/>
+        <remap from="map" to="$(arg map_topic)"/>
+        <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     </node>
 
 </launch>

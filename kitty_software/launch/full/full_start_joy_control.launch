@@ -13,10 +13,15 @@
         <arg name="cmd_topic" value="joy_vel" />
         <arg name="speed/frwd_limit" value="1.0"/>
         <arg name="speed/bkwrd_limit" value="-1.0"/>
-        <arg name="steer/limit" value="15"/>
+        <arg name="steer/limit" value="30"/>
     </include>
     <!-- navigation control -->
-    <include file="$(find kitty_software)/launch/drivers/move_base.launch"/>
+    <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+        <arg name="odom_topic" value="visual_odometry"/>
+        <arg name="scan_topic" value="bottom_ydlidar_scan/filtered"/>
+        <arg name="map_topic" value="map"/>
+        <arg name="cmd_vel_topic" value="joy_vel" />
+    </include>
     <!-- twist_mux -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
         <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
@@ -38,6 +43,7 @@
         <include file="$(find kitty_software)/launch/drivers/amcl.launch">
             <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
             <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
         </include>
     </group>
     <!-- solving slam problem -->
