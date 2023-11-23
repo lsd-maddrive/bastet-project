@@ -97,3 +97,28 @@ Reboot
 After that, reconnect the Arduino board to the computer, reopen the Arduino IDE, re-upload it and upload the code will successfully.
 
 Hopefully this Arduino Input/output Error article can help you in learning the Arduino Environment. If this Arduino error article is useful, please share it using the share button below.
+
+ 
+## Прошивка через usb
+burn bootlader
+прошиваем один раз blink через arduino IDE
+не должно быть udev (либо прошить с винды 1 раз)???????????
+
+/snap/arduino/85/hardware/tools/avr/bin/avrdude -C/snap/arduino/85/hardware/tools/avr/etc/avrdude.conf -v -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -Uflash:w:avr_subscriber.hex:i
+
+
+/snap/arduino/85/hardware/tools/avr/bin/avrdude -C/snap/arduino/85/hardware/tools/avr/etc/avrdude.conf -v -patmega2560 -cstk500v2 -P/dev/ttyUSB0 -e -Ulock:w:0x3F:m -Uefuse:w:0xFD:m -Uhfuse:w:0xD8:m -Ulfuse:w:0xFF:m
+
+# [SOLVED] can't open device "/dev/ttyUSB0": Perm. denied (Linux permissions)
+
+sudo usermod -a -G dialout <username>
+
+## Beelink auto power on
+https://www.reddit.com/r/BeelinkOfficial/comments/13lqrz4/beelink_eq12_eq12pro_how_to_set_auto_power_on/
+
+1. Enter BIOS setup.
+2. Use the arrow keys to enter the Chipset page. Select “PCH-IO Configuration” and press the Enter key.
+3. Select “State After G3”.
+4. Select “S0 State”. “S0 State” is to enable auto power on and “S5 State” is to disable auto power on.
+5. Press the F4 and select “Yes” to save the configuration.
+

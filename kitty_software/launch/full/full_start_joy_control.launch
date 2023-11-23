@@ -7,6 +7,10 @@
 
     </include>
     <include file="$(find kitty_software)/launch/drivers/uc_convertion_layer.launch" />
-    <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" />
+    <include file="$(find kitty_software)/launch/drivers/start_joy_teleop.launch" >
+        <arg name="frwd_limit" value="2" />
+        <arg name="bkwrd_limit" value="-1" />
+        <arg name="steer_limit" value="30" />   
+    </include>
 
 </launch>
