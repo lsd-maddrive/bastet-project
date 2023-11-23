@@ -3,6 +3,8 @@
 
     <!-- selecting mode (slam or localization) -->
     <arg name="localization" default="false"/>
+    <!-- name of saved map -->
+    <param name="map_name" value="my_map"/>
     <!-- map file for localization and navigation -->
     <arg name="map_file" default="$(find kitty_maps)/2d_maps/my_map.yaml"/>
 

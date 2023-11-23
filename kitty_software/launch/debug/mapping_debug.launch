@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
+    <param name="use_sim_time" value="true" />
+
     <node pkg="rosbag" type="play" name="rosbag_play" output="screen"
         args="
             --quiet
@@ -22,5 +24,8 @@
     </include>
 
     <!-- rosbag record /front_rs_d435i_camera/rgbd_image /bottom_ydlidar_scan/filtered /tf /tf_static -->
+
+    <include file="$(find kitty_software)/launch/full/view_start_joy_control.launch">
+    </include>
 
 </launch>
