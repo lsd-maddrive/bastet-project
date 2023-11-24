@@ -15,14 +15,14 @@
         name="base_link_2_bottom_ydlidar_scan_link"
         args="
             0.0 0.0 -0.009
-            0.0 0.0 0.0
+            1.570795 0.0 0.0
             /base_link /bottom_ydlidar_scan_link" />
     <!-- front_rs_camera -->
     <node pkg="tf2_ros" type="static_transform_publisher"
         name="base_link_2_front_rs_d435i_camera_link"
         args="
             -0.045 0.0 0.29
-            0.0 0.226893.0 0.0
+            0.0 0.0 0.0
             /base_link /front_rs_d435i_camera_link" />
 
 </launch>
