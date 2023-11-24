@@ -14,10 +14,12 @@
                 /front_rs_d435i_camera/rgbd_image
             --bags $(find kitty_software)/bags/bag_from_lab.bag"/>
 
+    <!-- mapping -->
     <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
         <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
     </include>
 
+    <!-- rgbd odometry -->
     <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
         <arg name="camera_name" value="front_rs_d435i_camera"/>
         <arg name="publish_tf" value="true"/>

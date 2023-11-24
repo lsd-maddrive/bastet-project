@@ -87,6 +87,7 @@
         <include file="$(find kitty_software)/launch/drivers/amcl.launch">
             <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
             <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
         </include>
     </group>
     <!-- solving slam problem -->
