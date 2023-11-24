@@ -17,6 +17,7 @@
             0.0 0.0 -0.009
             1.570795 0.0 0.0
             /base_link /bottom_ydlidar_scan_link" />
+    <!-- front_rs_camera -->
     <node pkg="tf2_ros" type="static_transform_publisher"
         name="base_link_2_front_rs_d435i_camera_link"
         args="
