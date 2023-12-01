@@ -60,6 +60,95 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bottom_ydlidar_scan_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_rs_d435i_camera_imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_rs_d435i_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_rs_d435i_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_left_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_left_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_steer_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_suspension_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -79,29 +168,39 @@ Visualization Manager:
           Value: true
         bottom_ydlidar_scan_link:
           Value: true
-        front_rs_d435i_camera_accel_frame:
+        front_left_steer_link:
           Value: true
-        front_rs_d435i_camera_accel_optical_frame:
+        front_left_suspension_link:
           Value: true
-        front_rs_d435i_camera_aligned_depth_to_color_frame:
+        front_left_wheel_link:
           Value: true
-        front_rs_d435i_camera_color_frame:
+        front_right_steer_link:
           Value: true
-        front_rs_d435i_camera_color_optical_frame:
+        front_right_suspension_link:
           Value: true
-        front_rs_d435i_camera_depth_frame:
+        front_right_wheel_link:
           Value: true
-        front_rs_d435i_camera_depth_optical_frame:
-          Value: true
-        front_rs_d435i_camera_gyro_frame:
-          Value: true
-        front_rs_d435i_camera_imu_optical_frame:
-          Value: true
+        front_rs_d435i_camera_imu_link:
+          Value: false
         front_rs_d435i_camera_link:
           Value: true
+        front_rs_d435i_camera_optical_frame:
+          Value: false
         map:
           Value: true
         odom:
+          Value: true
+        rear_left_steer_link:
+          Value: true
+        rear_left_suspension_link:
+          Value: true
+        rear_left_wheel_link:
+          Value: true
+        rear_right_steer_link:
+          Value: true
+        rear_right_suspension_link:
+          Value: true
+        rear_right_wheel_link:
           Value: true
       Marker Alpha: 0.699999988079071
       Marker Scale: 0.25
@@ -116,20 +215,26 @@ Visualization Manager:
               base_link:
                 bottom_ydlidar_scan_link:
                   {}
+                front_left_suspension_link:
+                  front_left_steer_link:
+                    front_left_wheel_link:
+                      {}
+                front_right_suspension_link:
+                  front_right_steer_link:
+                    front_right_wheel_link:
+                      {}
                 front_rs_d435i_camera_link:
-                  front_rs_d435i_camera_accel_frame:
-                    front_rs_d435i_camera_accel_optical_frame:
-                      {}
-                  front_rs_d435i_camera_aligned_depth_to_color_frame:
-                    front_rs_d435i_camera_color_optical_frame:
-                      {}
-                  front_rs_d435i_camera_color_frame:
+                  front_rs_d435i_camera_imu_link:
                     {}
-                  front_rs_d435i_camera_depth_frame:
-                    front_rs_d435i_camera_depth_optical_frame:
+                  front_rs_d435i_camera_optical_frame:
+                    {}
+                rear_left_suspension_link:
+                  rear_left_steer_link:
+                    rear_left_wheel_link:
                       {}
-                  front_rs_d435i_camera_gyro_frame:
-                    front_rs_d435i_camera_imu_optical_frame:
+                rear_right_suspension_link:
+                  rear_right_steer_link:
+                    rear_right_wheel_link:
                       {}
       Update Interval: 0
       Value: true

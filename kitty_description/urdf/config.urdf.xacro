@@ -10,8 +10,8 @@
 	<xacro:ydlidar
 		prefix="bottom"
 		parent="base_link"
-		origin_xyz="-0.15 0.0 0"
-		origin_rpy="-3.141593 0.0 0.0" />
+		origin_xyz="0.0 0.0 -0.009"
+		origin_rpy="0.0 0.0 0.0" />
 
 	<xacro:rs_camera
 		prefix="front"
