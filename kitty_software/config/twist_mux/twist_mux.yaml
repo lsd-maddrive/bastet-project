@@ -14,3 +14,10 @@ topics:
     topic: key_vel
     timeout: 0.5
     priority: 100
+
+locks:
+-
+    name: big_raw_picture_transport_delay
+    topic: big_raw_picture_transport_delay
+    timeout: 0.0
+    priority: 150
