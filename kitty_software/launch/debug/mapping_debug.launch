@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <launch>
 
-    <param name="use_sim_time" value="true" />
-
     <arg name="rosbag_mode" default="play" doc="[play, record]"/>
 
     <group if="$(eval arg('rosbag_mode') == 'play')">

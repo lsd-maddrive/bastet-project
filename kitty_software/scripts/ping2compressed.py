@@ -4,11 +4,12 @@ from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Float32, Bool
 
 def image_callback(msg):
-    # Получаем текущее время
+    # Получаем текущее время и временную метку
     now = rospy.Time.now()
+    header_time = msg.header.stamp.to_sec()
 
     # Вычисляем задержку
-    delay = now.to_sec() - msg.header.stamp.to_sec()
+    delay = now.to_sec() - header_time
 
     # Публикация задержки
     delay_msg = Float32()
