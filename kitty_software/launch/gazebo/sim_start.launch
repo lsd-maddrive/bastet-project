@@ -70,8 +70,15 @@
     <!-- twist_mux -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
         <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
-        <remap from="cmd_vel_out" to="four_wheel_steering_controller/cmd_vel"/>
+        <remap from="cmd_vel_out" to="cmd_vel_raw"/>
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
+    </node>
+    <!-- steering_filter -->
+    <node pkg="maddrive_teleop" type="cmd_vel_filter" name="cmd_vel_filter" output="screen">
+        <param name="steering_alpha" value="0.7" />
+        <param name="linear_alpha" value="0.7" />
+        <remap from="cmd_vel_raw" to="cmd_vel_raw" />
+        <remap from="cmd_vel" to="four_wheel_steering_controller/cmd_vel" />
     </node>
 
     <!-- laser_filter -->
