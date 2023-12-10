@@ -20,9 +20,10 @@ catkin build \
     realsense2_description \
     -j$(($(nproc)-2)) \
     --cmake-args \
+    -D OpenCV_DIR="/usr/local/lib/cmake/opencv4" \
+    -D RTABMAP_SYNC_MULTI_RGBD=ON \
     -D CATKIN_ENABLE_TESTING=False \
-    -D CMAKE_BUILD_TYPE=Release \
-    -D OpenCV_DIR="/usr/local/lib/cmake/opencv4"
+    -D CMAKE_BUILD_TYPE=Release
 ##TODO - OPENCV_DIR replace like jetson nano
 
 # catkin build \
