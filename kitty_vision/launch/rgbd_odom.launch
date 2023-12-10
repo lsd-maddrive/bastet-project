@@ -34,7 +34,6 @@
         <remap from="rgbd_image" to="$(arg camera_name)/rgbd_image" />
         <!-- outputs -->
         <remap from="odom" to="visual_odometry" />
-
     </node>
 
 </launch>

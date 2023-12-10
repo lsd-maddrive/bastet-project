@@ -73,7 +73,7 @@
         <remap from="cmd_vel_out" to="cmd_vel_raw"/>
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
     </node>
-    <!-- steering_filter -->
+    <!-- cmd_vel_filter -->
     <node pkg="maddrive_teleop" type="cmd_vel_filter" name="cmd_vel_filter" output="screen">
         <param name="steering_alpha" value="0.7" />
         <param name="linear_alpha" value="0.7" />
@@ -118,7 +118,7 @@
     </node>
 
     <!-- rgbd odometry -->
-    <include file="$(find kitty_vision)/launch/drivers/rgbd_odom.launch">
+    <include file="$(find kitty_vision)/launch/rgbd_odom.launch">
         <arg name="camera_name" value="front_rs_d435i_camera"/>
         <arg name="publish_tf" value="true"/>
     </include>
