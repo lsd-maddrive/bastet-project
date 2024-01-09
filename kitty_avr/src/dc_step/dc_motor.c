@@ -104,30 +104,27 @@ void SetSpeed(float desired_speed, float desired_angle){
 		rotation_dir = -1;
 		DC_MOT_REV;
 	} 
-	
-	set_speed = abs(desired_speed);
+	if (desired_speed >= MAX_SPEED){
+		set_speed = MAX_SPEED;
+	}
+	else{
+		set_speed = abs(desired_speed);
+	} 
 	_set_angle = desired_angle;
-	// speed_ms = desired_speed * REVMIN_2_MS;
+	// speed_ms = desired_speed * REVMIN_20_MS;
 }
 
 
 void DcMotGo(float* speed){
-	// 1 and 2 front
-	// 0 and 4 back
+	// OCR4A - FR
+	// OCR2A - FL
+	// OCR2B - RL
+	// OCR4C - RR
 
-	// 0 and 1 right
-	// 3 and 2 left
-
-
-	// 0 and 1 front
-	// 3 and 2 back
-
-	// 0 and 3 right
-	// 1 and 2 left
 	OCR4A = speed[0];
-	OCR2A = speed[3];
+	OCR2A = speed[1];
 	OCR2B = speed[2];
-	OCR4C = speed[1];
+	OCR4C = speed[3];
 }
 
 void DcMotPIDGo(float set_speed){
@@ -152,7 +149,7 @@ void DcMotPIDGo(float set_speed){
 			rw_speed = set_speed * R_right / R_centre; 
 
 		}
-	float differential_speed[4]={rw_speed,rw_speed,lw_speed,lw_speed};
+	float differential_speed[4]={rw_speed,lw_speed,lw_speed,rw_speed};
 	//float differential_speed[4]={lw_speed, rw_speed, rw_speed, lw_speed};
 	
 	for(uint8_t i=0; i<4; i++){

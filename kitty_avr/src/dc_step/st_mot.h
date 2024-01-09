@@ -34,8 +34,8 @@
 //general settings
 #define POS_CENTER 512
 #define POS_ERR 1
-#define MAX_ANGLE 90
-#define MIN_ANGLE -90
+#define MAX_ANGLE 60 //default 90
+#define MIN_ANGLE -60 //default 90
 #define MODE 16 //step divide by n
 #define STEPS (360/(1.8/MODE))*2
 #define ANGLE_TO_STEPS STEPS/360

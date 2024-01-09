@@ -45,6 +45,7 @@
 #define PI 3.141593
 #define MS_2_REVMIN 60 / (PI*WHEEL_D)
 #define REVMIN_2_MS (PI*WHEEL_D) / 60 
+#define MAX_SPEED 500
 
 
 
