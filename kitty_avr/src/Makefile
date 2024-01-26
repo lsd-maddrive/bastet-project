@@ -447,6 +447,10 @@ program: $(TARGET).hex $(TARGET).eep
 #	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 	avrdude -c stk500 -p m2560 -P /dev/ttyUSB0 -U flash:w:$(TARGET).hex
 
+	
+program-uart: $(TARGET).hex $(TARGET).eep
+	/snap/arduino/85/hardware/tools/avr/bin/avrdude -C/snap/arduino/85/hardware/tools/avr/etc/avrdude.conf -v -p atmega2560 -c wiring -P /dev/ttyACM0 -b 115200 -D -Uflash:w:$(TARGET).hex:i
+
 
 # Generate avr-gdb config/init file which does the following:
 #     define the reset signal, load the target file, connect to target, and set 

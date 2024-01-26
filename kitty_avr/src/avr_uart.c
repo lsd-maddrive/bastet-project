@@ -1,6 +1,8 @@
 #include <avr/io.h>
 
 #define BAUD 57600
+// #define BAUD 115200
+
 // #define BAUD 57605000000
 
 

@@ -13,7 +13,7 @@ float debug_angles[3] = {0,0,0};
 uint16_t set_counter =0;
 
 //pot_koefs
-float p_k[4]={0.268,0.268,0.268,0.268};
+float p_k[4]={0.35,0.35,0.35,0.35};
 float info[3]={0, 0 ,0};
 
 
@@ -125,25 +125,27 @@ void SetAngle(float angle){
 	
 	if (angle == 0)
 	{
-	angle_l = 0;
-	angle_r = 0;
-	destenation = 1;
+		angle_l = 0;
+		angle_r = 0;
+		destenation = 1;
 
 	}
 	else
 	{
-	h = LEN_WHEEL/2 / tan(0.01745*angle);
-	destenation = h/abs(h);
+		h = LEN_WHEEL/2 / tan(0.01745*angle);
+		destenation = h/abs(h);
 
 
-	angle_l=57.3*atan(fabs((LEN_WHEEL/2)/(WID_WHEEL/2+h)));
-	angle_r=57.3*atan(fabs((LEN_WHEEL/2)/(h-WID_WHEEL/2)));
-	//angle_l=(LEN_WHEEL/2)/(WID_WHEEL/2+h);
-	//angle_r=atfabs((LEN_WHEEL/2)/(WID_WHEEL/2+h));
+		angle_l=57.3*atan(fabs((LEN_WHEEL/2)/(WID_WHEEL/2+h)));
+		angle_r=57.3*atan(fabs((LEN_WHEEL/2)/(h-WID_WHEEL/2)));
+		//angle_l=(LEN_WHEEL/2)/(WID_WHEEL/2+h);
+		//angle_r=atfabs((LEN_WHEEL/2)/(WID_WHEEL/2+h));
 	
 	}
 
-	float angles[4]={-1*destenation*angle_r, destenation*angle_r, destenation*angle_l,  -1*destenation*angle_l};
+	// float angles[4]={-1*destenation*angle_r, destenation*angle_r, destenation*angle_l,  -1*destenation*angle_l};
+	float angles[4]={destenation*angle_r, destenation*angle_l, -1*destenation*angle_l, -1*destenation*angle_r};
+
 	
 
 
@@ -181,7 +183,9 @@ void SetAngle(float angle){
 float GetMotPos(uint8_t n){
 	float real_mot_pos;
 	real_mot_pos=(512.0f-(float)AdcGetPos()[n])*p_k[n];
-	return -real_mot_pos;
+	// real_mot_pos=(float)AdcGetPos()[n];
+
+	return real_mot_pos;
 	
 }
 

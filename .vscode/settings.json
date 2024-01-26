@@ -70,6 +70,13 @@
   "files.associations": {
     "cmath": "c",
     "complex": "c",
-    "st_mot.h": "c"
-  }
+    "st_mot.h": "c",
+    "chrono": "c",
+    "random": "c",
+    "limits": "c"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "python.formatting.provider": "none"
 }
