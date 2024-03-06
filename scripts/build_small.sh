@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
 catkin build \
-    kitty-project
+    kitty-project \
+    maddrive_ros_shared

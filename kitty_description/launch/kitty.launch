@@ -11,7 +11,7 @@
     <!-- urdf spawner -->
     <arg name="robot_pose_x" default="0.0"/>
     <arg name="robot_pose_y" default="0.0"/>
-    <arg name="robot_pose_z" default="0.05"/>
+    <arg name="robot_pose_z" default="0.11"/>
     <arg name="robot_pose_R" default="0.0"/>
     <arg name="robot_pose_P" default="0.0"/>
     <arg name="robot_pose_Y" default="0.0"/>

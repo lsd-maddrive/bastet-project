@@ -11,15 +11,14 @@
     <!-- urdf spawner -->
     <arg name="robot_pose_x" default="0.0"/>
     <arg name="robot_pose_y" default="0.0"/>
-    <arg name="robot_pose_z" default="0.05"/>
+    <arg name="robot_pose_z" default="0.11"/>
     <arg name="robot_pose_R" default="0.0"/>
     <arg name="robot_pose_P" default="0.0"/>
     <arg name="robot_pose_Y" default="0.0"/>
-    <arg name="localization" default="true"/>
+    <!-- selecting mode (slam or localization) -->
+    <arg name="localization" default="false"/>
     <!-- map file for localization and navigation -->
     <arg name="map_file" default="$(find kitty_maps)/2d_maps/$(arg world_name).yaml"/>
-    <!-- rviz -->
-    <arg name='rviz' default="true" />
     <!-- parameter is used to save the map scan with the name of the map from the simulation -->
     <param name="map_name" value="$(arg world_name)"/>
 
@@ -41,22 +40,6 @@
         <arg name="model" value="$(arg model)"/>
     </include>
 
-    <!-- solving slam problem -->
-    <group if="$(arg localization)">
-        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
-            <arg name="map_file" value="$(arg map_file)"/>
-        </include>
-        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
-            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
-            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
-        </include>
-    </group>
-    <!-- solving localization problem -->
-    <group unless="$(arg localization)">
-        <include file="$(find kitty_software)/launch/drivers/hector_mapping.launch">
-        </include>
-    </group>
-
     <!-- keyboard control -->
     <include file="$(find maddrive_teleop)/launch/start_keyboard_teleop.launch">
         <arg name="turbo/linear_steps" value="4"/>
@@ -71,6 +54,7 @@
     </include>
     <!-- joystick control -->
     <include file="$(find maddrive_teleop)/launch/start_joy_teleop.launch">
+        <arg name="dev" value="/dev/input/js0" />
         <arg name="cmd_topic" value="joy_vel" />
         <arg name="speed/frwd_limit" value="1"/>
         <arg name="speed/bkwrd_limit" value="-0.6"/>
@@ -78,20 +62,65 @@
     </include>
     <!-- navigation control -->
     <!-- <include file="$(find kitty_software)/launch/drivers/move_base.launch">
-        <arg name="algorithm_config" value="$(arg algorithm_config)"/>
+        <arg name="odom_topic" value="visual_odometry"/>
+        <arg name="scan_topic" value="bottom_ydlidar_scan/filtered"/>
+        <arg name="map_topic" value="map"/>
+        <arg name="cmd_vel_topic" value="nav_vel" />
     </include> -->
     <!-- twist_mux -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
         <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
-        <remap from="cmd_vel_out" to="four_wheel_steering_controller/cmd_vel"/>
+        <remap from="cmd_vel_out" to="cmd_vel_raw"/>
         <remap from="diagnostics" to="twist_mux/diagnostics"/>
     </node>
+    <!-- cmd_vel_filter -->
+    <node pkg="maddrive_teleop" type="cmd_vel_filter" name="cmd_vel_filter" output="screen">
+        <param name="steering_alpha" value="0.7" />
+        <param name="linear_alpha" value="0.7" />
+        <remap from="cmd_vel_raw" to="cmd_vel_raw" />
+        <remap from="cmd_vel" to="four_wheel_steering_controller/cmd_vel" />
+    </node>
 
-    <!-- rviz -->
-    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find kitty_software)/config/rqt/rviz/full_config.rviz"/>
+    <!-- laser_filter -->
+    <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
+        <arg name="scan/data_raw" value="bottom_ydlidar_scan/raw"/>
+        <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
+    </include>
 
-    <!-- <include file="$(find kitty_software)/launch/debug/ekf_debug.launch">
-        <arg name="ekf_debug" value="$(arg ekf_debug)" />
-    </include> -->
+    <!-- solving localization problem -->
+    <group if="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
+            <arg name="map_file" value="$(arg map_file)"/>
+        </include>
+        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
+            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+        </include>
+    </group>
+    <!-- solving slam problem -->
+    <group unless="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/slam_gmapping.launch">
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+        </include>
+    </group>
+
+    <!-- rgbd_sync -->
+    <node pkg="rtabmap_sync" type="rgbd_sync" name="rgbd_sync">
+        <!-- inputs -->
+        <remap from="rgb/image" to="front_rs_d435i_camera/color/image_raw" />
+        <remap from="depth/image" to="front_rs_d435i_camera/aligned_depth_to_color/image_raw" />
+        <remap from="rgb/camera_info" to="front_rs_d435i_camera/color/camera_info" />
+        <!-- outputs -->
+        <remap from="rgbd_image" to="front_rs_d435i_camera/rgbd_image" />
+        <remap from="rgbd_image/compressed" to="front_rs_d435i_camera/rgbd_image/compressed" />
+        <param name="approx_sync" value="false" />
+    </node>
+
+    <!-- rgbd odometry -->
+    <include file="$(find kitty_vision)/launch/rgbd_odom.launch">
+        <arg name="camera_name" value="front_rs_d435i_camera"/>
+        <arg name="publish_tf" value="true"/>
+    </include>
 
 </launch>

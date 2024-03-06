@@ -1,8 +1,20 @@
 <launch>
 
+    <include file="$(find kitty_software)/launch/drivers/uc_serial_server.launch">
+        <arg name="port" value="/dev/ttyACM0" />
+    </include>
+    <include file="$(find kitty_software)/launch/drivers/uc_convertion_layer.launch" />
     <include file="$(find kitty_software)/launch/drivers/tf_transforms.launch" />
 
     <!-- YDLidar -->
-    <include file="$(find ydlidar_ros_driver)/launch/X2.launch" />
+    <include file="$(find maddrive_hardware_tools)/launch/ydlidar_X2.launch">
+        <arg name="scan_output_topic" value="bottom_ydlidar_scan/raw" />
+        <arg name="point_cloud_output_topic" value="bottom_ydlidar_point_cloud/raw" />
+        <arg name="frame_id" value="bottom_ydlidar_scan_link" />
+    </include>
 
+    <!-- realsence -->
+    <include file="$(find kitty_vision)/launch/start_rs_camera.launch">
+        <arg name="camera_name" value="front_rs_d435i_camera" />
+    </include>
 </launch>

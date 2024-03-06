@@ -14,12 +14,16 @@ catkin build \
     hector_gazebo \
     cv_bridge \
     maddrive_ros_shared \
+    rtabmap_ros \
     ydlidar_ros_driver \
+    realsense2_camera \
+    realsense2_description \
     -j$(($(nproc)-2)) \
     --cmake-args \
+    -D OpenCV_DIR="/usr/local/lib/cmake/opencv4" \
+    -D RTABMAP_SYNC_MULTI_RGBD=ON \
     -D CATKIN_ENABLE_TESTING=False \
-    -D CMAKE_BUILD_TYPE=Release \
-    -D OpenCV_DIR="/usr/local/lib/cmake/opencv4"
+    -D CMAKE_BUILD_TYPE=Release
 ##TODO - OPENCV_DIR replace like jetson nano
 
 # catkin build \

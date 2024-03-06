@@ -1,11 +1,21 @@
 #include "dc_motor.h"
+#include "math.h"
 #include <avr/io.h>
+
 
 //uint16_t tim2_count=0, dc_mot_enc_count = 0, enc_result = 0;
 uint16_t tim2_count=0, dc_mot_enc_count[4]={0,0,0,0}, enc_result[4]={0,0,0,0};
+int16_t rotation_dir = 1;
 float reg_speed[4]={0,0,0,0}, integral[4]={0,0,0,0};
 //uint32_t enc_result = 0;
+float speed_ms[4] = {0,0,0,0}; //for odom calculate
 float set_speed = 0;
+float _set_angle = 0; // only for calculate turning radius
+float debug_formuls[6]={0,0,0,0,0,0};
+float odom_info[3]={0,0,0};
+
+float x0,y0,alf;
+
 
 
 void Tim2DcMotInit(void){
@@ -30,7 +40,7 @@ void DcMotInit(void){
 	Tim2DcMotInit();
 	IntDcMotEcoderInit();
 	DC_MOT1_SPEED_DDR|=(1<<DC_MOT1_SPEED_DDR_PIN);
-	DC_MOT2_SPEED_DDR|=(1<<DC_MOT2_SPEED_DDR_PIN);
+	 DC_MOT2_SPEED_DDR|=(1<<DC_MOT2_SPEED_DDR_PIN);
 	DC_MOT3_SPEED_DDR|=(1<<DC_MOT3_SPEED_DDR_PIN);
 	DC_MOT4_SPEED_DDR|=(1<<DC_MOT4_SPEED_DDR_PIN);
 	
@@ -38,35 +48,113 @@ void DcMotInit(void){
 }
 
 
+
 uint16_t* GetSpeed(void){
 	return(enc_result);
 }
 
-void SetSpeed(float desired_speed){
-	if(desired_speed>=0) DC_MOT_FOR;
-	else DC_MOT_REV;
-	// if (desired_speed==0)\{
-	// 	for (int i = 0; i < 4; i++){
-	// 		integral[i]=0;
-	// 	}
-	// }
-	set_speed = abs(desired_speed);
+
+float* GetSpeedMS(void){
+	speed_ms[0] = (int16_t)enc_result[0] * rotation_dir * REVMIN_2_MS;
+	speed_ms[1] = (int16_t)enc_result[1] * rotation_dir * REVMIN_2_MS;
+	speed_ms[2] = (int16_t)enc_result[2] * rotation_dir * REVMIN_2_MS;
+	speed_ms[3] = (int16_t)enc_result[3] * rotation_dir * REVMIN_2_MS;
+	return(speed_ms);
+}
+
+float* GetFormuls(float _speed,float _angle)
+{
+float h = 0 ,R_left = 0 ,R_centre = 0 ,R_right = 0 , QQ_left=0, QQ_centre=0, QQ_right=0, lw_speed,rw_speed;
+	if (_angle ==0)
+		{
+		lw_speed = _speed;
+		rw_speed = _speed;
+		}
+	else
+		{ 	 
+			h = 0.5*LEN_WHEEL / tan(0.01745*(_set_angle));
+			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((h),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((h-WID_WHEEL/2),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
+			QQ_centre = atan((LEN_WHEEL / 2)/h);
+			QQ_right = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			lw_speed = set_speed  * R_left / (R_centre );
+			rw_speed = set_speed  * R_right / (R_centre ); 
+
+    
+		}
+	debug_formuls[0] = _angle;
+	debug_formuls[1] = R_left;
+	debug_formuls[2] = R_centre;
+	debug_formuls[3] = R_right;
+	debug_formuls[4] = lw_speed;
+	debug_formuls[5] = rw_speed;
+
+	return (debug_formuls);
+}
+
+
+void SetSpeed(float desired_speed, float desired_angle){
+	if(desired_speed>0){
+		rotation_dir = 1;
+		DC_MOT_FOR;
+	}
+	else if (desired_speed<0){
+		rotation_dir = -1;
+		DC_MOT_REV;
+	} 
+	if (desired_speed >= MAX_SPEED){
+		set_speed = MAX_SPEED;
+	}
+	else{
+		set_speed = abs(desired_speed);
+	} 
+	_set_angle = desired_angle;
+	// speed_ms = desired_speed * REVMIN_20_MS;
 }
 
 
 void DcMotGo(float* speed){
+	// OCR4A - FR
+	// OCR2A - FL
+	// OCR2B - RL
+	// OCR4C - RR
 
-	OCR2A = speed[3];
+	OCR4A = speed[0];
+	OCR2A = speed[1];
 	OCR2B = speed[2];
-	OCR4A = speed[1];
-	OCR4C = speed[0];
+	OCR4C = speed[3];
 }
 
 void DcMotPIDGo(float set_speed){
 	//float speed_test[4]={0,0,0,0};
+	// calculate each wheel
+	float h, lw_speed = 50, rw_speed=50, R_left, R_centre, R_right, QQ_left=0, QQ_centre=0, QQ_right=0;
+	if (_set_angle ==0)
+		{
+		lw_speed = set_speed;
+		rw_speed = set_speed;
+		}
+	else
+		{
+			h = 0.5*LEN_WHEEL / tan(0.01745*(_set_angle));
+			R_left = sqrt(pow((LEN_WHEEL/2),2) + pow((WID_WHEEL/2+h),2));
+			R_centre = sqrt(pow((LEN_WHEEL/2),2) + pow((h),2));
+			R_right = sqrt(pow((LEN_WHEEL/2),2) + pow((h-WID_WHEEL/2),2));
+			QQ_left = atan((LEN_WHEEL / 2)/(h+WID_WHEEL/2));
+			QQ_centre = atan((LEN_WHEEL / 2)/h);
+			QQ_right = atan((LEN_WHEEL / 2)/(h-WID_WHEEL/2));
+			lw_speed = set_speed * R_left / R_centre;
+			rw_speed = set_speed * R_right / R_centre; 
+
+		}
+	float differential_speed[4]={rw_speed,lw_speed,lw_speed,rw_speed};
+	//float differential_speed[4]={lw_speed, rw_speed, rw_speed, lw_speed};
+	
 	for(uint8_t i=0; i<4; i++){
-		//reg_speed[i] = ComputePI(GetSpeed()[i], input_speed);
-		reg_speed[i] = ComputePI(GetSpeed()[i], set_speed, i);
+		reg_speed[i] = ComputePI(GetSpeed()[i], differential_speed[i], i);
+		// reg_speed[i] = ComputePI(GetSpeed()[i], set_speed, i);
 	}
 	DcMotGo(reg_speed);
 }
@@ -82,14 +170,13 @@ void IntDcMotEcoderInit(void){
 
 ISR (INT0_vect)
 {
-	PORTB^=(1<<7);
-	dc_mot_enc_count[0]+=1;
+	dc_mot_enc_count[3]+=1;
 }
 
 ISR (INT1_vect)
 {
 	//PORTB^=(1<<7);
-	dc_mot_enc_count[1]+=1;
+	dc_mot_enc_count[0]+=1;
 }
 
 ISR (INT2_vect)
@@ -100,18 +187,19 @@ ISR (INT2_vect)
 
 ISR (INT3_vect)
 {
-	//PORTB^=(1<<7);
-	dc_mot_enc_count[3]+=1;
+	PORTB^=(1<<7);
+	dc_mot_enc_count[1]+=1;
 }
 
 ISR(TIMER2_OVF_vect){ //isr executes every 8 ms
 	if(tim2_count<10) tim2_count++; //every 80 ms
 	else{
 		for(uint8_t i=0; i<4; i++){
-			enc_result[i]=dc_mot_enc_count[i]*ENC_TO_REV_PER_MIN;
+			enc_result[i]=((uint32_t)dc_mot_enc_count[i]*12.5*60)/115; //rev per minute
 			dc_mot_enc_count[i]=0;
 		}
 		DcMotPIDGo(set_speed);
+		// Light_Wheel_Odometry(set_speed, _set_angle);
 		//PORTB^=(1<<7);
 		tim2_count=0;
 	}
@@ -132,6 +220,69 @@ float ComputePI(uint16_t input, float setpoint, uint8_t integral_num){
 	return(control);
 }
 
+
+float* GetOdom(void){
+
+	odom_info[0] = x0;
+	odom_info[1] = y0;
+	// odom_info[2] = velocity;
+	// odom_info[3] = yaw;
+	return(odom_info);
+}
+
+
+float Light_Wheel_Odometry (float set_speed, float set_angle)
+{
+    float h, dir_x, dir_y, fi, sf, sa, cf, ca, DeltaY, x1, y1, len_wheel_m, h_angle;
+	// float t = 0.08;
+
+	// if (set_angle == 0){
+ 	// 	x1 = x0 + speed_ms * t;
+	// 	x0 = x1;
+	// }
+	
+	// else if (speed_ms !=0){
+
+	// 	len_wheel_m = LEN_WHEEL / 100;
+	// 	dir_x= speed_ms/ fabs(speed_ms);
+	// 	dir_y= set_angle/ abs(set_angle);
+	// 	h_angle = abs(set_angle)
+	// 	h = len_wheel_m /2/ tan(0.01745*h_angle);
+	// 	fi= speed_ms*t/h;
+	// 	sf= sin(0.01745*fi);
+	// 	sa= sin(0.01745*alf);
+	// 	cf= cos(0.01745*fi);
+	// 	ca= cos(0.01745*alf);
+		
+	// 	DeltaY=sa*sf*h+ca*pow(pow(h,2)*pow((-1 + cf),2) +pow(h,2)*pow(sf,2)-pow(h,2)*pow(sf,2),0.5);
+	// 	if (((fabs(alf))<90) && (((fabs(alf))>=0)))
+	// 		{
+	// 		x1=x0+ dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y*DeltaY;
+	// 		}
+	// 	else if (((fabs(alf))<180) && (((fabs(alf))>=90)))
+	// 		{
+	// 		x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y*DeltaY;
+	// 		}
+	// 	else if (((fabs(alf))<270) && (((fabs(alf))>=180)))
+	// 		{
+	// 		x1=x0- dir_x*pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y*DeltaY;
+	// 		}
+	// 	else if (((fabs(alf))<=360) && (((fabs(alf))>=270)))
+	// 		{
+	// 		x1=x0+ dir_x *pow( pow(h-cf*h,2)+pow(sf*h,2)-pow(DeltaY,2), 0.5);
+	// 		y1=y0- dir_y *DeltaY;
+	// 		}
+		
+	// 	alf=alf+fi;
+	// 	if (alf>360) alf=alf-360;
+	// 	if (alf<-360) alf=alf+360;
+	// 	x0=x1;
+    // 	y0=y1;
+	// }
+}
 //previous_error = 0;
 //integral = 0;
 //OCRnA = 1500;

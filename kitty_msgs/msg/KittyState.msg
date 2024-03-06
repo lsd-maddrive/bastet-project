@@ -8,3 +8,14 @@ time stamp
 float32 rotation_speed
 # Steering angle [rad]
 float32 angle_steering
+# angles
+float32 front_right_steering_angle
+float32 front_left_steering_angle
+float32 rear_right_steering_angle
+float32 rear_left_steering_angle
+# speeds
+float32 front_right_rotation_speed
+float32 front_left_rotation_speed
+float32 rear_right_rotation_speed
+float32 rear_left_rotation_speed
+

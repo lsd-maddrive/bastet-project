@@ -5,19 +5,19 @@
 	<xacro:include filename="$(find kitty_description)/urdf/params.urdf.xacro" />
 
 	<xacro:include filename="$(find maddrive_urdf_tools)/urdf/macros/realsense.urdf.xacro" />
-	<xacro:include filename="$(find maddrive_urdf_tools)/urdf/macros/lidar.urdf.xacro" />
+	<xacro:include filename="$(find maddrive_urdf_tools)/urdf/macros/ydlidar.urdf.xacro" />
 
-	<xacro:lidar
-		prefix="top"
+	<xacro:ydlidar
+		prefix="bottom"
 		parent="base_link"
-		origin_xyz="0.0 0.0 ${body_heigth+0.1}"
+		origin_xyz="0.0 0.0 -0.009"
 		origin_rpy="0.0 0.0 0.0" />
 
 	<xacro:rs_camera
 		prefix="front"
-		model="d455"
-		parent="front_axis_link"
-		origin_xyz="${front_wheel_2_front_bumper} 0.0 ${body_heigth}"
-		origin_rpy="0.0 0.0 0.0" />
+		model="d435i"
+		parent="base_link"
+		origin_xyz="0.21 0.12 0.295"
+		origin_rpy="0.0 0.226893 0.0" />
 
 </robot>

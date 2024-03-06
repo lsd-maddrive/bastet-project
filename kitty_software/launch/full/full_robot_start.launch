@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <!-- selecting mode (slam or localization) -->
+    <arg name="localization" default="false"/>
+    <!-- name of saved map -->
+    <param name="map_name" value="my_map"/>
+    <!-- map file for localization and navigation -->
+    <arg name="map_file" default="$(find kitty_maps)/2d_maps/my_map.yaml"/>
+    
+    <arg name="nav_config" default="teb_local_planner_params" />
+
+    <!-- start_hardware -->
+    <include file="$(find kitty_software)/launch/drivers/start_hardware.launch"/>
+
+    <!-- joystick control -->
+    <include file="$(find maddrive_teleop)/launch/start_joy_teleop.launch">
+        <arg name="cmd_topic" value="joy_vel" />
+        <arg name="speed/frwd_limit" value="2.0"/>
+        <arg name="speed/bkwrd_limit" value="-2.0"/>
+        <arg name="steer/limit" value="30"/>
+    </include>
+    <!-- navigation control -->
+    <include file="$(find kitty_software)/launch/drivers/move_base.launch">
+            <arg name="folder_name" value="move_base" />
+            <arg name="cmd_topic" value="nav_vel" />
+            <arg name="teb_config" value="$(arg nav_config)" />
+    </include>
+    <!-- twist_mux -->
+    <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
+        <rosparam command="load" file="$(find kitty_software)/config/twist_mux/twist_mux.yaml" />
+        <remap from="cmd_vel_out" to="cmd_vel_raw"/>
+        <remap from="diagnostics" to="twist_mux/diagnostics"/>
+    </node>
+    <!-- cmd_vel_filter -->
+    <node pkg="maddrive_teleop" type="cmd_vel_filter" name="cmd_vel_filter" output="screen">
+        <param name="steering_alpha" value="0.7" />
+        <param name="linear_alpha" value="0.7" />
+        <remap from="cmd_vel_raw" to="cmd_vel_raw" />
+        <remap from="cmd_vel" to="cmd_vel" />
+    </node>
+
+    <!-- laser_filter -->
+    <include file="$(find kitty_software)/launch/drivers/laser_filter.launch">
+        <arg name="scan/data_raw" value="bottom_ydlidar_scan/raw"/>
+        <arg name="scan/data_filtered" value="bottom_ydlidar_scan/filtered"/>
+    </include>
+
+    <!-- solving localization problem -->
+    <group if="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/map_server.launch">
+            <arg name="map_file" value="$(arg map_file)"/>
+        </include>
+        <include file="$(find kitty_software)/launch/drivers/amcl.launch">
+            <arg name="robot_pose_x" value="$(arg robot_pose_x)"/>
+            <arg name="robot_pose_y" value="$(arg robot_pose_y)"/>
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+        </include>
+    </group>
+    <!-- solving slam problem -->
+    <group unless="$(arg localization)">
+        <include file="$(find kitty_software)/launch/drivers/slam_gmapping.launch">
+            <arg name="scan_input_topic" value="bottom_ydlidar_scan/filtered"/>
+        </include>
+    </group>
+
+    <!-- rdbd_odometry -->
+    <include file="$(find kitty_vision)/launch/rgbd_odom.launch">
+        <arg name="camera_name" value="front_rs_d435i_camera"/>
+        <arg name="publish_tf" value="true"/>
+    </include>
+
+</launch>
